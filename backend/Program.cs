@@ -1,3 +1,5 @@
+using backend.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,13 +9,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddDataProtection();
 builder.Services.AddSession();
-
-builder.Services.AddCors(options =>
-    options.AddPolicy("Allow", policy =>
-    {
-        policy.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod();
-    }
-));
+builder.Services.RegisterDb(builder.Configuration);
 
 var app = builder.Build();
 

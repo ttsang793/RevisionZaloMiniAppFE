@@ -1,23 +1,21 @@
-import StudentFooter from "@/components/student-footer";
-import StudentHeader from "@/components/student-header";
-import { Box, Button, Icon, Page, Text } from "zmp-ui";
-import TestHolder from "@/components/test-holder";
+import { Book, Mortarboard } from "react-bootstrap-icons";
+import { Text, Page, useNavigate } from "zmp-ui"
 
-function HomePage() {
+export default function ChooseRolePage() {
+  const navTo = useNavigate();
   return (
-    <Page className="page">
-      <StudentHeader />
-      <div className="flex gap-5 flex-wrap justify-center">
-        <TestHolder />
-        <TestHolder latest="" />
-        <TestHolder />
-        <TestHolder />
-        <TestHolder />
-        <TestHolder />
-      </div>
-      <StudentFooter />
-    </Page>
-  );
-}
+    <Page className="flex flex-col justify-center text-center zaui-bg-blue-20 p-10">
+      <div className="section-container flex flex-col gap-4">
+        <Text.Title size="xLarge">Chào mừng bạn đến với MáyÔnTập! Mời bạn chọn vai trò:</Text.Title>
 
-export default HomePage;
+        <button onClick={() => navTo("/")} className="w-full zaui-bg-green-20 border zaui-border-green-80 text-lg rounded-full py-2">
+          <Book className="inline me-1" size={24} /> Học sinh
+        </button>
+        
+        <button className="w-full zaui-bg-orange-20 border zaui-border-orange-80 text-lg rounded-full py-2">
+          <Mortarboard className="inline me-1" size={24} /> Giáo viên
+        </button>
+      </div>
+    </Page>
+  )
+}

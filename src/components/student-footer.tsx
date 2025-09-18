@@ -27,36 +27,35 @@ export default function StudentFooter() {
         key="home"
         label="Trang chủ"
         linkTo="/"
-        onClick={() => navTo("/", { animate: false })}
+        onClick={() => navTo("/student", { animate: false })}
       />
       <BottomNavigation.Item
         icon={<Heart />}
         activeIcon={<HeartFill />}
         key="favorite"
         label="Yêu thích"
-        onClick={() => navTo("/favorite", { animate: false })}
+        onClick={() => navTo("/student/favorite", { animate: false })}
       />
       <BottomNavigation.Item
         icon={<Clock />}
         activeIcon={<ClockFill />}
         key="history"
         label="Lịch sử"
-        onClick={() => navTo("/history", { animate: false })}
+        onClick={() => navTo("/student/history", { animate: false })}
       />
       <BottomNavigation.Item
         icon={<BarChart />}
         activeIcon={<BarChartFill />}
         key="statistic"
         label="Thống kê"
-        //linkTo="/statistic"
-        onClick={() => navTo("/statistic", { animate: false })}
+        onClick={() => navTo("/student/statistic", { animate: false })}
       />
       <BottomNavigation.Item
         icon={<Gear />}
         activeIcon={<GearFill />}
         key="setting"
         label="Cài đặt"
-        onClick={() => navTo("/setting", { animate: false })}
+        onClick={() => navTo("/student/setting", { animate: false })}
       />
     </BottomNavigation>
   )

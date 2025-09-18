@@ -2,36 +2,59 @@ import { getSystemInfo } from "zmp-sdk";
 import { AnimationRoutes, App, Route, SnackbarProvider, ZMPRouter } from "zmp-ui";
 import { AppProps } from "zmp-ui/app";
 
-import ChooseRolePage from "@/pages/first-time";
+import ChooseRolePage from "@/pages";
 
 import HomePage from "@/pages/index";
-import FavoritePage from "@/pages/favorite";
-import StatisticPage from "@/pages/statistic";
+import FavoritePage from "@/pages/student/favorite";
+import StatisticPage from "@/pages/student/statistic";
 import StudentFooter from "./student-footer";
 import "@/css/app.scss"
-import HistoryPage from "@/pages/history";
-import SettingPage from "@/pages/setting";
+import HistoryPage from "@/pages/student/history";
+import SettingPage from "@/pages/student/setting";
 
-import TestPreviewPage from "@/pages/test/preview";
-import TeacherDetailPage from "@/pages/teacher-detail";
-import TakeTestPage from "@/pages/test/take";
+import TestPreviewPage from "@/pages/student/test/preview";
+import TeacherDetailPage from "@/pages/student/teacher-detail";
+import TakeTestPage from "@/pages/student/test/take";
+
+import AdminHomePage from "@/pages/admin";
+import SubjectManagement from "@/pages/admin/subject";
 
 const Layout = () => {
-  return (
+  if (location.pathname.startsWith("/admin")) {
+    return (
+      <App theme={getSystemInfo().zaloTheme as AppProps["theme"]}>
+        <SnackbarProvider>
+          <ZMPRouter>
+            <AnimationRoutes>
+              <Route path="/admin">
+                <Route path="" element={<AdminHomePage />} />
+                <Route path="subject" element={<SubjectManagement />} />
+              </Route>
+            </AnimationRoutes>
+          </ZMPRouter>
+        </SnackbarProvider>
+      </App>
+    )
+  }
+
+  else return (
     <App theme={getSystemInfo().zaloTheme as AppProps["theme"]}>
       <SnackbarProvider>
         <ZMPRouter>
           <AnimationRoutes>
-            <Route path="/first-time" element={<ChooseRolePage />} />
-            <Route path="/" element={<HomePage />} />
-            <Route path="/favorite" element={<FavoritePage />} />
-            <Route path="/history" element={<HistoryPage />} />
-            <Route path="/statistic" element={<StatisticPage />} />
-            <Route path="/setting" element={<SettingPage />} />
+            <Route path="/student">
+              <Route path="" element={<HomePage />} />
+              <Route path="favorite" element={<FavoritePage />} />
+              <Route path="history" element={<HistoryPage />} />
+              <Route path="statistic" element={<StatisticPage />} />
+              <Route path="setting" element={<SettingPage />} />
 
-            <Route path="/test/preview/:id" element={<TestPreviewPage />} />
-            <Route path="/teacher/:id" element={<TeacherDetailPage />} />
-            <Route path="/test/take/:id" element={<TakeTestPage />} />
+              <Route path="test/preview/:id" element={<TestPreviewPage />} />
+              <Route path="teacher/:id" element={<TeacherDetailPage />} />
+              <Route path="test/take/:id" element={<TakeTestPage />} />
+            </Route>
+
+            <Route path="/" element={<ChooseRolePage />} />
           </AnimationRoutes>
           <StudentFooter />
         </ZMPRouter>
