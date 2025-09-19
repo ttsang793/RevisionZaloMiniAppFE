@@ -1,7 +1,8 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+
 using backend.Models;
 
 namespace backend.Services;
@@ -18,6 +19,8 @@ public partial class ZaloRevisionAppDbContext : DbContext
     }
 
     public virtual DbSet<Subject> Subjects { get; set; }
+
+    public virtual DbSet<Topic> Topics { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -43,35 +46,64 @@ public partial class ZaloRevisionAppDbContext : DbContext
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
+            entity.Property(e => e.IsVisible)
+                .HasDefaultValueSql("'1'")
+                .HasColumnName("is_visible");
             entity.Property(e => e.Name)
                 .HasMaxLength(100)
                 .HasColumnName("name");
-            entity.Property(e => e.IsVisible)
-                .HasColumnType("boolean")
-                .HasDefaultValue("true")
-                .HasColumnName("isVisible");
-            entity.Property(e => e.QuestionTN)
-                .HasColumnType("boolean")
-                .HasColumnName("questionTN");
-            entity.Property(e => e.QuestionDS)
-                .HasColumnType("boolean")
-                .HasColumnName("questionDS");
-            entity.Property(e => e.QuestionTLN)
-                .HasColumnType("boolean")
-                .HasColumnName("questionTLN");
-            entity.Property(e => e.QuestionDVCT)
-                .HasColumnType("boolean")
-                .HasColumnName("questionDVCT");
-            entity.Property(e => e.QuestionTL)
-                .HasColumnType("boolean")
-                .HasColumnName("questionTL");
-            entity.Property(e => e.QuestionSX)
-                .HasColumnType("boolean")
-                .HasColumnName("questionSX");
+            entity.Property(e => e.QuestionDS).HasColumnName("questionDS");
+            entity.Property(e => e.QuestionDVCT).HasColumnName("questionDVCT");
+            entity.Property(e => e.QuestionSX).HasColumnName("questionSX");
+            entity.Property(e => e.QuestionTL).HasColumnName("questionTL");
+            entity.Property(e => e.QuestionTLN).HasColumnName("questionTLN");
+            entity.Property(e => e.QuestionTN).HasColumnName("questionTN");
             entity.Property(e => e.UpdateAt)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("datetime")
                 .HasColumnName("update_at");
+        });
+
+        modelBuilder.Entity<Topic>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("topics");
+
+            entity.HasIndex(e => e.SubjectId, "subject_id");
+
+            entity.Property(e => e.Id)
+                .HasMaxLength(10)
+                .HasColumnName("id");
+            entity.Property(e => e.Classes)
+                .HasColumnType("json")
+                .HasConversion(
+                      v => JsonSerializer.Serialize(v, new JsonSerializerOptions()),
+                      v => JsonSerializer.Deserialize<List<int>>(v!, new JsonSerializerOptions())
+                  )
+                .HasColumnName("classes");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("datetime")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Name)
+                .HasMaxLength(200)
+                .HasColumnName("name");
+            entity.Property(e => e.IsVisible)
+                .HasDefaultValueSql("'1'")
+                .HasColumnName("is_visible");
+            entity.Property(e => e.SubjectId)
+                .HasMaxLength(4)
+                .HasColumnName("subject_id");
+            entity.Property(e => e.UpdateAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("datetime")
+                .HasColumnName("update_at");
+
+            entity.HasOne(d => d.Subject).WithMany(p => p.Topics)
+                .HasForeignKey(d => d.SubjectId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("topics_ibfk_1");
         });
 
         OnModelCreatingPartial(modelBuilder);

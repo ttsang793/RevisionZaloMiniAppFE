@@ -4,7 +4,7 @@ import { AppProps } from "zmp-ui/app";
 
 import ChooseRolePage from "@/pages";
 
-import HomePage from "@/pages/index";
+import HomePage from "@/pages/student/index";
 import FavoritePage from "@/pages/student/favorite";
 import StatisticPage from "@/pages/student/statistic";
 import StudentFooter from "./student-footer";
@@ -18,6 +18,7 @@ import TakeTestPage from "@/pages/student/test/take";
 
 import AdminHomePage from "@/pages/admin";
 import SubjectManagement from "@/pages/admin/subject";
+import TopicManagement from "@/pages/admin/topic";
 
 const Layout = () => {
   if (location.pathname.startsWith("/admin")) {
@@ -29,8 +30,34 @@ const Layout = () => {
               <Route path="/admin">
                 <Route path="" element={<AdminHomePage />} />
                 <Route path="subject" element={<SubjectManagement />} />
+                <Route path="topic" element={<TopicManagement />} />
               </Route>
             </AnimationRoutes>
+          </ZMPRouter>
+        </SnackbarProvider>
+      </App>
+    )
+  }
+
+  else if (location.pathname.startsWith("/student")) {
+    return (
+      <App theme={getSystemInfo().zaloTheme as AppProps["theme"]}>
+        <SnackbarProvider>
+          <ZMPRouter>
+            <AnimationRoutes>
+              <Route path="/student">
+                <Route path="" element={<HomePage />} />
+                <Route path="favorite" element={<FavoritePage />} />
+                <Route path="history" element={<HistoryPage />} />
+                <Route path="statistic" element={<StatisticPage />} />
+                <Route path="setting" element={<SettingPage />} />
+
+                <Route path="test/preview/:id" element={<TestPreviewPage />} />
+                <Route path="teacher/:id" element={<TeacherDetailPage />} />
+                <Route path="test/take/:id" element={<TakeTestPage />} />
+              </Route>
+            </AnimationRoutes>
+            <StudentFooter />
           </ZMPRouter>
         </SnackbarProvider>
       </App>
@@ -42,24 +69,11 @@ const Layout = () => {
       <SnackbarProvider>
         <ZMPRouter>
           <AnimationRoutes>
-            <Route path="/student">
-              <Route path="" element={<HomePage />} />
-              <Route path="favorite" element={<FavoritePage />} />
-              <Route path="history" element={<HistoryPage />} />
-              <Route path="statistic" element={<StatisticPage />} />
-              <Route path="setting" element={<SettingPage />} />
-
-              <Route path="test/preview/:id" element={<TestPreviewPage />} />
-              <Route path="teacher/:id" element={<TeacherDetailPage />} />
-              <Route path="test/take/:id" element={<TakeTestPage />} />
-            </Route>
-
             <Route path="/" element={<ChooseRolePage />} />
           </AnimationRoutes>
-          <StudentFooter />
         </ZMPRouter>
       </SnackbarProvider>
     </App>
-  );
+  )
 };
 export default Layout;

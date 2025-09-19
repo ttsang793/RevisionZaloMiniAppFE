@@ -1,14 +1,14 @@
 import { Book, Mortarboard } from "react-bootstrap-icons";
-import { Text, Page, useNavigate } from "zmp-ui"
+import { Text, Page } from "zmp-ui";
+import { redirect } from "@/script/util";
 
 export default function ChooseRolePage() {
-  const navTo = useNavigate();
   return (
     <Page className="flex flex-col justify-center text-center zaui-bg-blue-20 p-10">
       <div className="section-container flex flex-col gap-4">
         <Text.Title size="xLarge">Chào mừng bạn đến với MáyÔnTập! Mời bạn chọn vai trò:</Text.Title>
 
-        <button onClick={() => navTo("/")} className="w-full zaui-bg-green-20 border zaui-border-green-80 text-lg rounded-full py-2">
+        <button onClick={() => redirect("/student")} className="w-full zaui-bg-green-20 border zaui-border-green-80 text-lg rounded-full py-2">
           <Book className="inline me-1" size={24} /> Học sinh
         </button>
         

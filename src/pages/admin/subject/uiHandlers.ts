@@ -10,11 +10,16 @@ type Subject = {
   questionDVCT: boolean,
   questionTL: boolean,
   questionSX: boolean,
-  isVisible: boolean
+  isVisible?: boolean
+}
+
+const getSubjects = async () => {
+  const response = await axios.get("/api/subject");
+  return response.data;
 }
 
 const getSubjectById = async (id: string) => {
-  const response = await axios.get(`/api/subject/get/${id}`);
+  const response = await axios.get(`/api/subject/${id}`);
   return (response.status === 200) ? response.data : null;
 }
 
@@ -40,7 +45,7 @@ const insertSubject = (subject: Subject) => {
 
 const updateSubject = (subject: Subject) => {
   if (confirm("Bạn có muốn cập nhật môn học này?")) {
-    axios.put(`/api/subject/update/${subject.id}`, subject)
+    axios.put(`/api/subject/${subject.id}`, subject)
     .then(response => {
       if (response.status === 200) {
         alert("Cập nhật thành công!");
@@ -58,8 +63,8 @@ const updateSubject = (subject: Subject) => {
   }
 }
 
-const deleteSubject = (id: string) => {
-  if (confirm("Bạn có muốn thay đổi trạng thái ẩn/hiện của môn học này?")) {
+const deleteSubject = (id: string, isVisible: boolean) => {
+  if (confirm(`Bạn có muốn ${isVisible ? "ẩn" : "hiện"} môn học này?`)) {
     axios.delete(`/api/subject/visible/${id}`)
     .then(response => {
       if (response.status === 200) {
@@ -78,4 +83,4 @@ const deleteSubject = (id: string) => {
   }
 }
 
-export { Subject, getSubjectById, insertSubject, updateSubject, deleteSubject };
+export { Subject, getSubjects, getSubjectById, insertSubject, updateSubject, deleteSubject };

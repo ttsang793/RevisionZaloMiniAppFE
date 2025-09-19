@@ -3,8 +3,24 @@
   "WorkspaceRootPath": "D:\\Kh\u00F3a lu\u1EADn\\may-on-thi\\backend\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{9619788E-F584-46F3-B7D8-DA1C99F53699}|backend.csproj|d:\\kh\u00F3a lu\u1EADn\\may-on-thi\\backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9619788E-F584-46F3-B7D8-DA1C99F53699}|backend.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{9619788E-F584-46F3-B7D8-DA1C99F53699}|backend.csproj|d:\\kh\u00F3a lu\u1EADn\\may-on-thi\\backend\\services\\topicdb.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9619788E-F584-46F3-B7D8-DA1C99F53699}|backend.csproj|solutionrelative:services\\topicdb.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9619788E-F584-46F3-B7D8-DA1C99F53699}|backend.csproj|d:\\kh\u00F3a lu\u1EADn\\may-on-thi\\backend\\controllers\\topiccontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9619788E-F584-46F3-B7D8-DA1C99F53699}|backend.csproj|solutionrelative:controllers\\topiccontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9619788E-F584-46F3-B7D8-DA1C99F53699}|backend.csproj|d:\\kh\u00F3a lu\u1EADn\\may-on-thi\\backend\\controllers\\subjectcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9619788E-F584-46F3-B7D8-DA1C99F53699}|backend.csproj|solutionrelative:controllers\\subjectcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9619788E-F584-46F3-B7D8-DA1C99F53699}|backend.csproj|d:\\kh\u00F3a lu\u1EADn\\may-on-thi\\backend\\dtos\\topicdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9619788E-F584-46F3-B7D8-DA1C99F53699}|backend.csproj|solutionrelative:dtos\\topicdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9619788E-F584-46F3-B7D8-DA1C99F53699}|backend.csproj|d:\\kh\u00F3a lu\u1EADn\\may-on-thi\\backend\\models\\topic.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9619788E-F584-46F3-B7D8-DA1C99F53699}|backend.csproj|solutionrelative:models\\topic.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,19 +30,70 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Program.cs",
-              "DocumentMoniker": "D:\\Kh\u00F3a lu\u1EADn\\may-on-thi\\backend\\Program.cs",
-              "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "D:\\Kh\u00F3a lu\u1EADn\\may-on-thi\\backend\\Program.cs",
-              "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAXAAAAAAAAAA==",
+              "DocumentIndex": 3,
+              "Title": "TopicDTO.cs",
+              "DocumentMoniker": "D:\\Kh\u00F3a lu\u1EADn\\may-on-thi\\backend\\DTOs\\TopicDTO.cs",
+              "RelativeDocumentMoniker": "DTOs\\TopicDTO.cs",
+              "ToolTip": "D:\\Kh\u00F3a lu\u1EADn\\may-on-thi\\backend\\DTOs\\TopicDTO.cs",
+              "RelativeToolTip": "DTOs\\TopicDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-18T09:28:23.536Z",
+              "WhenOpened": "2025-09-19T02:42:04.945Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Topic.cs",
+              "DocumentMoniker": "D:\\Kh\u00F3a lu\u1EADn\\may-on-thi\\backend\\Models\\Topic.cs",
+              "RelativeDocumentMoniker": "Models\\Topic.cs",
+              "ToolTip": "D:\\Kh\u00F3a lu\u1EADn\\may-on-thi\\backend\\Models\\Topic.cs",
+              "RelativeToolTip": "Models\\Topic.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAYAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-19T01:38:32.193Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "SubjectController.cs",
+              "DocumentMoniker": "D:\\Kh\u00F3a lu\u1EADn\\may-on-thi\\backend\\Controllers\\SubjectController.cs",
+              "RelativeDocumentMoniker": "Controllers\\SubjectController.cs",
+              "ToolTip": "D:\\Kh\u00F3a lu\u1EADn\\may-on-thi\\backend\\Controllers\\SubjectController.cs",
+              "RelativeToolTip": "Controllers\\SubjectController.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAgwAYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-19T01:26:10.633Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "TopicController.cs",
+              "DocumentMoniker": "D:\\Kh\u00F3a lu\u1EADn\\may-on-thi\\backend\\Controllers\\TopicController.cs",
+              "RelativeDocumentMoniker": "Controllers\\TopicController.cs",
+              "ToolTip": "D:\\Kh\u00F3a lu\u1EADn\\may-on-thi\\backend\\Controllers\\TopicController.cs",
+              "RelativeToolTip": "Controllers\\TopicController.cs",
+              "ViewState": "AgIAABgAAAAAAAAAAAAowCMAAAB1AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-19T01:25:53.196Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "TopicDb.cs",
+              "DocumentMoniker": "D:\\Kh\u00F3a lu\u1EADn\\may-on-thi\\backend\\Services\\TopicDb.cs",
+              "RelativeDocumentMoniker": "Services\\TopicDb.cs",
+              "ToolTip": "D:\\Kh\u00F3a lu\u1EADn\\may-on-thi\\backend\\Services\\TopicDb.cs",
+              "RelativeToolTip": "Services\\TopicDb.cs",
+              "ViewState": "AgIAABkAAAAAAAAAAAAcwCcAAABkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-19T01:25:45.088Z",
               "EditorCaption": ""
             }
           ]

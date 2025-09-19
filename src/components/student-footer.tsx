@@ -1,7 +1,7 @@
 import { BarChart, BarChartFill, Clock, ClockFill, Gear, GearFill, Heart, HeartFill, HouseDoor, HouseDoorFill } from "react-bootstrap-icons"
 import { BottomNavigation, useLocation, useNavigate } from "zmp-ui";
 
-const noFooter: string[] = ["/first-time", "/test"];
+const noFooter: string[] = ["/test"];
 
 function checkIfNoFooter() {
   let noFooterFlag = false;

@@ -17,13 +17,13 @@ public class SubjectController : Controller
         _subjectDb = new SubjectDb(dbContext);
     }
 
-    [HttpGet("get")]
+    [HttpGet("")]
     public async Task<List<Subject>> Get()
     {
         return await _subjectDb.GetAsync();
     }
 
-    [HttpGet("get/{id}")]
+    [HttpGet("{id}")]
     public async Task<Subject> GetById(string id)
     {
         return await _subjectDb.GetByIdAsync(id);
@@ -35,7 +35,7 @@ public class SubjectController : Controller
         return await _subjectDb.Add(subject) ? StatusCode(201) : StatusCode(400);
     }
 
-    [HttpPut("update/{id}")]
+    [HttpPut("{id}")]
     public async Task<IActionResult> Update([Bind("Id", "Name", "Classes", "QuestionTN", "QuestionDS", "QuestionTLN", "QuestionDVCT", "QuestionTL", "QuestionSX", "IsVisible")] Subject subject)
     {
         return await _subjectDb.Update(subject) ? StatusCode(200) : StatusCode(400);

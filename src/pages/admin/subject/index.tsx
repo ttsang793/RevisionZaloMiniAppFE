@@ -1,9 +1,8 @@
-import axios from "axios";
 import { useState, useEffect } from "react";
 import { Pencil, PlusCircle, X } from "react-bootstrap-icons";
 import { Page, Text } from "zmp-ui";
 
-import { Subject, deleteSubject } from "./uiHandlers";
+import { Subject, getSubjects, deleteSubject } from "./uiHandlers";
 import InfoSubjectModal from "./info-modal";
 
 export default function SubjectManagement() {
@@ -13,7 +12,7 @@ export default function SubjectManagement() {
   let [editId, setEditId] = useState("");
 
   useEffect(() => {
-    axios.get("/api/subject/get").then(response => setSubjectList(response.data));
+    getSubjects().then(subject => setSubjectList(subject));
     setLoading(false);
   }, [])
 
@@ -74,7 +73,7 @@ export default function SubjectManagement() {
 
               <td className="text-center">
                 <Pencil size={18} className="inline" onClick={() => { setVisible(true); setEditId(subject.id) }} />
-                <X size={24} className="inline" onClick={() => deleteSubject(subject.id)} />
+                <X size={24} className="inline" onClick={() => deleteSubject(subject.id, subject.isVisible!)} />
               </td>
 
               <td>{subject.isVisible ? <>&#x2714;</> : ""}</td>

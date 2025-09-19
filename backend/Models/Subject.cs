@@ -17,6 +17,7 @@ public partial class Subject
     public bool IsVisible { get; set; } = true;
     public DateTime? CreatedAt { get; set; } = null!;
     public DateTime? UpdateAt { get; set; } = null!;
+    public virtual ICollection<Topic> Topics { get; set; } = [];
 
     public void TakeValuesFrom(Subject s)
     {
