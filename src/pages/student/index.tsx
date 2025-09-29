@@ -1,5 +1,5 @@
 import StudentFooter from "@/components/student-footer";
-import StudentHeader from "@/components/student-header";
+import StudentHeader from "@/components/header";
 import { Box, Button, Icon, Page, Text } from "zmp-ui";
 import TestHolder from "@/components/test-holder";
 

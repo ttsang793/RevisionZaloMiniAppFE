@@ -1,9 +1,10 @@
 "use client"
 import { Calendar3, PersonFill, ClockFill, TrophyFill, ChatTextFill, Heart } from "react-bootstrap-icons"
 import Comment from "@/components/test/comment";
-import { Avatar, Text, Page, Modal, useNavigate, useParams } from "zmp-ui";
+import { useNavigate, useParams } from "react-router-dom";
+import { Avatar, Text, Page, Modal } from "zmp-ui";
 import { useState } from "react";
-import StudentHeader from "@/components/student-header";
+import AppHeader from "@/components/header";
 
 export default function TestPreviewPage() {
   const { id } = useParams();
@@ -12,13 +13,13 @@ export default function TestPreviewPage() {
 
   return (
     <Page className="page page-wo-footer">
-      <StudentHeader title="Thông tin bài kiểm tra" showBackIcon />
+      <AppHeader title="Thông tin bài kiểm tra" showBackIcon />
       <div className="section-container">        
         <div className="flex gap-x-2">
           <div className="flex-1">             
             <Text.Title size="large">Ôn tập kiểm tra thường xuyên lần 1 &minus; Toán 12</Text.Title>
             <div>
-              <div onClick={() => navTo("/teacher/1")} className="me-2 inline-block">
+              <div onClick={() => navTo("/student/teacher/1")} className="me-2 inline-block">
                 <Avatar src="/avatar/default.jpg" size={24} className="me-1" />
                 Trần Văn A
               </div>
@@ -37,7 +38,7 @@ export default function TestPreviewPage() {
           <button onClick={() => setTakeVisible(true)} className="zaui-bg-orange-60 text-white rounded-full py-1 px-4 text-sm me-1">
             Làm bài
           </button>
-          <button onClick={() => navTo(`/test/practice/${id}`)} className="zaui-bg-green-70 text-white rounded-full py-1 px-4 text-sm">
+          <button onClick={() => navTo(`/student/test/practice/${id}`)} className="zaui-bg-green-70 text-white rounded-full py-1 px-4 text-sm">
             Luyện tập
           </button>
         </div>
@@ -87,6 +88,6 @@ export default function TestPreviewPage() {
 
   function handleTake() {
     setTakeVisible(false);
-    navTo(`/test/take/${id}`);
+    navTo(`/student/test/take/${id}`);
   }
 }

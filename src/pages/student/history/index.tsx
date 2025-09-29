@@ -1,15 +1,14 @@
 import TestHolder from "@/components/test-holder";
 import { Page } from "zmp-ui";
-import StudentHeader from "@/components/student-header";
+import AppHeader from "@/components/header";
 import axios from "axios";
 import { useEffect, useState } from "react";
-
-
+import { useNavigate } from "react-router-dom";
 
 export default function HistoryPage() {
   return (
     <Page className="page">
-      <StudentHeader title="Lịch sử truy cập" />
+      <AppHeader title="Lịch sử truy cập" />
             
       <div className="flex gap-5 flex-wrap justify-center">
         Hello World
@@ -34,7 +33,7 @@ export default function HistoryPage() {
 
   return loading ? <></> : (
     <Page className="page">
-      <StudentHeader title="Lịch sử truy cập" />
+      <AppHeader title="Lịch sử truy cập" />
             
       <div className="flex gap-5 flex-wrap justify-center">
         <button onClick={() => navTo("/first-time")}>{inner}</button>

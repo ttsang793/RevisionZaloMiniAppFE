@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 
 using backend.Models;
+using MySql.EntityFrameworkCore.Extensions;
 
 namespace backend.Services;
 
@@ -21,6 +22,8 @@ public partial class ZaloRevisionAppDbContext : DbContext
     public virtual DbSet<Subject> Subjects { get; set; }
 
     public virtual DbSet<Topic> Topics { get; set; }
+
+    public virtual DbSet<Achievement> Achivements { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -104,6 +107,28 @@ public partial class ZaloRevisionAppDbContext : DbContext
                 .HasForeignKey(d => d.SubjectId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("topics_ibfk_1");
+        });
+
+        modelBuilder.Entity<Achievement>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("achievements");
+
+            entity.Property(e => e.Id)
+                .HasMaxLength(10)
+                .HasColumnName("id");
+
+            entity.Property(e => e.Name)
+                .HasMaxLength(256)
+                .HasColumnName("name");
+
+            entity.Property(e => e.Description)
+                .HasMaxLength(256)
+                .HasColumnName("description");
+
+            entity.Property(e => e.Image)
+                .HasColumnName("image");
         });
 
         OnModelCreatingPartial(modelBuilder);

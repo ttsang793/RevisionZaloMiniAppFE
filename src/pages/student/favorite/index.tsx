@@ -1,12 +1,12 @@
 import TestHolder from "@/components/test-holder";
 import { Page } from "zmp-ui";
-import StudentHeader from "@/components/student-header";
+import AppHeader from "@/components/header";
 import StudentFooter from "@/components/student-footer";
 
 export default function FavoritePage() {
   return (
     <Page className="page">
-      <StudentHeader title="Yêu thích" />
+      <AppHeader title="Yêu thích" />
       
       <div className="flex gap-5 flex-wrap justify-center">
         <TestHolder latest="" />

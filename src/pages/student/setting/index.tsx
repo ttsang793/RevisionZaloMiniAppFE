@@ -1,13 +1,13 @@
 import { CameraFill, ChevronRight } from "react-bootstrap-icons";
 import { Switch, Input, Text, Page } from "zmp-ui";
-import StudentHeader from "@/components/student-header";
-import SettingAlarm from "@/components/settng/alarm";
+import AppHeader from "@/components/header";
+import SettingAlarm from "@/components/setting/alarm";
 import "./setting.css"
 
-export default function SettingPage() {
+export default function StudentSettingPage() {
   return (
     <Page className="page-x-0">
-      <StudentHeader title="Cài đặt" />
+      <AppHeader title="Cài đặt" />
       <div className="section-container">
         <div className="grid grid-cols-[1fr_30px] gap-x-2 mb-3 items-center">
           <Text>Thông báo</Text>

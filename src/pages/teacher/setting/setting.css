@@ -1,0 +1,8 @@
+#student-info .zaui-list-item-title {
+  display: block;
+  width: 100%;
+}
+
+#student-info .zaui-input-label {
+  font-size: 16px;
+}

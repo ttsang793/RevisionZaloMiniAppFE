@@ -1,12 +1,12 @@
 "use client"
-import StudentHeader from "@/components/student-header";
+import AppHeader from "@/components/header";
 import TestHolder from "@/components/test-holder"
 import { Text, Page } from "zmp-ui";
 
 export default function TeacherDetailPage() {
   return (
     <Page className="page-x-0">
-      <StudentHeader title="Trần Văn A" showBackIcon />
+      <AppHeader title="Trần Văn A" showBackIcon />
       <div className="flex gap-2 section-container">
         <img src="/avatar/default.jpg" className="size-[64px] rounded-full" />
         <div className="w-full">

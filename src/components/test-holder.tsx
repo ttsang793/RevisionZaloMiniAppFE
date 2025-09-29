@@ -35,14 +35,14 @@ const TestHolder = ({ latest = "28/09/2025" }) => {
                 Xem kết quả</button>
               <button 
                 className="zaui-bg-blue-80 text-white rounded-full py-1 px-2 text-sm"
-                onClick={() => navTo("/test/preview/1")}
+                onClick={() => navTo("/student/test/preview/1")}
               >
                 Làm lại bài</button>
             </>
           ) : (
             <button 
               className="zaui-bg-blue-80 text-white rounded-full py-1 px-2 text-sm"
-              onClick={() => navTo("/test/preview/1")}
+              onClick={() => navTo("/student/test/preview/1")}
             >
               Làm bài</button>
           )
