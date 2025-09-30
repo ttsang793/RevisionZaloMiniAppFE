@@ -1,7 +1,10 @@
 import { Eye, PencilSquare, XLg } from "react-bootstrap-icons";
+import { useNavigate } from "react-router-dom";
 import { Text } from "zmp-ui";
 
 const QuestionList = ({editable = true}) => {
+  const navTo = useNavigate();
+
   return (
     <>
       <div className={`flex place-items-start`}>
@@ -9,7 +12,7 @@ const QuestionList = ({editable = true}) => {
           <Text bold>
             Hàm số y=2x+3 giao với trục Ox tại:
           </Text>
-          <Text size="small">Trắc nghiệm 1 đáp án <i>(Toán 7)</i></Text>
+          <Text size="small">Trắc nghiệm 4 đáp án <i>(Toán 7)</i></Text>
         </div>
         {
           editable ? (
@@ -17,7 +20,7 @@ const QuestionList = ({editable = true}) => {
               <button className="me-1">
                 <XLg size={24} />
               </button>
-              <button>
+              <button onClick={() => navTo("edit/1")}>
                 <PencilSquare size={24} />
               </button>
             </div>

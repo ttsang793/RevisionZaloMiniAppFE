@@ -1,8 +1,16 @@
 import { CardChecklist, Gear, GearFill, PatchQuestion, PatchQuestionFill, Postcard, PostcardFill } from "react-bootstrap-icons"
-import { BottomNavigation } from "zmp-ui";
+import { BottomNavigation, useLocation } from "zmp-ui";
+
+function checkIfNoFooter() {
+  const pathname = useLocation().pathname.substring(1);
+  const pathnameArray = pathname.split("/");
+  
+  if (pathnameArray[pathnameArray.length - 1] === "") pathnameArray.splice(pathnameArray.length - 1, 1);
+  return pathnameArray.length !== 2;
+}
 
 export default function TeacherFooter() {
-  return (
+  return checkIfNoFooter() ? <></> : (
     <BottomNavigation fixed>
       <BottomNavigation.Item
         icon={<PatchQuestion />}

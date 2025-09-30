@@ -1,24 +1,8 @@
-import { redirect } from "@/script/util";
 import { BarChart, BarChartFill, Clock, ClockFill, Gear, GearFill, Heart, HeartFill, HouseDoor, HouseDoorFill } from "react-bootstrap-icons"
-import { BottomNavigation, useLocation } from "zmp-ui";
-
-const noFooter: string[] = ["/test"];
-
-function checkIfNoFooter() {
-  let noFooterFlag = false;
-  const pathname = useLocation().pathname;
-  
-  for (let i = 0; i < noFooter.length; i++)
-    if (pathname.startsWith(noFooter[i])) {
-      noFooterFlag = true;
-      break;
-    }
-
-  return noFooterFlag;
-}
+import { BottomNavigation } from "zmp-ui";
 
 export default function StudentFooter() {
-  return checkIfNoFooter() ? <></> : (
+  return (
     <BottomNavigation fixed>
       <BottomNavigation.Item
         icon={<HouseDoor />}

@@ -1,0 +1,5 @@
+.zaui-radio-group .zaui-radio-wrapper {
+  margin: 0!important;
+
+  @apply border py-1 px-2;
+}

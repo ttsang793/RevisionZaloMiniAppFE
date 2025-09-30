@@ -21,15 +21,17 @@ import TakeTestPage from "@/pages/student/test/take";
 // Teacher
 import TeacherFooter from "./teacher-footer";
 import QuestionManagement from "@/pages/teacher/question";
+import QuestionMaker from "@/pages/teacher/question/maker";
+import QuestionImportWord from "@/pages/teacher/question/import-word";
 import ExamManagement from "@/pages/teacher/exam";
 import GradeManagement from "@/pages/teacher/grade";
 import TeacherSettingPage from "@/pages/teacher/setting";
 import TeacherRegisterPage from "@/pages/teacher/register";
 
 // Admin
+import AdminLogin from "@/pages/admin/login";
 import SubjectManagement from "@/pages/admin/subject";
 import TopicManagement from "@/pages/admin/topic";
-
 
 // Inline layout wrappers
 const TeacherLayout = () => (
@@ -52,7 +54,7 @@ const AdminLayout = () => (
   </>
 );
 
-const TestLayout = () => <Outlet />
+const NoFooter = () => <Outlet />
 
 const Layout = () => {
   return (
@@ -69,12 +71,18 @@ const Layout = () => {
               <Route index element={<Navigate to="/admin/subject" replace />} />
               <Route path="subject" element={<SubjectManagement />} />
               <Route path="topic" element={<TopicManagement />} />
+              <Route path="login" element={<AdminLogin />} />
             </Route>
 
             {/* Teacher routes */}
             <Route path="/teacher" element={<TeacherLayout />}>
               <Route index element={<Navigate to="/teacher/question" replace />} />
-              <Route path="question" element={<QuestionManagement />} />
+              <Route path="question">
+                <Route index element={<QuestionManagement />} />
+                <Route path="maker/:type" element={<QuestionMaker />} />
+                <Route path="maker/word" element={<QuestionImportWord />} />
+                <Route path="edit/:id" element={<QuestionMaker />} />
+              </Route>
               <Route path="exam" element={<ExamManagement />} />
               <Route path="grade" element={<GradeManagement />} />
               <Route path="setting" element={<TeacherSettingPage />} />
@@ -91,7 +99,7 @@ const Layout = () => {
             </Route>
 
             {/* Test routes */}
-            <Route path="/student/test" element={<TestLayout />}>
+            <Route path="/student/test" element={<NoFooter />}>
               <Route path="preview/:id" element={<TestPreviewPage />} />
               <Route path="take/:id" element={<TakeTestPage />} />
               <Route path="practice/:id" element={<TakeTestPage />} />              

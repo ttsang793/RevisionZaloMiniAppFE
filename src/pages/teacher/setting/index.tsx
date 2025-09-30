@@ -50,7 +50,7 @@ export default function TeacherSettingPage() {
               required
             />
             <Select
-              label={<Text className="mt-1">Khối <span className="zaui-text-red-50">*</span></Text>}
+              label={<Text className="mt-2">Khối <span className="zaui-text-red-50">*</span></Text>}
               closeOnSelect
               defaultValue="-1"
             >
@@ -60,7 +60,7 @@ export default function TeacherSettingPage() {
             </Select>
 
             <Select
-              label={<Text className="mt-1">Môn học <span className="zaui-text-red-50">*</span></Text>}
+              label={<Text className="mt-2">Môn học <span className="zaui-text-red-50">*</span></Text>}
               closeOnSelect
               defaultValue="-1"
             >
@@ -72,16 +72,16 @@ export default function TeacherSettingPage() {
 
             <TextArea
               placeholder="Giới thiệu"
-              label="Giới thiệu"
+              label={<Text className="mt-2">Giới thiệu</Text>}
             />
 
             <Text className="zaui-text-red-50 text-left italic mb-2" bold>
               *: Các trường bắt buộc
             </Text>
 
-            <div className="flex gap-x-2 justify-center">
-              <input type="submit" value="Lưu" className="zaui-bg-blue-80 text-white rounded-full py-1 px-4 text-sm" />
-              <input type="reset" value="Hủy" className="zaui-bg-blue-20 zaui-text-blue-80 rounded-full py-1 px-4 text-sm" />
+            <div className="flex gap-x-2 justify-center mt-4">
+              <input type="submit" value="Lưu" className="zaui-bg-blue-80 text-white rounded-full py-2 px-8" />
+              <input type="reset" value="Hủy" className="zaui-bg-blue-20 zaui-text-blue-80 rounded-full py-2 px-8" />
             </div>
           </form>
         </div>
