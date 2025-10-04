@@ -13,7 +13,7 @@ const QuestionMakerConstructedResponse = () => {
   }, [])
 
   return (
-    <form className="section-container">
+    <form>
       <Input
         label={<Text>Tiêu đề câu hỏi <span className="zaui-text-red-50">*</span></Text>}
         placeholder="Tiêu đề câu hỏi" required
@@ -92,10 +92,10 @@ const QuestionMakerConstructedResponse = () => {
         </Checkbox>
       </Checkbox.Group>
 
-      <div className="flex gap-x-2 justify-center mt-2">
+      <Box className="flex gap-x-2 justify-center mt-2">
         <input type="submit" value="Lưu" className="zaui-bg-blue-80 text-white rounded-full py-2 px-8" />
         <input type="button" value="Hủy" className="zaui-bg-blue-20 zaui-text-blue-80 rounded-full py-2 px-8" onClick={() => navTo("/teacher/question")} />
-      </div>
+      </Box>
     </form>
   )
 }

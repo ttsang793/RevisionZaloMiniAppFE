@@ -22,6 +22,7 @@ import TakeTestPage from "@/pages/student/test/take";
 import TeacherFooter from "./teacher-footer";
 import QuestionManagement from "@/pages/teacher/question";
 import QuestionMaker from "@/pages/teacher/question/maker";
+import GroupQuestion from "@/pages/teacher/question/group-question";
 import QuestionImportWord from "@/pages/teacher/question/import-word";
 import ExamManagement from "@/pages/teacher/exam";
 import GradeManagement from "@/pages/teacher/grade";
@@ -32,6 +33,9 @@ import TeacherRegisterPage from "@/pages/teacher/register";
 import AdminLogin from "@/pages/admin/login";
 import SubjectManagement from "@/pages/admin/subject";
 import TopicManagement from "@/pages/admin/topic";
+import { AdminFooter, AdminHeader } from "./admin/head-foot";
+import TrueFalseTHPTQuestion from "@/pages/teacher/question/true-false-THPT";
+import PDFExam from "@/pages/teacher/exam/maker/PDF";
 
 // Inline layout wrappers
 const TeacherLayout = () => (
@@ -50,7 +54,9 @@ const StudentLayout = () => (
 
 const AdminLayout = () => (
   <>
+    <AdminHeader />
     <Outlet />
+    <AdminFooter />
   </>
 );
 
@@ -80,10 +86,15 @@ const Layout = () => {
               <Route path="question">
                 <Route index element={<QuestionManagement />} />
                 <Route path="maker/:type" element={<QuestionMaker />} />
+                <Route path="maker/group" element={<GroupQuestion />} />
+                <Route path="maker/true-false-THPT" element={<TrueFalseTHPTQuestion />} />
                 <Route path="maker/word" element={<QuestionImportWord />} />
                 <Route path="edit/:id" element={<QuestionMaker />} />
               </Route>
-              <Route path="exam" element={<ExamManagement />} />
+              <Route path="exam">
+                <Route index element={<ExamManagement />} />
+                <Route path="maker/PDF" element={<PDFExam />} />
+              </Route>
               <Route path="grade" element={<GradeManagement />} />
               <Route path="setting" element={<TeacherSettingPage />} />
             </Route>

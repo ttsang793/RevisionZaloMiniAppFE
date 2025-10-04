@@ -1,5 +1,5 @@
-import { Topic, getTopicById, insertTopic, updateTopic } from "./uiHandlers";
-import { getSubjects, Subject } from "../subject/uiHandlers";
+import { Topic, getTopicById, insertTopic, updateTopic } from "@/models/topic";
+import { getSubjects, Subject } from "@/models/subject";
 import { Text, Input, Button, Checkbox, Select } from "zmp-ui";
 import { useState, useEffect } from "react";
 

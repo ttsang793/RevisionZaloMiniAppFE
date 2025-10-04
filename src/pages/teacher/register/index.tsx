@@ -2,7 +2,7 @@ import { Page, Button, Text, Input, Select } from "zmp-ui";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getSubjects, Subject } from "@/pages/admin/subject/uiHandlers";
+import { getSubjects, Subject } from "@/models/subject";
 
 export default function TeacherRegisterPage() {
   const navTo = useNavigate();

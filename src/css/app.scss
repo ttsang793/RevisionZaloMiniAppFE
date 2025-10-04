@@ -22,11 +22,20 @@
   background-color: white;
 }
 
+.page-admin {
+  padding: 62px 32px 46px 32px;
+  background-color:	white;
+}
+
 .section-container {
   padding: 16px;
   background: #ffffff;
   border-radius: 8px;
   margin-bottom: 24px;
+}
+
+input:focus {
+  outline: #00378A;
 }
 
 hr {

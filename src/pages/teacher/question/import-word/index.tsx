@@ -9,10 +9,10 @@ export default function QuestionImportWord() {
   const [questionList, setQuestionList] = useState([]);
 
   return (
-    <Page className="page-x-0 bg-white">
+    <Page className="page page-wo-footer bg-white">
       <AppHeader title="Nhập từ file Word" showBackIcon />
 
-      <Box className="p-4 pb-0">
+      <Box className="pt-4">
         <Input
           label={<Text>File Word <span className="zaui-text-red-50">*</span></Text>}
           placeholder="Nhấn vào đây để nhập file Word"

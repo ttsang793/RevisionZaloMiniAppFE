@@ -2,7 +2,7 @@ import { CameraFill, ChevronRight } from "react-bootstrap-icons";
 import { Switch, Input, Text, Page, Select } from "zmp-ui";
 import AppHeader from "@/components/header";
 import { useState, useEffect } from "react";
-import { getSubjects, Subject } from "../../admin/subject/uiHandlers";
+import { getSubjects, Subject } from "@/models/subject";
 import "./setting.css"
 
 export default function TeacherSettingPage() {

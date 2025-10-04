@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Subject } from "../subject/uiHandlers";
+import { Subject } from "./subject";
 
 type Topic = {
   id?: string,
@@ -18,6 +18,11 @@ const getTopics = async () => {
 const getTopicById = async (id: string) => {
   const response = await axios.get(`/api/topic/${id}`);
   return (response.status === 200) ? response.data : null;
+}
+
+const getTopicByName = async (name: string) => {
+  const list = await axios.get(`/api/topic?name=${name}`);
+  return list.data;
 }
 
 const insertTopic = (topic: Topic) => {
@@ -80,4 +85,4 @@ const deleteTopic = (id: string, isVisible: boolean) => {
   }
 }
 
-export { Topic, getTopics, getTopicById, insertTopic, updateTopic, deleteTopic }
+export { Topic, getTopics, getTopicById, getTopicByName, insertTopic, updateTopic, deleteTopic }

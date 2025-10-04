@@ -1,4 +1,4 @@
-import { Subject, getSubjectById, insertSubject, updateSubject } from "./uiHandlers";
+import { Subject, getSubjectById, insertSubject, updateSubject } from "@/models/subject";
 import { Text, Input, Button, Checkbox } from "zmp-ui";
 import { useState, useEffect } from "react";
 

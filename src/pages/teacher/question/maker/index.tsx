@@ -1,6 +1,5 @@
 import AppHeader from "@/components/header";
-import { useParams } from "react-router-dom";
-import { Page } from "zmp-ui";
+import { Box, Page, useParams } from "zmp-ui";
 import { QuestionMakerMutipleChoice as MultipleChoice } from "@/components/teacher/question/maker/multiple-choice";
 import { QuestionMakerTrueFalse as TrueFalse } from "@/components/teacher/question/maker/true-false";
 import { QuestionMakerShortAnswer as ShortAnswer } from "@/components/teacher/question/maker/short-answer";
@@ -26,10 +25,12 @@ export default function QuestionMaker() {
   const { type } = useParams();
 
   return (
-    <Page className="page-x-0">
+    <Page className="page page-wo-footer bg-white">
       <AppHeader title="Thêm câu hỏi" showBackIcon />
 
-      { renderQuestionMaker(type) }
+      <Box className="pt-4">
+        { renderQuestionMaker(type) }
+      </Box>
     </Page>
   )
 }

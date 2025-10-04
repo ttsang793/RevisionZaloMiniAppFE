@@ -1,5 +1,5 @@
-import { Page, Text } from "zmp-ui";
 import axios from "axios";
+import { Box, Page, Text } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AppHeader from "@/components/header";
@@ -17,21 +17,21 @@ export default function QuestionManagement() {
   }, [])
 
   return (
-    <Page className="page-x-0">
+    <Page className="page">
       <AppHeader title="Quản lý câu hỏi" />
 
-      <div className="section-container zaui-text-blue-90">
+      <Box className="section-container mt-4 zaui-text-blue-90">
         <Text.Title className="mb-2">Thêm câu hỏi</Text.Title>
-        <div className="grid grid-cols-4 gap-x-1 place-items-start">
+        <Box className="grid grid-cols-4 gap-x-1 place-items-start">
           <button className="flex flex-col items-center w-full" onClick={() => setOpenChoose(true)}>
             <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
             Thủ công
           </button>
-          <button className="flex flex-col items-center w-full">
+          <button className="flex flex-col items-center w-full" onClick={() => navTo("maker/group")}>
             <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
             Thêm nhóm câu hỏi
           </button>
-          <button className="flex flex-col items-center w-full">
+          <button className="flex flex-col items-center w-full" onClick={() => navTo("maker/true-false-THPT")}>
             <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
             TN Đúng &minus; Sai (THPTQG)
           </button>
@@ -39,12 +39,12 @@ export default function QuestionManagement() {
             <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
             Nhập từ file Word
           </button>
-        </div>
+        </Box>
 
         <hr />
         
         <Text.Title className="mb-2">File mẫu và câu hỏi mẫu</Text.Title>
-        <div className="grid grid-cols-2 gap-x-1 place-items-start">
+        <Box className="grid grid-cols-2 gap-x-1 place-items-start">
           <button className="flex flex-col items-center w-full">
             <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
             Danh sách câu hỏi mẫu
@@ -53,10 +53,10 @@ export default function QuestionManagement() {
             <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
             File Word mẫu
           </button>
-        </div>
-      </div>
+        </Box>
+      </Box>
       
-      <div className="section-container">
+      <Box className="section-container">
         <Text.Title className="mb-2 zaui-text-blue-90">Danh sách câu hỏi</Text.Title>
         {
           loading ? <Text className="text-center">Chờ chút</Text> : (
@@ -69,7 +69,7 @@ export default function QuestionManagement() {
             </>
           )
         }
-      </div>
+      </Box>
 
       <ChooseQuestionType visible={openChoose} setVisible={setOpenChoose} />
     </Page>
