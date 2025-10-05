@@ -87,7 +87,7 @@ const QuestionMakerConstructedResponse = () => {
         <Checkbox className="mt-2" id="allow-enter" value="true">
           <Text>Cho phép học sinh xuống dòng.</Text>
         </Checkbox>
-        <Checkbox className="mt-2" id="allow-enter" value="true">
+        <Checkbox className="mt-2" id="mark-as-wrong" value="true">
           <Text>Đánh dấu các câu trả lời không khớp với nhóm đáp án là sai.</Text>
         </Checkbox>
       </Checkbox.Group>

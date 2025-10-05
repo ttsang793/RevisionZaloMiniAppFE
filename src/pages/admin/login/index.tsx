@@ -1,6 +1,10 @@
-import { FormEvent } from "react";
+import { useState, FormEvent } from "react";
 
 export default function AdminLogin() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<{ username?: string, password?: string }>();
+
   return (
     <div className="flex h-dvh justify-center items-center px-20 bg-blue-100">
       <form
@@ -18,12 +22,16 @@ export default function AdminLogin() {
             ID tài khoản:
           </label>
           <input
-            name="username"
+            id="username"
+            value={username}
             className="border border-zinc-300 py-2 px-4 rounded-md w-full focus:border-blue-800"
             placeholder="ID tài khoản"
-            onInput={() => document.getElementById("username-error").innerHTML = ""}
+            onChange={e => {
+              setUsername(e.target.value);
+              setErrors({...errors, username: ""})
+            }}
           />
-          <p id="username-error" className="text-red-500"></p>
+          <p className="zaui-text-red-60">{errors?.username}</p>
         </div>
 
         <div>
@@ -35,12 +43,16 @@ export default function AdminLogin() {
           </label>
           <input
             type="password"
-            name="password"
+            id="password"
+            value={password}
             className="border border-zinc-300 py-2 px-4 rounded-md w-full focus:border-blue-800"
             placeholder="Mật khẩu"
-            onInput={() => document.getElementById("password-error").innerHTML = ""}
+            onChange={e => {
+              setPassword(e.target.value);
+              setErrors({...errors, password: ""})
+            }}
           />
-          <p id="password-error" className="text-red-500"></p>
+          <p className="zaui-text-red-60">{errors?.password}</p>
         </div>
 
         <div className="text-center">
@@ -60,19 +72,13 @@ export default function AdminLogin() {
     const formData = new FormData(e.currentTarget);    
     const username = formData.get("username") as string;
     const password = formData.get("password") as string;
+    const newError: { username?: string, password?: string } = {};
+    
+    if (username === "") newError.username = "Vui lòng nhập ID tài khoản!";
+    if (password === "") newError.password = "Vui lòng nhập mật khẩu!";
 
-    let errorFlag = false;
-    if (username === "") {
-      document.getElementById("username-error").innerHTML = "Vui lòng nhập ID tài khoản!";
-      errorFlag = true;
-    }
-
-    if (password === "") {
-      document.getElementById("password-error").innerHTML = "Vui lòng nhập mật khẩu!";
-      errorFlag = true;
-    }
-
-    if (!errorFlag) {
+    setErrors(newError);
+    if (Object.keys(newError).length === 0) {
       alert("Đăng nhập thành công!");
       location.href = "/admin";
     }

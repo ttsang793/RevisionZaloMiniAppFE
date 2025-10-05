@@ -23,7 +23,11 @@ import TeacherFooter from "./teacher-footer";
 import QuestionManagement from "@/pages/teacher/question";
 import QuestionMaker from "@/pages/teacher/question/maker";
 import GroupQuestion from "@/pages/teacher/question/group-question";
+import TrueFalseTHPTQuestion from "@/pages/teacher/question/true-false-THPT";
 import QuestionImportWord from "@/pages/teacher/question/import-word";
+import ExamMaker from "@/pages/teacher/exam/maker";
+import ExamQuestions from "@/pages/teacher/exam/maker/Exam";
+import PDFExamQuestions from "@/pages/teacher/exam/maker/PDF-exam";
 import ExamManagement from "@/pages/teacher/exam";
 import GradeManagement from "@/pages/teacher/grade";
 import TeacherSettingPage from "@/pages/teacher/setting";
@@ -34,8 +38,6 @@ import AdminLogin from "@/pages/admin/login";
 import SubjectManagement from "@/pages/admin/subject";
 import TopicManagement from "@/pages/admin/topic";
 import { AdminFooter, AdminHeader } from "./admin/head-foot";
-import TrueFalseTHPTQuestion from "@/pages/teacher/question/true-false-THPT";
-import PDFExam from "@/pages/teacher/exam/maker/PDF";
 
 // Inline layout wrappers
 const TeacherLayout = () => (
@@ -93,7 +95,10 @@ const Layout = () => {
               </Route>
               <Route path="exam">
                 <Route index element={<ExamManagement />} />
-                <Route path="maker/PDF" element={<PDFExam />} />
+                <Route path="maker" element={<ExamMaker />} />
+                <Route path="maker/:type" element={<ExamMaker />} />
+                <Route path="maker/question" element={<ExamQuestions />} />
+                <Route path="maker/pdf/question" element={<PDFExamQuestions />} />
               </Route>
               <Route path="grade" element={<GradeManagement />} />
               <Route path="setting" element={<TeacherSettingPage />} />

@@ -1,5 +1,5 @@
 import { Box, Text } from "zmp-ui";
-import { TracNghiem, DungSai, DungSaiTHPT, TraLoiNgan, DienVaoChoTrong, TuLuan } from "./PDF-question";
+import { PDFAnswer } from "./PDF-question";
 import { PlusLg } from "react-bootstrap-icons";
 
 
@@ -14,12 +14,12 @@ const PDFExamPart = () => {
         </button>
       </Box>
 
-      <TracNghiem />
-      <DungSai isDungSaiTHPT={false} cauHoi="2" />
-      <DungSaiTHPT />
-      <TraLoiNgan />
-      <DienVaoChoTrong />
-      <TuLuan />
+      <PDFAnswer type="multiple-choice" />
+      <PDFAnswer type="true-false" />
+      <PDFAnswer type="true-false-THPT" />
+      <PDFAnswer type="short-answer" />
+      <PDFAnswer type="fill-in-the-blank" />
+      <PDFAnswer type="constructed-response" />
     </Box>
   )
 }

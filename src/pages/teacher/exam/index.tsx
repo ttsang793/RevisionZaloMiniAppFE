@@ -20,12 +20,12 @@ export default function QuestionManagement() {
       <Box className="section-container zaui-text-blue-90">
         <Text.Title className="mb-2">Thêm đề thi</Text.Title>
         <Box className="grid grid-cols-2 gap-x-1 place-items-start">
-          <button className="flex flex-col items-center w-full">
-            <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg" />
+          <button className="flex flex-col items-center w-full" onClick={() => navTo("maker")}>
+            <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
             Từ ngân hàng câu hỏi
           </button>
           <button className="flex flex-col items-center w-full" onClick={() => navTo("maker/PDF")}>
-            <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg" />
+            <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
             Nhập từ file PDF
           </button>
         </Box>

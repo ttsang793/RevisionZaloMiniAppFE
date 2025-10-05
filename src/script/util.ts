@@ -1,5 +1,8 @@
 function backToTop() {
-  document.body.scrollTo(0, 0);
+  document.body.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
 }
 
 export { backToTop }

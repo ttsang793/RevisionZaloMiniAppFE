@@ -80,7 +80,7 @@ const QuestionMakerFillInTheBlank = () => {
         *: Các trường bắt buộc
       </Text>
       
-      <Checkbox className="mt-2" id="allow-take-pic" value="true">
+      <Checkbox className="mt-2" id="mark-as-wrong" value="true">
         <Text>Đánh dấu các câu trả lời không khớp với nhóm đáp án là sai.</Text>
       </Checkbox>
 

@@ -16,7 +16,7 @@ const QuestionMakerMutipleChoice = () => {
   }, [])
 
   return (
-    <form>
+    <form id="multiple-choice-question-maker">
       <Input
         label={<Text>Tiêu đề câu hỏi <span className="zaui-text-red-50">*</span></Text>}
         placeholder="Tiêu đề câu hỏi" required

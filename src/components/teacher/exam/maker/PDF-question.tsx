@@ -53,13 +53,11 @@ const DungSai = ({isDungSaiTHPT = false, cauHoi = "1"}: { isDungSaiTHPT: boolean
 }
 
 const DungSaiTHPT = () => {
-  const [answer, setAnswer] = useState("Đ");
-
   return (
     <Box className="grid grid-cols-[24px_1fr] items-center zaui-text-blue-80 my-2">
       <Text bold>3</Text>
 
-      <Box className="flex gap-x-1 gap-y-1.5 flex-wrap">
+      <Box className="grid grid-cols-2 gap-y-1.5">
         <DungSai isDungSaiTHPT cauHoi="a" />
         <DungSai isDungSaiTHPT cauHoi="b" />
         <DungSai isDungSaiTHPT cauHoi="c" />
@@ -69,8 +67,7 @@ const DungSaiTHPT = () => {
   );
 }
 
-const TraLoiNgan = () => {
-  
+const TraLoiNgan = () => {  
   const [answer, setAnswer] = useState<{ [key: number]: string }>({});
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -152,4 +149,32 @@ const TuLuan = () => {
   );
 }
 
-export { TracNghiem, DungSai, DungSaiTHPT, TraLoiNgan, DienVaoChoTrong, TuLuan }
+type QuestionType =
+  | "multiple-choice"
+  | "true-false"
+  | "true-false-THPT"
+  | "short-answer"
+  | "fill-in-the-blank"
+  | "constructed-response";
+
+const components: Record<QuestionType, JSX.Element> = {
+  "multiple-choice": <TracNghiem />,
+  "true-false": <DungSai />,
+  "true-false-THPT": <DungSaiTHPT />,
+  "short-answer": <TraLoiNgan />,
+  "fill-in-the-blank": <DienVaoChoTrong />,
+  "constructed-response": <TuLuan />,
+};
+
+const PDFAnswer = ({type}) => {
+  const renderComponent = components[type];
+
+  return (
+    <Box className="grid grid-cols-[1fr_44px] gap-x-4 items-center">
+      {renderComponent}
+      <input className="px-2 h-[28px] bg-white border zaui-border-blue-80 rounded-md text-right" />
+    </Box>
+  )
+}
+
+export { PDFAnswer }

@@ -1,42 +1,17 @@
-import { CloudSlash, CloudUpload, Eye, PencilSquare, XLg } from "react-bootstrap-icons";
+import { Eye, ThreeDotsVertical } from "react-bootstrap-icons";
+import { useState } from "react";
 import { Text } from "zmp-ui";
+import ExamListAction from "./exam-list-action";
 
 const ExamList = ({state = 1}) => {
   const showAction = () => {
-    if (state === 1) return (            
-      <div className="flex gap-1 w-[52px] flex-wrap">
-        <button>
-          <CloudUpload size={24} />
-        </button>
-        <button>
-          <Eye size={24} />
-        </button>
-        <button>
-          <XLg size={24} />
-        </button>
-        <button>
-          <PencilSquare size={24} />
-        </button>
-      </div>
-    )
-    else if (state == 2) return (
-      <div className="w-[52px] text-right">
-        <button>
-          <Eye size={24} />
-        </button>
-      </div>
-    )
-    else return (      
-      <div className="inline-block">
-        <button className="me-1">
-          <CloudSlash size={24} />
-        </button>
-        <button>
-          <Eye size={24} />
-        </button>
-      </div>
+    return (
+      (state === 2) ? <button><Eye size={24} /></button>
+        : <button onClick={() => setOpenAction(true)}><ThreeDotsVertical size={24} /></button>
     )
   }
+
+  const [openAction, setOpenAction] = useState(false);
 
   return (
     <>
@@ -54,6 +29,9 @@ const ExamList = ({state = 1}) => {
             Thời gian làm bài: 90 phút | 3 phần | 22 câu hỏi
           </Text>
           <Text size="small">
+            Loại bài kiểm tra: PDF
+          </Text>
+          <Text size="small">
           {
             state === 3 ? `Số lượt làm bài: 100` : ""
           }
@@ -62,6 +40,8 @@ const ExamList = ({state = 1}) => {
         { showAction() }
       </div>
       <hr />
+
+      <ExamListAction state={state} displayType="NORMAL" visible={openAction} setVisible={setOpenAction}  />
     </>
   )
 }

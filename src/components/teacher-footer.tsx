@@ -10,8 +10,8 @@ function checkIfNoFooter() {
 }
 
 export default function TeacherFooter() {
-  return checkIfNoFooter() ? <></> : (
-    <BottomNavigation fixed>
+  return (
+    <BottomNavigation fixed className={checkIfNoFooter() ? "hidden" : ""}>
       <BottomNavigation.Item
         icon={<PatchQuestion />}
         activeIcon={<PatchQuestionFill />}
