@@ -14,7 +14,7 @@ const ChooseQuestionType = ({visible, setVisible}) => {
       <div className="grid grid-cols-3 gap-x-2 gap-y-6 place-items-start px-4">
         <button className="flex flex-col items-center w-full" onClick={() => navTo("maker/multiple-choice")}>
           <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
-          Trắc nghiệm 1 đáp án
+          Trắc nghiệm 4 đáp án
         </button>
         <button className="flex flex-col items-center w-full" onClick={() => navTo("maker/true-false")}>
           <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />

@@ -6,6 +6,8 @@ import AppHeader from "@/components/header";
 import QuestionList from "@/components/teacher/question/question-list";
 import ChooseQuestionType from "@/components/teacher/question/choose-question-type";
 
+import { Question, getQuestionsByTeacher } from "@/models/question";
+
 export default function QuestionManagement() {
   const [questionList, setQuestionList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,7 +15,11 @@ export default function QuestionManagement() {
   const navTo = useNavigate();
 
   useEffect(() => {
-    setLoading(false)
+    setLoading(true);
+
+    getQuestionsByTeacher()
+      .then(response => setQuestionList(response.data))
+      .finally(() => setLoading(false));
   }, [])
 
   return (
@@ -61,10 +67,9 @@ export default function QuestionManagement() {
         {
           loading ? <Text className="text-center">Chờ chút</Text> : (
             <>
-              <QuestionList editable={false} />
-              <QuestionList />
-              <QuestionList />
-              <QuestionList />
+              {
+                questionList.map((q: Question) => <QuestionList question={q} key={`question-${q.id}`} />)
+              }
               <Text size="xxSmall" className="text-center">Không còn câu hỏi</Text>
             </>
           )

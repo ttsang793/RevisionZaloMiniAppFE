@@ -1,39 +1,28 @@
 import AppHeader from "@/components/header";
 import { Box, Checkbox, Input, Page, Select, Text, useNavigate, useParams } from "zmp-ui";
 import { FormEvent, useState } from "react";
-import { Exam } from "@/models/exam";
+import { Exam, insertExam } from "@/models/exam";
 
 export default function ExamMaker() {
   const navTo = useNavigate();
-  const { type } = useParams();  
+  const { type } = useParams();
 
-  const defaultExam: Exam = {
-    id: "",
-    examType: -1,
-    displayType: type?.toLowerCase() === "pdf" ? "PDF" : "NORMAL",
-    grade: -1,
-    timeLimit: "",
-    allowTurnInTime: "",
-    allowShowScore: false,
-    allowPartSwap: false,
-    allowQuesionSwap: false,
-    allowAnswerSwap: false
-  };
-
-  const [examInfo, setExamInfo] = useState<Exam>(defaultExam);
+  const [examInfo, setExamInfo] = useState<Exam>(new Exam());
+  const [timeLimit, setTimeLimit] = useState("");
+  const [allowTurnInTime, setAllowTurnInTime] = useState("");
 
   return (
     <Page className="page-x-0 page-wo-footer bg-white">
       <AppHeader title={`Tạo đề thi mới${type?.toLowerCase() === "pdf" ? " (PDF)" : ""}`} showBackIcon />
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
         <Box className="bg-white p-4">
           <Select
-            label={<Text>Lớp <span className="zaui-text-red-50">*</span></Text>}
+            label={<Text>Lớp <span className="required">*</span></Text>}
             defaultValue={-1} closeOnSelect value={examInfo.grade}
             onChange={(e: number) => setExamInfo({...examInfo, grade: e})}
           >
-            <Select.Option value={-1} title="Lớp" disabled className="zaui-text-red-50" />
+            <Select.Option value={-1} title="Lớp" disabled />
             <Select.Option value={6} title="Lớp 6" />
             <Select.Option value={7} title="Lớp 7" />
             <Select.Option value={8} title="Lớp 8" />
@@ -44,39 +33,39 @@ export default function ExamMaker() {
           </Select>
 
           <Select
-            label={<Text className="mt-2">Loại bài kiểm tra <span className="zaui-text-red-50">*</span></Text>}
+            label={<Text className="mt-2">Loại bài kiểm tra <span className="required">*</span></Text>}
             defaultValue={-1} closeOnSelect
             onChange={(e: number) => setExamInfo({...examInfo, examType: e})}
           >
-            <Select.Option value={-1} title="Loại bài kiểm tra" />
+            <Select.Option value={-1} title="Loại bài kiểm tra" disabled />
             <Select.Option value={1} title="Kiểm tra thường xuyên" />
             <Select.Option value={2} title="Kiểm tra giữa kì" />
             <Select.Option value={3} title="Kiểm tra học kì" />
-            <Select.Option value={4} title="Kiểm tra chuyển cấp" />
             <Select.Option value={0} title="Khác" />
           </Select>
 
           {
             examInfo.examType === 0 ? (
               <Input
-                label={<Text className="mt-2">Tên bài kiểm tra <span className="zaui-text-red-50">*</span></Text>}
-                placeholder="Tên bài kiểm tra" required onChange={e => setExamInfo({...examInfo, name: e.target.value})}
+                label={<Text className="mt-2">Tên bài kiểm tra <span className="required">*</span></Text>}
+                placeholder="Tên bài kiểm tra" required value={examInfo.title}
+                onChange={e => setExamInfo({...examInfo, title: e.target.value})}
               />
             ) : <></>
           }
 
           <Input
-            label={<Text className="mt-2">Thời gian làm bài (phút) <span className="zaui-text-red-50">*</span></Text>}
-            placeholder="Thời gian làm bài" required onChange={e => setExamInfo({...examInfo, timeLimit: e.target.value})}
+            label={<Text className="mt-2">Thời gian làm bài (phút) <span className="required">*</span></Text>}
+            placeholder="Thời gian làm bài" required onChange={e => setTimeLimit(e.target.value)}
           />
           <Input
             label={<Text className="mt-2">Thời gian nộp bài tối thiểu (phút)</Text>}
-            placeholder="Thời gian nộp bài tối thiểu" onChange={e => setExamInfo({...examInfo, allowTurnInTime: e.target.value})}
+            placeholder="Thời gian nộp bài tối thiểu" onChange={e => setAllowTurnInTime(e.target.value)}
           />
           
           <Checkbox
-            className="mt-2 w-full"
-            value={examInfo.allowShowScore} onChange={(e: boolean) => setExamInfo({...examInfo, allowShowScore: e})}
+            className="mt-2 w-full" value={examInfo.allowShowScore}
+            onClick={e => setExamInfo({...examInfo, allowShowScore: e.target.checked})}
           >
             <Text>Hiện điểm cho từng câu hỏi.</Text>
           </Checkbox>
@@ -85,22 +74,22 @@ export default function ExamMaker() {
             type?.toLowerCase() === "pdf" ? <></> : (
               <>
                 <Checkbox
-                  className="mt-2 w-full"
-                  value={examInfo.allowPartSwap} onChange={(e: boolean) => setExamInfo({...examInfo, allowPartSwap: e})}
+                  className="mt-2 w-full" value={examInfo.allowPartSwap}
+                  onClick={e => setExamInfo({...examInfo, allowPartSwap: e.target.checked})}
                 >
                   <Text>Trộn các phần.</Text>
                 </Checkbox>
 
                 <Checkbox
-                  className="mt-2 w-full"
-                  value={examInfo.allowQuesionSwap} onChange={(e: boolean) => setExamInfo({...examInfo, allowQuesionSwap: e})}
+                  className="mt-2 w-full" value={examInfo.allowQuestionSwap}
+                  onClick={e => setExamInfo({...examInfo, allowQuestionSwap: e.target.checked})}
                 >
                   <Text>Trộn câu hỏi ở mỗi phần.</Text>
                 </Checkbox>
 
                 <Checkbox
-                  className="mt-2 w-full"
-                  value={examInfo.allowAnswerSwap} onChange={(e: boolean) => setExamInfo({...examInfo, allowAnswerSwap: e})}
+                  className="mt-2 w-full" value={examInfo.allowAnswerSwap}
+                  onClick={e => setExamInfo({...examInfo, allowAnswerSwap: e.target.checked})}
                 >
                   <Text>Trộn đáp án trong câu hỏi.</Text>
                 </Checkbox>
@@ -118,6 +107,21 @@ export default function ExamMaker() {
   )
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();   
+    e.preventDefault();
+
+    switch (examInfo.examType) {
+      case 1: examInfo.title = "Kiểm tra thường xuyên"; break;
+      case 2: examInfo.title = "Kiểm tra giữa kì"; break;
+      case 3: examInfo.title = "Kiểm tra học kì"; break;
+      default: break;
+    }
+
+    examInfo.displayType = type?.toLowerCase() === "pdf" ? "PDF" : "NORMAL";
+    examInfo.timeLimit = Number(timeLimit);
+    examInfo.allowTurnInTime = Number(allowTurnInTime);
+
+    console.log(examInfo);
+
+    insertExam(examInfo);
   }
 }

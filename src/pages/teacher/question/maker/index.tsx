@@ -9,27 +9,27 @@ import { QuestionMakerSorting as Sorting } from "@/components/teacher/question/m
 
 const questionType = ["multiple-choice", "true-false", "short-answer", "fill-in-the-blank", "constructed-response", "sorting"]
 
-function renderQuestionMaker(type) {
+function renderQuestionMaker(type, id) {
   switch (type) {
-    case questionType[0]: return <MultipleChoice />;
-    case questionType[1]: return <TrueFalse />;
-    case questionType[2]: return <ShortAnswer />;
-    case questionType[3]: return <FillInTheBlank />;
-    case questionType[4]: return <ConstructedResponse />;
-    case questionType[5]: return <Sorting />;
+    case questionType[0]: return <MultipleChoice id={id} />;
+    case questionType[1]: return <TrueFalse id={id} />;
+    case questionType[2]: return <ShortAnswer id={id} />;
+    case questionType[3]: return <FillInTheBlank id={id} />;
+    case questionType[4]: return <ConstructedResponse id={id} />;
+    case questionType[5]: return <Sorting id={id} />;
     default: return <>Hello World</>;
   }
 }
 
 export default function QuestionMaker() {
-  const { type } = useParams();
+  const { type, id } = useParams();
 
   return (
     <Page className="page page-wo-footer bg-white">
       <AppHeader title="Thêm câu hỏi" showBackIcon />
 
       <Box className="pt-4">
-        { renderQuestionMaker(type) }
+        { renderQuestionMaker(type, id) }
       </Box>
     </Page>
   )

@@ -88,6 +88,7 @@ const Layout = () => {
               <Route path="question">
                 <Route index element={<QuestionManagement />} />
                 <Route path="maker/:type" element={<QuestionMaker />} />
+                <Route path="maker/:type/:id" element={<QuestionMaker />} />
                 <Route path="maker/group" element={<GroupQuestion />} />
                 <Route path="maker/true-false-THPT" element={<TrueFalseTHPTQuestion />} />
                 <Route path="maker/word" element={<QuestionImportWord />} />
