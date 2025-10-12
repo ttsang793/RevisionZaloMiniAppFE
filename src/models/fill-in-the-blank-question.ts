@@ -2,11 +2,11 @@ import axios from "axios";
 import { FillInTheBlankQuestion } from "./question";
 
 function getFillInTheBlankQuestionById(id: number) {
-  return axios.get(`/api/question/fill-in-the-blank/${id}`);
+  return axios.get(`/api/question/${id}`);
 }
 
 function insertFillInTheBlankQuestion(fitbq: FillInTheBlankQuestion) {
-  axios.post("/api/question/fill-in-the-blank", fitbq, {
+  axios.post("/api/question/manual-response", fitbq, {
     headers: { "Content-Type": "application/json" }
   }).then(response => {
     console.log(response.status);
@@ -16,7 +16,7 @@ function insertFillInTheBlankQuestion(fitbq: FillInTheBlankQuestion) {
 }
 
 function updateFillInTheBlankQuestion(fitbq: FillInTheBlankQuestion, id: number) {
-  axios.put(`/api/question/fill-in-the-blank/${id}`, fitbq, {
+  axios.put(`/api/question/manual-response/${id}`, fitbq, {
     headers: { "Content-Type": "application/json" }
   }).then(response => {
     console.log(response.status);

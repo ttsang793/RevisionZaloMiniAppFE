@@ -2,7 +2,7 @@ import axios from "axios";
 import { TrueFalseQuestion } from "./question";
 
 function getTrueFalseQuestionById(id: number) {
-  return axios.get(`/api/question/true-false/${id}`);
+  return axios.get(`/api/question/${id}`);
 }
 
 function insertTrueFalseQuestion(tfq: TrueFalseQuestion) {

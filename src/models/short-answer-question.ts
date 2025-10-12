@@ -2,7 +2,7 @@ import axios from "axios";
 import { ShortAnswerQuestion } from "./question";
 
 function getShortAnswerQuestionById(id: number) {
-  return axios.get(`/api/question/true-false/${id}`);
+  return axios.get(`/api/question/${id}`);
 }
 
 function insertShortAnswerQuestion(saq: ShortAnswerQuestion) {

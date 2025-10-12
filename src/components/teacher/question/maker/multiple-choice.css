@@ -1,4 +1,4 @@
-#multiple-choice-question-maker .zaui-radio-group .zaui-radio-wrapper {
+#radio-answer .zaui-radio-group .zaui-radio-wrapper {
   margin: 0!important;
 
   @apply border py-1 px-2;

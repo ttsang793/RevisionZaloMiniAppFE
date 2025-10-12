@@ -2,7 +2,7 @@ import axios from "axios";
 import { MultipleChoiceQuestion } from "./question";
 
 function getMultipleChoiceQuestionById(id: number) {
-  return axios.get(`/api/question/multiple-choice/${id}`);
+  return axios.get(`/api/question/${id}`);
 }
 
 function insertMultipleChoiceQuestion(mcq: MultipleChoiceQuestion) {

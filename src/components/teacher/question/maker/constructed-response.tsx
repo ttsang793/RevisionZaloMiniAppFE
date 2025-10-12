@@ -5,9 +5,9 @@ import { XLg } from "react-bootstrap-icons";
 import { Topic } from "@/models/topic";
 
 import { ConstructedResponseQuestion } from "@/models/question";
-import { insertConstructedResponseQuestion } from "@/models/constructed-response-question";
+import { getConstructedResponseQuestionById, insertConstructedResponseQuestion, updateConstructedResponseQuestion } from "@/models/constructed-response-question";
 
-const QuestionMakerConstructedResponse = () => {
+const QuestionMakerConstructedResponse = ({id}) => {
   const { TextArea } = Input;
   const [topicList, setTopicList] = useState([]);
   const [question, setQuestion] = useState<ConstructedResponseQuestion>(new ConstructedResponseQuestion());
@@ -28,6 +28,7 @@ const QuestionMakerConstructedResponse = () => {
   }
 
   useEffect(() => {
+    if (id !== undefined) getConstructedResponseQuestionById(id).then(response => setQuestion(response.data));
     axios.get("/api/topic").then(response => setTopicList(response.data));
   }, [])
 
@@ -82,7 +83,7 @@ const QuestionMakerConstructedResponse = () => {
 
       <Select
         label={<Text className="mt-2">Độ khó <span className="required">*</span></Text>}
-        defaultValue={-1} closeOnSelect
+        value={question?.difficulty} closeOnSelect
         onChange={(e: number) => setQuestion({...question, difficulty: e})}
       >
         <Select.Option value={-1} title="Độ khó" disabled className="required" />
@@ -94,7 +95,7 @@ const QuestionMakerConstructedResponse = () => {
 
       <Select
         label={<Text className="mt-2">Chủ đề <span className="required">*</span></Text>}
-        defaultValue="-1" closeOnSelect
+        value={question?.topicId} closeOnSelect
         onChange={(e: string) => setQuestion({...question, topicId: e})}
       >
         <Select.Option value="-1" title="Chủ đề" disabled className="required" />
@@ -107,7 +108,7 @@ const QuestionMakerConstructedResponse = () => {
 
       <TextArea
         label={<Text className="mt-2">Lời giải/Giải thích <span className="required">*</span></Text>}
-        placeholder="Lời giải/Giải thích" required
+        placeholder="Lời giải/Giải thích" required value={question.explaination}
         onChange={e => setQuestion({...question, explaination: e.target.value})}
       />
 
@@ -134,7 +135,7 @@ const QuestionMakerConstructedResponse = () => {
 
   function handleSubmit() {
     question.type = 5;
-    insertConstructedResponseQuestion(question);
+    (id === undefined) ? insertConstructedResponseQuestion(question) : updateConstructedResponseQuestion(question, id);
   }
 }
 

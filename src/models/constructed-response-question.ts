@@ -2,11 +2,11 @@ import axios from "axios";
 import { ConstructedResponseQuestion } from "./question";
 
 function getConstructedResponseQuestionById(id: number) {
-  return axios.get(`/api/question/constructed-response/${id}`);
+  return axios.get(`/api/question/${id}`);
 }
 
 function insertConstructedResponseQuestion(crq: ConstructedResponseQuestion) {
-  axios.post("/api/question/constructed-response", crq, {
+  axios.post("/api/question/manual-response", crq, {
     headers: { "Content-Type": "application/json" }
   }).then(response => {
     console.log(response.status);
@@ -16,7 +16,7 @@ function insertConstructedResponseQuestion(crq: ConstructedResponseQuestion) {
 }
 
 function updateConstructedResponseQuestion(crq: ConstructedResponseQuestion, id: number) {
-  axios.put(`/api/question/constructed-response/${id}`, crq, {
+  axios.put(`/api/question/manual-response/${id}`, crq, {
     headers: { "Content-Type": "application/json" }
   }).then(response => {
     console.log(response.status);

@@ -1,4 +1,4 @@
-import TestHolder from "@/components/test-holder";
+import TestHolder from "@/components/exam-holder";
 import { Page } from "zmp-ui";
 import AppHeader from "@/components/header";
 import axios from "axios";

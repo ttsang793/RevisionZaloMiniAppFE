@@ -5,9 +5,9 @@ import { XLg } from "react-bootstrap-icons";
 import { Topic } from "@/models/topic";
 
 import { FillInTheBlankQuestion } from "@/models/question";
-import { insertFillInTheBlankQuestion } from "@/models/fill-in-the-blank-question";
+import { getFillInTheBlankQuestionById, insertFillInTheBlankQuestion, updateFillInTheBlankQuestion } from "@/models/fill-in-the-blank-question";
 
-const QuestionMakerFillInTheBlank = () => {
+const QuestionMakerFillInTheBlank = ({id}) => {
   const { TextArea } = Input;
   const [topicList, setTopicList] = useState([]);
   const [question, setQuestion] = useState<FillInTheBlankQuestion>(new FillInTheBlankQuestion());
@@ -28,6 +28,7 @@ const QuestionMakerFillInTheBlank = () => {
   }
 
   useEffect(() => {
+    if (id !== undefined) getFillInTheBlankQuestionById(id).then(response => setQuestion(response.data));
     axios.get("/api/topic").then(response => setTopicList(response.data));
   }, [])
 
@@ -82,7 +83,7 @@ const QuestionMakerFillInTheBlank = () => {
 
       <Select
         label={<Text className="mt-2">Độ khó <span className="required">*</span></Text>}
-        defaultValue={-1} closeOnSelect
+        value={question?.difficulty} closeOnSelect
         onChange={(e: number) => setQuestion({...question, difficulty: e})}
       >
         <Select.Option value={-1} title="Độ khó" disabled className="required" />
@@ -94,7 +95,7 @@ const QuestionMakerFillInTheBlank = () => {
 
       <Select
         label={<Text className="mt-2">Chủ đề <span className="required">*</span></Text>}
-        defaultValue="-1" closeOnSelect
+        value={question?.topicId} closeOnSelect
         onChange={(e: string) => setQuestion({...question, topicId: e})}
       >
         <Select.Option value="-1" title="Chủ đề" disabled className="required" />
@@ -107,7 +108,7 @@ const QuestionMakerFillInTheBlank = () => {
 
       <TextArea
         label={<Text className="mt-2">Lời giải/Giải thích</Text>}
-        placeholder="Lời giải/Giải thích"
+        placeholder="Lời giải/Giải thích" value={question?.explaination}
         onChange={e => setQuestion({...question, explaination: e.target.value})}
       />
 
@@ -115,20 +116,20 @@ const QuestionMakerFillInTheBlank = () => {
         *: Các trường bắt buộc
       </Text>
       
-      <Checkbox className="mt-2" value={question.markAsWrong} onClick={e => setQuestion({...question, markAsWrong: e.target.checked})}>
+      <Checkbox className="mt-2" checked={question.markAsWrong} onClick={e => setQuestion({...question, markAsWrong: e.target.checked})}>
         <Text>Đánh dấu các câu trả lời không khớp với nhóm đáp án là sai.</Text>
       </Checkbox>
 
       <div className="flex gap-x-2 justify-center mt-2">
-        <input type="submit" value="Lưu" className="zaui-bg-blue-80 text-white rounded-full py-2 px-8" onClick={handleSubmit} />
+        <input type="submit" value="Lưu" className="zaui-bg-blue-80 text-white rounded-full py-2 px-8" onClick={() => handleSubmit()} />
         <input type="reset" value="Hủy" className="zaui-bg-blue-20 zaui-text-blue-80 rounded-full py-2 px-8" onClick={() => navTo("/teacher/question")} />
       </div>
     </form>
   )
 
   function handleSubmit() {
-    question.type = 4;    
-    insertFillInTheBlankQuestion(question);
+    question.type = 4;
+    (id === undefined) ? insertFillInTheBlankQuestion(question) : updateFillInTheBlankQuestion(question, id);
   }
 }
 

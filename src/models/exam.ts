@@ -12,6 +12,13 @@ class Exam {
   allowPartSwap: boolean = false;
   allowQuestionSwap: boolean = false;
   allowAnswerSwap: boolean = false;
+  teacherId?: number;
+  subjectId?: string;
+  approvedBy?: number;
+}
+
+function getAllExams() {
+  return axios.get("/api/exam");
 }
 
 function insertExam(exam: Exam) {
@@ -24,4 +31,4 @@ function insertExam(exam: Exam) {
   })
 }
 
-export { Exam, insertExam }
+export { Exam, getAllExams, insertExam }

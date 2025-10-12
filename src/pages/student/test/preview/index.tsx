@@ -1,6 +1,5 @@
-"use client"
 import { Calendar3, PersonFill, ClockFill, TrophyFill, ChatTextFill, Heart } from "react-bootstrap-icons"
-import Comment from "@/components/test/comment";
+import CommentBlock from "@/components/test/comment";
 import { useNavigate, useParams } from "react-router-dom";
 import { Avatar, Text, Page, Modal } from "zmp-ui";
 import { useState } from "react";
@@ -62,7 +61,7 @@ export default function TestPreviewPage() {
         </li>
       </ul>
       
-      <Comment />
+      <CommentBlock id={id} />
 
       <Modal
         actions = {[

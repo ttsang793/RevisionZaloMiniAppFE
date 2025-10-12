@@ -1,6 +1,6 @@
 "use client"
 import AppHeader from "@/components/header";
-import TestHolder from "@/components/test-holder"
+import TestHolder from "@/components/exam-holder"
 import { Text, Page } from "zmp-ui";
 
 export default function TeacherDetailPage() {

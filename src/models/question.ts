@@ -12,11 +12,10 @@ class Question {
 }
 
 class MultipleChoiceQuestion extends Question {
-  answerA: string = "";
-  answerB: string = "";
-  answerC: string = "";
-  answerD: string = "";
-  answerKey: string = "A";
+  correctAnswer: string = "";
+  wrongAnswer1: string = "";
+  wrongAnswer2: string = "";
+  wrongAnswer3: string = "";
 }
 
 class TrueFalseQuestion extends Question {

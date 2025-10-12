@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Box, Input, Radio, Select, Text } from "zmp-ui";
-import { FormEvent, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Topic } from "@/models/topic";
 
 import { TrueFalseQuestion } from "@/models/question";
@@ -20,14 +20,14 @@ const QuestionMakerTrueFalse = ({id}) => {
   }, [])
 
   return (
-    <form id="multiple-choice-question-maker" onSubmit={e => e.preventDefault()} noValidate>
+    <form onSubmit={e => e.preventDefault()} noValidate>
       <Input
         label={<Text>Tiêu đề câu hỏi <span className="required">*</span></Text>}
         placeholder="Tiêu đề câu hỏi" required value={question?.title}
         onChange={e => setQuestion({...question, title: e.target.value})}
       />
 
-      <Box>
+      <Box id="radio-answer">
         <Text className="my-2">Đáp án <span className="required">*</span></Text>
         <Radio.Group name="answer" className="w-full" defaultValue={question.answerKey}>
           <Radio value={true} className="zaui-border-gray-30 zaui-bg-steelblue-20" onClick={e => setQuestion({...question, answerKey: true})}>
