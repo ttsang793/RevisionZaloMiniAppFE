@@ -29,7 +29,12 @@ const CommentBlock = ({id}) => {
       </form>
 
       {
-        commentList.map((c: Comment) => <CommentFirst comment={c} handleDelete={handleDelete} key={`comment-${c.id}`} loadData={loadData} />)
+        commentList.map((c: Comment) => 
+          <>
+            <CommentFirst comment={c} handleDelete={handleDelete} key={`comment-${c.id}`} loadData={loadData} />
+            {c.replies.map((r: Comment) => <CommentReply comment={r} handleDelete={handleDelete} key={`comment-${r.id}`} loadData={loadData} />)}
+          </>
+        )
       }
     </div>
   )

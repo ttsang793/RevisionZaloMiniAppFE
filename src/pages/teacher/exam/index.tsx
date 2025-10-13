@@ -3,6 +3,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import AppHeader from "@/components/header";
 import ExamList from "@/components/teacher/exam/exam-list";
+import { Exam, getExamsByTeacher } from "@/models/exam";
 
 export default function QuestionManagement() {
   const [examList, setExamList] = useState([]);
@@ -10,7 +11,11 @@ export default function QuestionManagement() {
   const navTo = useNavigate();
 
   useEffect(() => {
-    setLoading(false);
+    setLoading(true);
+    getExamsByTeacher().then(response => {
+      setExamList(response.data);
+      setLoading(false);
+    });
   }, [])
 
   return (
@@ -20,7 +25,7 @@ export default function QuestionManagement() {
       <Box className="section-container zaui-text-blue-90">
         <Text.Title className="mb-2">Thêm đề thi</Text.Title>
         <Box className="grid grid-cols-2 gap-x-1 place-items-start">
-          <button className="flex flex-col items-center w-full" onClick={() => navTo("maker")}>
+          <button className="flex flex-col items-center w-full" onClick={() => navTo("maker/normal")}>
             <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
             Từ ngân hàng câu hỏi
           </button>
@@ -36,9 +41,9 @@ export default function QuestionManagement() {
         {
           loading ? <Text className="text-center">Chờ chút</Text> : (
             <>
-              <ExamList />
-              <ExamList state={2} />
-              <ExamList state={3} />
+            {
+              examList.map((exam: Exam) => <ExamList exam={exam} key={`exam-${exam.id}`} />)
+            }
               <Text size="xxSmall" className="text-center">Không còn đề thi</Text>
             </>
           )

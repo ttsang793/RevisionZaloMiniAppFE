@@ -108,8 +108,8 @@ const QuestionMakerFillInTheBlank = ({id}) => {
 
       <TextArea
         label={<Text className="mt-2">Lời giải/Giải thích</Text>}
-        placeholder="Lời giải/Giải thích" value={question?.explaination}
-        onChange={e => setQuestion({...question, explaination: e.target.value})}
+        placeholder="Lời giải/Giải thích" value={question?.explanation}
+        onChange={e => setQuestion({...question, explanation: e.target.value})}
       />
 
       <Text className="required text-left italic" bold>
@@ -128,7 +128,7 @@ const QuestionMakerFillInTheBlank = ({id}) => {
   )
 
   function handleSubmit() {
-    question.type = 4;
+    question.type = 'fill-in-the-blank';
     (id === undefined) ? insertFillInTheBlankQuestion(question) : updateFillInTheBlankQuestion(question, id);
   }
 }

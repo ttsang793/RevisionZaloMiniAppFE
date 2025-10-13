@@ -22,8 +22,6 @@ import TakeTestPage from "@/pages/student/test/take";
 import TeacherFooter from "./teacher-footer";
 import QuestionManagement from "@/pages/teacher/question";
 import QuestionMaker from "@/pages/teacher/question/maker";
-import GroupQuestion from "@/pages/teacher/question/group-question";
-import TrueFalseTHPTQuestion from "@/pages/teacher/question/true-false-THPT";
 import QuestionImportWord from "@/pages/teacher/question/import-word";
 import ExamMaker from "@/pages/teacher/exam/maker";
 import ExamQuestions from "@/pages/teacher/exam/maker/Exam";
@@ -87,19 +85,18 @@ const Layout = () => {
               <Route index element={<Navigate to="/teacher/question" replace />} />
               <Route path="question">
                 <Route index element={<QuestionManagement />} />
-                <Route path="maker/:type" element={<QuestionMaker />} />
+                <Route path="maker/:type/" element={<QuestionMaker />} />
                 <Route path="maker/:type/:id" element={<QuestionMaker />} />
-                <Route path="maker/group" element={<GroupQuestion />} />
-                <Route path="maker/true-false-THPT" element={<TrueFalseTHPTQuestion />} />
-                <Route path="maker/word" element={<QuestionImportWord />} />
+                <Route path="word" element={<QuestionImportWord />} />
                 <Route path="edit/:id" element={<QuestionMaker />} />
               </Route>
               <Route path="exam">
                 <Route index element={<ExamManagement />} />
                 <Route path="maker" element={<ExamMaker />} />
                 <Route path="maker/:type" element={<ExamMaker />} />
-                <Route path="maker/question" element={<ExamQuestions />} />
-                <Route path="maker/pdf/question" element={<PDFExamQuestions />} />
+                <Route path="maker/:type/:id" element={<ExamMaker />} />
+                <Route path="question/:id" element={<ExamQuestions />} />
+                <Route path="question/pdf/:id" element={<PDFExamQuestions />} />
               </Route>
               <Route path="grade" element={<GradeManagement />} />
               <Route path="setting" element={<TeacherSettingPage />} />

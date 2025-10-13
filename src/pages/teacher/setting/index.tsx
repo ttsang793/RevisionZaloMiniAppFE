@@ -3,10 +3,14 @@ import { Switch, Input, Text, Page, Select } from "zmp-ui";
 import AppHeader from "@/components/header";
 import { useState, useEffect } from "react";
 import { getSubjects, Subject } from "@/models/subject";
-import "./setting.css"
+import "./setting.css";
+
+import { Teacher, updateTeacher } from "@/models/teacher";
 
 export default function TeacherSettingPage() {
   const { TextArea } = Input;
+  const [teacher, setTeacher] = useState<Teacher>(new Teacher());
+  const [level, setLevel] = useState("-1");
 
   const [subjectList, setSubjectList] = useState([]);
 
@@ -43,16 +47,15 @@ export default function TeacherSettingPage() {
             </button>
           </div>
 
-          <form action="">
+          <form onSubmit={e => e.preventDefault()}>
             <Input
-              placeholder="Họ và tên*"
+              placeholder="Họ và tên*" value={teacher.name}
               label={<Text>Họ và tên <span className="zaui-text-red-50">*</span></Text>}
-              required
+              required onChange={e => setTeacher({...teacher, name: e.target.value})}
             />
             <Select
               label={<Text className="mt-2">Khối <span className="zaui-text-red-50">*</span></Text>}
-              closeOnSelect
-              defaultValue="-1"
+              closeOnSelect value={level} onChange={(e: string) => setLevel(e)}
             >
               <Select.Option value="-1" title="Chọn khối" disabled />
               <Select.Option value="THCS" title="THCS" />
@@ -61,8 +64,7 @@ export default function TeacherSettingPage() {
 
             <Select
               label={<Text className="mt-2">Môn học <span className="zaui-text-red-50">*</span></Text>}
-              closeOnSelect
-              defaultValue="-1"
+              closeOnSelect value={teacher.subjectId} onChange={(e: string) => setTeacher({...teacher, subjectId: e})}
             >
               <Select.Option value="-1" title="Chọn môn học" disabled />
               {
@@ -71,7 +73,8 @@ export default function TeacherSettingPage() {
             </Select>
 
             <TextArea
-              placeholder="Giới thiệu"
+              placeholder="Giới thiệu" value={teacher.introduction}
+              onChange={e => setTeacher({...teacher, introduction: e.target.value})}
               label={<Text className="mt-2">Giới thiệu</Text>}
             />
 
@@ -80,8 +83,8 @@ export default function TeacherSettingPage() {
             </Text>
 
             <div className="flex gap-x-2 justify-center mt-4">
-              <input type="submit" value="Lưu" className="zaui-bg-blue-80 text-white rounded-full py-2 px-8" />
-              <input type="reset" value="Hủy" className="zaui-bg-blue-20 zaui-text-blue-80 rounded-full py-2 px-8" />
+              <input type="submit" value="Lưu" className="zaui-bg-blue-80 text-white rounded-full py-2 px-8" onClick={() => handleSubmit()} />
+              <input type="reset" value="Hủy" className="zaui-bg-blue-20 zaui-text-blue-80 rounded-full py-2 px-8" onClick={() => handleReset()} />
             </div>
           </form>
         </div>
@@ -94,4 +97,14 @@ export default function TeacherSettingPage() {
       </div>
     </Page>
   )
+
+  function handleSubmit() {
+    teacher.id = 2;
+    teacher.grades = (level === "THCS") ? [6,7,8,9] : [10,11,12];
+    updateTeacher(teacher);
+  }
+  
+  function handleReset() {
+    setTeacher(new Teacher());
+  }
 }

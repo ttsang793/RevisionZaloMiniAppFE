@@ -1,31 +1,34 @@
 import axios from "axios";
-import { Input, Select, Text, Box, useNavigate } from "zmp-ui";
-import { FormEvent, useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Box, Input, Select, Text, Checkbox, useNavigate } from "zmp-ui";
 import { Topic } from "@/models/topic";
+import "./radio-checkbox.css";
 
-import { ShortAnswerQuestion } from "@/models/question";
-import { getShortAnswerQuestionById, insertShortAnswerQuestion, updateShortAnswerQuestion } from "@/models/short-answer-question";
+import { TrueFalseTHPTQuestion } from "@/models/question";
+import { getTrueFalseTHPTQuestionById, insertTrueFalseTHPTQuestion, updateTrueFalseTHPTQuestion } from "@/models/true-false-thpt-question";
 
-const QuestionMakerShortAnswer = ({id}) => {
+const QuestionMakerTrueFalseTHPT = ({id}) => {
   const { TextArea } = Input;
   const [topicList, setTopicList] = useState([]);
-  const [question, setQuestion] = useState<ShortAnswerQuestion>(new ShortAnswerQuestion());
-  let [number, setNumber] = useState(["", "", "", ""]);
+  const [question, setQuestion] = useState<TrueFalseTHPTQuestion>(new TrueFalseTHPTQuestion());
   const navTo = useNavigate();
 
-  const handleNumber = (value: string, index: number) => {
-    const newNumber = [...number];
-    newNumber[index] = value;
-    setNumber(newNumber);
+  const handleChangeAnswerKeys = (i: number, value: boolean) => {
+    const newAnswerKeys = question.answerKeys;
+    newAnswerKeys[i] = value;
+    setQuestion({...question, answerKeys: newAnswerKeys});
+  }
+
+  const handleChangeStatements = (i: number, value: string) => {
+    const newStatements = question.statements;
+    newStatements[i] = value;
+    setQuestion({...question, statements: newStatements});
   }
 
   useEffect(() => {
-    if (id !== undefined) getShortAnswerQuestionById(id).then(response => {
-      setNumber(String(response.data).split(""));
-      setQuestion(response.data);
-    });
+    if (id !== undefined) getTrueFalseTHPTQuestionById(Number(id)).then(response => setQuestion(response.data));
     axios.get("/api/topic").then(response => setTopicList(response.data));
-  }, [])
+  }, []);
 
   return (
     <form onSubmit={e => e.preventDefault()} noValidate>
@@ -36,17 +39,54 @@ const QuestionMakerShortAnswer = ({id}) => {
       />
 
       <Box>
-        <Text className="my-2">Đáp án <span className="required">*</span></Text>
-        <Box className="border zaui-border-gray-40 zaui-bg-steelblue-20 p-2">
-          {number.map((n, i) => (
-            <input
-              className="size-8 text-center border border-gray-400 rounded-lg me-2"
-              maxLength={1} key={i} value={n} onChange={e => handleNumber(e.target.value, i)}
-            />
-          ))}
-        </Box>
+        <label>
+          <Text className="mt-2">Hình ảnh minh họa</Text>
+        </label>
+        <input
+          type="file"
+          className="p-4 border zaui-border-gray-30 rounded-lg w-full text-center mt-2"
+          accept="image/png, image/jpeg"
+        />
       </Box>
 
+      <Input
+        label={<Text className="mt-2">Tiêu đề đoạn văn (trích đoạn)</Text>}
+        placeholder="Tiêu đề đoạn văn" value={question?.passageTitle}
+        onChange={e => setQuestion({...question, passageTitle: e.target.value})}
+      />
+
+      <TextArea
+        label={<Text className="mt-2">Nội dung đoạn văn</Text>}
+        placeholder="Nội dung đoạn văn" value={question?.passageContent}
+        onChange={e => setQuestion({...question, passageContent: e.target.value})}
+      />
+
+      <Input
+        label={<Text className="mt-2">Tác giả và nguồn của đoạn văn</Text>}
+        placeholder="Tác giả và nguồn của đoạn văn" value={question?.passageAuthor}
+        onChange={e => setQuestion({...question, passageAuthor: e.target.value})}
+      />
+
+      <Box id="checkbox-answer">
+        <Text className="my-2">Danh sách mệnh đề <span className="required">*</span></Text>
+        
+        {
+          [0, 1, 2, 3].map(i =>
+            <Checkbox
+              className="zaui-border-gray-30 zaui-bg-steelblue-20"
+              value="" checked={question.answerKeys[i]}
+              onChange={e => handleChangeAnswerKeys(i, e.target.checked)}
+              key={`checkbox-${i + 1}`}
+            >
+              <Input
+                placeholder={`Mệnh đề ${i + 1}`} value={question.statements[i]}
+                onChange={e => handleChangeStatements(i, e.target.value)}
+              />
+            </Checkbox>
+          )
+        }
+      </Box>
+      
       <Select
         label={<Text className="mt-2">Lớp <span className="required">*</span></Text>}
         value={question?.grade} closeOnSelect
@@ -61,11 +101,6 @@ const QuestionMakerShortAnswer = ({id}) => {
         <Select.Option value={11} title="Lớp 11" />
         <Select.Option value={12} title="Lớp 12" />
       </Select>
-
-      <Input
-        label={<Text className="mt-2">Dạng câu hỏi</Text>}
-        value="Trắc nghiệm trả lời ngắn" disabled
-      />
 
       <Select
         label={<Text className="mt-2">Độ khó <span className="required">*</span></Text>}
@@ -98,10 +133,6 @@ const QuestionMakerShortAnswer = ({id}) => {
         onChange={e => setQuestion({...question, explanation: e.target.value})}
       />
 
-      <Text className="required text-left italic mb-2" bold>
-        *: Các trường bắt buộc
-      </Text>
-
       <div className="flex gap-x-2 justify-center mt-2">
         <input type="submit" value="Lưu" className="zaui-bg-blue-80 text-white rounded-full py-2 px-8" onClick={handleSubmit} />
         <input type="button" value="Hủy" className="zaui-bg-blue-20 zaui-text-blue-80 rounded-full py-2 px-8" onClick={() => navTo("/teacher/question")} />
@@ -110,11 +141,9 @@ const QuestionMakerShortAnswer = ({id}) => {
   )
 
   function handleSubmit() {
-    question.type = 'short-answer';
-    question.answerKey = Number(number.join(""));
-
-    insertShortAnswerQuestion(question);
+    question.type = 'true-false-thpt';
+    (id === undefined) ? insertTrueFalseTHPTQuestion(question) : updateTrueFalseTHPTQuestion(question, id);
   }
 }
 
-export { QuestionMakerShortAnswer }
+export { QuestionMakerTrueFalseTHPT }

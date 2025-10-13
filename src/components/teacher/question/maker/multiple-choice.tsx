@@ -94,8 +94,8 @@ const QuestionMakerMutipleChoice = ({id}) => {
 
       <TextArea
         label={<Text className="mt-2">Lời giải/Giải thích</Text>}
-        placeholder="Lời giải/Giải thích" value={question.explaination}
-        onChange={e => setQuestion({...question, explaination: e.target.value})}
+        placeholder="Lời giải/Giải thích" value={question.explanation}
+        onChange={e => setQuestion({...question, explanation: e.target.value})}
       />
 
       <Text className="required text-left italic mb-2" bold>
@@ -110,7 +110,7 @@ const QuestionMakerMutipleChoice = ({id}) => {
   )
 
   function handleSubmit() {
-    question.type = 1;    
+    question.type = 'multiple-choice';    
     id === undefined ? insertMultipleChoiceQuestion(question) : updateMultipleChoiceQuestion(question, id);
   }
 }

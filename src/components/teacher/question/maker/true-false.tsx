@@ -6,7 +6,7 @@ import { Topic } from "@/models/topic";
 
 import { TrueFalseQuestion } from "@/models/question";
 import { getTrueFalseQuestionById, insertTrueFalseQuestion, updateTrueFalseQuestion } from "@/models/true-false-question";
-import "./multiple-choice.css"
+import "./radio-checkbox.css"
 
 const QuestionMakerTrueFalse = ({id}) => {
   const { TextArea } = Input;
@@ -29,14 +29,23 @@ const QuestionMakerTrueFalse = ({id}) => {
 
       <Box id="radio-answer">
         <Text className="my-2">Đáp án <span className="required">*</span></Text>
-        <Radio.Group name="answer" className="w-full" defaultValue={question.answerKey}>
-          <Radio value={true} className="zaui-border-gray-30 zaui-bg-steelblue-20" onClick={e => setQuestion({...question, answerKey: true})}>
-            <Input value="Đúng" readOnly />
-          </Radio>
-          <Radio value={false} className="zaui-border-gray-30 zaui-bg-steelblue-20" onClick={e => setQuestion({...question, answerKey: false})}>
-            <Input value="Sai" readOnly />
-          </Radio>
-        </Radio.Group>
+        
+        <Radio
+          checked={question.answerKey === true}
+          value="true"
+          className="zaui-border-gray-30 zaui-bg-steelblue-20"
+          onChange={() => setQuestion({ ...question, answerKey: true })}
+        >
+          <Input value="Đúng" readOnly />
+        </Radio>
+        <Radio
+          checked={question.answerKey === false}
+          value="true"
+          className="zaui-border-gray-30 zaui-bg-steelblue-20"
+          onChange={() => setQuestion({ ...question, answerKey: false })}
+        >
+          <Input value="Sai" readOnly />
+        </Radio>
       </Box>
 
       <Select
@@ -86,8 +95,8 @@ const QuestionMakerTrueFalse = ({id}) => {
 
       <TextArea
         label={<Text className="mt-2">Lời giải/Giải thích</Text>}
-        placeholder="Lời giải/Giải thích" value={question.explaination}
-        onChange={e => setQuestion({...question, explaination: e.target.value})}
+        placeholder="Lời giải/Giải thích" value={question.explanation}
+        onChange={e => setQuestion({...question, explanation: e.target.value})}
       />
 
       <Text className="required text-left italic mb-2" bold>
@@ -102,7 +111,7 @@ const QuestionMakerTrueFalse = ({id}) => {
   )
 
   function handleSubmit() {
-    question.type = 2;
+    question.type = 'true-false';
     (id === undefined) ? insertTrueFalseQuestion(question) : updateTrueFalseQuestion(question, id);
   }
 }

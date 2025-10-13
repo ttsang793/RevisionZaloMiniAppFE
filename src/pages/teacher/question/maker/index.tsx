@@ -6,8 +6,10 @@ import { QuestionMakerShortAnswer as ShortAnswer } from "@/components/teacher/qu
 import { QuestionMakerFillInTheBlank as FillInTheBlank } from "@/components/teacher/question/maker/fill-in-the-blank";
 import { QuestionMakerConstructedResponse as ConstructedResponse } from "@/components/teacher/question/maker/constructed-response";
 import { QuestionMakerSorting as Sorting } from "@/components/teacher/question/maker/sorting";
+import { QuestionMakerGroup as Group } from "@/components/teacher/question/maker/group";
+import { QuestionMakerTrueFalseTHPT as TrueFalseTHPT } from "@/components/teacher/question/maker/true-false-thpt";
 
-const questionType = ["multiple-choice", "true-false", "short-answer", "fill-in-the-blank", "constructed-response", "sorting"]
+const questionType = ["multiple-choice", "true-false", "short-answer", "fill-in-the-blank", "constructed-response", "sorting", "group", "true-false-thpt"]
 
 function renderQuestionMaker(type, id) {
   switch (type) {
@@ -17,6 +19,8 @@ function renderQuestionMaker(type, id) {
     case questionType[3]: return <FillInTheBlank id={id} />;
     case questionType[4]: return <ConstructedResponse id={id} />;
     case questionType[5]: return <Sorting id={id} />;
+    case questionType[6]: return <Group id={id} />;
+    case questionType[7]: return <TrueFalseTHPT id={id} />;
     default: return <>Hello World</>;
   }
 }
@@ -24,9 +28,11 @@ function renderQuestionMaker(type, id) {
 export default function QuestionMaker() {
   const { type, id } = useParams();
 
+  const title = (type === "group" ? "Thêm nhóm câu hỏi" : (type === "true-false-thpt" ? "Thêm câu hỏi Đúng – Sai (THPT)" : "Thêm câu hỏi"))
+
   return (
     <Page className="page page-wo-footer bg-white">
-      <AppHeader title="Thêm câu hỏi" showBackIcon />
+      <AppHeader title={title} showBackIcon />
 
       <Box className="pt-4">
         { renderQuestionMaker(type, id) }

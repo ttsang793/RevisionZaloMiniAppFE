@@ -1,4 +1,3 @@
-import axios from "axios";
 import { Box, Page, Text } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -17,9 +16,10 @@ export default function QuestionManagement() {
   useEffect(() => {
     setLoading(true);
 
-    getQuestionsByTeacher()
-      .then(response => setQuestionList(response.data))
-      .finally(() => setLoading(false));
+    try {
+      getQuestionsByTeacher().then(response => setQuestionList(response.data))
+    }
+    finally { setLoading(false) }
   }, [])
 
   return (
@@ -37,11 +37,11 @@ export default function QuestionManagement() {
             <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
             Thêm nhóm câu hỏi
           </button>
-          <button className="flex flex-col items-center w-full" onClick={() => navTo("maker/true-false-THPT")}>
+          <button className="flex flex-col items-center w-full" onClick={() => navTo("maker/true-false-thpt")}>
             <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
             TN Đúng &minus; Sai (THPTQG)
           </button>
-          <button className="flex flex-col items-center w-full" onClick={() => navTo("maker/word")}>
+          <button className="flex flex-col items-center w-full" onClick={() => navTo("word")}>
             <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
             Nhập từ file Word
           </button>

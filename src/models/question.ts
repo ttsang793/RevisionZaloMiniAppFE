@@ -4,11 +4,11 @@ class Question {
   id?: number;
   title: string = "";
   grade: number = -1;
-  type: number = -1;
+  type: string = "";
   difficulty: number = -1;
   topicId: string = "-1";
   subjectId: string = "ANH";
-  explaination: string = "";
+  explanation: string = "";
 }
 
 class MultipleChoiceQuestion extends Question {
@@ -39,7 +39,22 @@ class ConstructedResponseQuestion extends Question {
 }
 
 class SortingQuestion extends Question {
-  correctOrder: string[] = [];
+  correctOrder: string[] = ["", "", ""];
+}
+
+class GroupQuestion extends Question {
+  passageTitle?: string;
+  passageContent?: string;
+  passageAuthor?: string;
+  questions: number[] = [];
+}
+
+class TrueFalseTHPTQuestion extends Question {
+  passageTitle?: string;
+  passageContent?: string;
+  passageAuthor?: string;
+  statements: string[] = ["", "", "", ""]
+  answerKeys: boolean[] = [false, false, false, false];
 }
 
 function getQuestionsByTeacher() {
@@ -56,4 +71,4 @@ function deleteQuestion(id: number) {
     })
 }
 
-export { Question, MultipleChoiceQuestion, TrueFalseQuestion, ShortAnswerQuestion, FillInTheBlankQuestion, ConstructedResponseQuestion, SortingQuestion, getQuestionsByTeacher, deleteQuestion }
+export { Question, MultipleChoiceQuestion, TrueFalseQuestion, ShortAnswerQuestion, FillInTheBlankQuestion, ConstructedResponseQuestion, SortingQuestion, GroupQuestion, TrueFalseTHPTQuestion, getQuestionsByTeacher, deleteQuestion }

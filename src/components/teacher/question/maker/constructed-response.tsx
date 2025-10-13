@@ -108,8 +108,8 @@ const QuestionMakerConstructedResponse = ({id}) => {
 
       <TextArea
         label={<Text className="mt-2">Lời giải/Giải thích <span className="required">*</span></Text>}
-        placeholder="Lời giải/Giải thích" required value={question.explaination}
-        onChange={e => setQuestion({...question, explaination: e.target.value})}
+        placeholder="Lời giải/Giải thích" required value={question.explanation}
+        onChange={e => setQuestion({...question, explanation: e.target.value})}
       />
 
       <Text className="required text-left italic" bold>
@@ -134,7 +134,7 @@ const QuestionMakerConstructedResponse = ({id}) => {
   )
 
   function handleSubmit() {
-    question.type = 5;
+    question.type = 'constructed-response';
     (id === undefined) ? insertConstructedResponseQuestion(question) : updateConstructedResponseQuestion(question, id);
   }
 }
