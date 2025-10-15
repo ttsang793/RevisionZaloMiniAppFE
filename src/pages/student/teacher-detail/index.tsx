@@ -1,36 +1,49 @@
-"use client"
 import AppHeader from "@/components/header";
-import TestHolder from "@/components/exam-holder"
-import { Text, Page } from "zmp-ui";
+import ExamHolder from "@/components/exam-holder"
+import { Text, Page, Box } from "zmp-ui";
+import { useState, useEffect } from 'react';
+import { Teacher, getTeacherById } from "@/models/teacher";
+import { Exam, getExamsByTeacher } from "@/models/exam";
 
 export default function TeacherDetailPage() {
+  const [examList, setExamList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [teacher, setTeacher] = useState<Teacher>(new Teacher());
+
+  useEffect(() => {
+    getTeacherById().then(response => setTeacher(response.data));
+    getExamsByTeacher().then(response => {
+      setExamList(response.data);
+      setLoading(false);
+    }).catch(err => {
+      console.error(err);
+      setLoading(false);
+    })
+  }, []);
+
   return (
     <Page className="page-x-0">
-      <AppHeader title="Trần Văn A" showBackIcon />
-      <div className="flex gap-2 section-container">
+      <AppHeader title={teacher.name} showBackIcon />
+      <Box className="flex gap-2 section-container">
         <img src="/avatar/default.jpg" className="size-[64px] rounded-full" />
-        <div className="w-full">
-          <Text className="italic text-justify">Chào các em, thầy là Trần Văn A, giáo viên Toán với hơn 10 năm kinh nghiệm. Thầy mong muốn giúp các em yêu thích và hiểu sâu môn Toán hơn.</Text>
+        <Box className="w-full">
+          <Text className="italic text-justify">{teacher.introduction}</Text>
           <hr />
-          <div className="flex items-center gap-x-2">
+          <Box className="flex items-center gap-x-2">
             <Text>1,000 học sinh theo dõi</Text>
             <button className="zaui-bg-blue-80 text-white rounded-full py-1 px-2 text-sm">
               Theo dõi
             </button>
-          </div>
-        </div>
-      </div>
+          </Box>
+        </Box>
+      </Box>
 
-      <div className="flex gap-5 flex-wrap justify-center">
-        <TestHolder />
-        <TestHolder />
-        <TestHolder />
-        <TestHolder />
-        <TestHolder />
-        <TestHolder />
-        <TestHolder />
-        <TestHolder />
-      </div>
+      
+      <Box className="flex gap-5 flex-wrap justify-center">
+      {
+        loading ? <>Cho 1 chut</> : examList.map((exam: Exam) => <ExamHolder exam={exam} key={`exam-${exam.id}`} />)
+      }
+      </Box>
     </Page>
   )
 }

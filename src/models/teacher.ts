@@ -21,6 +21,10 @@ class Admin extends User {
   password: string = ""
 }
 
+function getTeacherById(id: number = 2) {
+  return axios.get(`/api/teacher/${id}`);
+}
+
 function updateTeacher(teacher: Teacher) {
   axios.put("/api/teacher", teacher, {
     headers: { "Content-Type": "application/json" }
@@ -31,4 +35,4 @@ function updateTeacher(teacher: Teacher) {
   })
 }
 
-export { Student, Teacher, Admin, updateTeacher }
+export { Student, Teacher, Admin, getTeacherById, updateTeacher }

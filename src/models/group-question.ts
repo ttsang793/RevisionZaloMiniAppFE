@@ -1,12 +1,25 @@
 import axios from "axios";
-import { GroupQuestion } from "./question";
+
+class GroupQuestion {  
+  id?: number;
+  title: string = "";
+  grade: number = -1;
+  type: string = "group";
+  subjectId: string = "TOAN";
+  passageTitle: string = "";
+  passageContent: string = "";
+  passageAuthor: string = "";
+  questions: number[] = [];
+}
 
 function getGroupQuestionById(id: number) {
   return axios.get(`/api/question/${id}`);
 }
 
-function insertGroupQuestion(tfq: GroupQuestion) {
-  axios.post("/api/question/group", tfq, {
+function insertGroupQuestion(gq: GroupQuestion) {
+  console.log(gq);
+
+  axios.post("/api/question/group", gq, {
     headers: { "Content-Type": "application/json" }
   }).then(response => {
     console.log(response.status);
@@ -15,8 +28,8 @@ function insertGroupQuestion(tfq: GroupQuestion) {
   })
 }
 
-function updateGroupQuestion(tfq: GroupQuestion, id: number) {
-  axios.put(`/api/question/group/${id}`, tfq, {
+function updateGroupQuestion(gq: GroupQuestion, id: number) {
+  axios.put(`/api/question/group/${id}`, gq, {
     headers: { "Content-Type": "application/json" }
   }).then(response => {
     console.log(response.status);
@@ -25,4 +38,4 @@ function updateGroupQuestion(tfq: GroupQuestion, id: number) {
   })
 }
 
-export { getGroupQuestionById, insertGroupQuestion, updateGroupQuestion }
+export { GroupQuestion, getGroupQuestionById, insertGroupQuestion, updateGroupQuestion }

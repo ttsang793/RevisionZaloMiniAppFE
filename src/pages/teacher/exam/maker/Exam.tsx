@@ -5,10 +5,12 @@ import { Box, Page, useNavigate } from "zmp-ui";
 import { FormEvent } from "react";
 import { backToTop } from "@/script/util";
 import { useState, useEffect } from 'react';
+import SelectQuestion from "@/components/teacher/select-question";
 
 export default function ExamQuestions({id}) {
   const navTo = useNavigate();
   const [examPart, setExamPart] = useState([]);
+  const [selectionModal, setSelectionModal] = useState(true);
 
   useEffect(() => {
 
@@ -37,6 +39,8 @@ export default function ExamQuestions({id}) {
       <button className="px-4 py-2 zaui-bg-blue-70 text-white rounded-full fixed bottom-4 right-4 flex items-center gap-x-1">
         Thêm phần mới
       </button>
+
+      {/*<SelectQuestion visible={selectionModal} setVisible={setSelectionModal} />*/}
     </Page>
   )
 

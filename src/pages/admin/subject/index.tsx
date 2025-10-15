@@ -88,7 +88,7 @@ export default function SubjectManagement() {
                 <td className="border border-zinc-500 px-2">{subject.name}</td>
                 <td className="border border-zinc-500 px-2">
                 {
-                  subject.classes.map((c: number, i: number) => (i === 0) ? c : `, ${c}`)
+                  subject.grades.map((c: number, i: number) => (i === 0) ? c : `, ${c}`)
                 }
                 </td>
                 <td className="border border-zinc-500 text-center">{subject.questionTN ? <>&#x2714;</> : ""}</td>

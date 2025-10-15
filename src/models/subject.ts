@@ -3,7 +3,7 @@ import axios from "axios";
 type Subject = {
   id: string,
   name: string,
-  classes: Array<number>,
+  grades: Array<number>,
   questionTN: boolean,
   questionDS: boolean,
   questionTLN: boolean,

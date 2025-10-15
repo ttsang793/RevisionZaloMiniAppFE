@@ -1,17 +1,26 @@
-import axios from "axios";
 import { useState, useEffect } from "react";
-import { Box, Input, Page, Select, Text, useNavigate } from "zmp-ui";
+import { Box, Input, Select, Text, useNavigate } from "zmp-ui";
 
-import { GroupQuestion } from "@/models/question";
-import { getGroupQuestionById, insertGroupQuestion, updateGroupQuestion } from "@/models/group-question";
+import { getQuestionsFilterByTeacher, Question } from "@/models/question";
+import { GroupQuestion, getGroupQuestionById, insertGroupQuestion, updateGroupQuestion } from "@/models/group-question";
+import SelectQuestion from "../../select-question";
 
 const QuestionMakerGroup = ({id}) => {
   const { TextArea } = Input;
   const [question, setQuestion] = useState<GroupQuestion>(new GroupQuestion());
+  const [filterQuestion, setFilterQuestion] = useState<Question[]>([]);
+  let [selectQuestion, setSelectQuestion] = useState<Question[]>([]);
+  const [selectionModal, setSelectionModal] = useState(true);
   const navTo = useNavigate();
+
+  const handleQuestion = (value: boolean, question: Question) => {
+    if (value) setSelectQuestion(prev => [...prev, question]);
+    else setSelectQuestion(prev => prev.filter(q => q.id !== question.id));
+  }
 
   useEffect(() => {
     if (id !== undefined) getGroupQuestionById(Number(id)).then(response => setQuestion(response.data));
+    getQuestionsFilterByTeacher().then(response => setFilterQuestion(response.data))
   }, []);
 
   return (
@@ -66,22 +75,38 @@ const QuestionMakerGroup = ({id}) => {
         <Select.Option value={12} title="Lớp 12" />
       </Select>
 
-      <Box className="mt-2">
-        <Box className="flex items-center">
-          <Text className="flex-1">Danh sách câu hỏi <span className="zaui-text-red-50">*</span></Text>
-          <button className="zaui-bg-blue-80 text-white rounded-full py-1 px-4">
-            Thêm câu hỏi mới
-          </button>
+      <Box>
+        <Text className="my-2">Danh sách câu hỏi <span className="zaui-text-red-50">*</span></Text>
+
+        <Box className="mb-3">
+          <Input
+            placeholder="Nhập tiêu đề của câu hỏi"
+            className="mb-0"
+          />
+
+          <Box className="border zaui-border-gray-30 min-h-0 max-h-40 overflow-auto divide-y">
+          {
+            filterQuestion.map((q, i) => <SelectQuestion question={q} filter handleQuestion={handleQuestion} key={`filter-${i}`} />)
+          }
+          </Box>
         </Box>
-        <hr />
+
+        {
+          selectQuestion.map((q, i) => <SelectQuestion question={q} handleQuestion={() => {}} key={`select-${i}`} />)
+        }
       </Box>
 
       <Box className="flex gap-x-2 justify-center mt-2">
-        <input type="submit" value="Lưu" className="zaui-bg-blue-80 text-white rounded-full py-2 px-8" />
+        <input type="submit" value="Lưu" className="zaui-bg-blue-80 text-white rounded-full py-2 px-8" onClick={handleSubmit} />
         <input type="button" value="Hủy" className="zaui-bg-blue-20 zaui-text-blue-80 rounded-full py-2 px-8" onClick={() => navTo("/teacher/question")} />
       </Box>
     </form>
   )
+
+  function handleSubmit() {
+    selectQuestion.forEach(q => question.questions.push(q.id!));
+    id === undefined ? insertGroupQuestion(question) : updateGroupQuestion(question, id);
+  }
 }
 
 export { QuestionMakerGroup }

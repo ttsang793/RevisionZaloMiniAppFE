@@ -1,7 +1,8 @@
 import { Heart } from "react-bootstrap-icons";
 import { Box, useNavigate } from "zmp-ui";
+import { Exam } from "@/models/exam";
 
-const ExamHolder = ({ exam, latest = "28/09/2025" }) => {
+const ExamHolder = ({ exam, latest = "28/09/2025" }: { exam: Exam, latest: string }) => {
   const navTo = useNavigate();
   
   return (
@@ -12,8 +13,8 @@ const ExamHolder = ({ exam, latest = "28/09/2025" }) => {
           <img src="/avatar/default.jpg" alt="avatar" className="size-6 rounded-full" />
 
           <ul className="text-xs">
-            <li>Giáo viên: Trần Văn A</li>
-            <li>Môn: {exam.subjectId} {exam.grade}</li>
+            <li>Giáo viên: {exam.teacherName}</li>
+            <li>Môn: {exam.subjectName} {exam.grade}</li>
             <li>Thời gian: {exam.timeLimit / 60} phút</li>
             {
               latest.length > 0 ? <li>Ngày làm bài gần nhất: {latest}</li> : <></>

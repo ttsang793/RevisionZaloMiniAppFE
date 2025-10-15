@@ -75,7 +75,7 @@ export default function TopicManagement() {
                 <td className="border border-zinc-500 px-2">{topic.name}</td>
                 <td className="border border-zinc-500 px-2">
                 {
-                  topic.classes.map((c: number, i: number) => (i === 0) ? c : `, ${c}`)
+                  topic.grades.map((c: number, i: number) => (i === 0) ? c : `, ${c}`)
                 }
                 </td>
                 <td className="border border-zinc-500 px-2">

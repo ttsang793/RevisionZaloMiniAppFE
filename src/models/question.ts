@@ -5,10 +5,10 @@ class Question {
   title: string = "";
   grade: number = -1;
   type: string = "";
-  difficulty: number = -1;
-  topicId: string = "-1";
-  subjectId: string = "ANH";
-  explanation: string = "";
+  difficulty?: number = -1;
+  topicId?: string = "-1";
+  subjectId: string = "TOAN";
+  explanation?: string;
 }
 
 class MultipleChoiceQuestion extends Question {
@@ -42,13 +42,6 @@ class SortingQuestion extends Question {
   correctOrder: string[] = ["", "", ""];
 }
 
-class GroupQuestion extends Question {
-  passageTitle?: string;
-  passageContent?: string;
-  passageAuthor?: string;
-  questions: number[] = [];
-}
-
 class TrueFalseTHPTQuestion extends Question {
   passageTitle?: string;
   passageContent?: string;
@@ -61,6 +54,10 @@ function getQuestionsByTeacher() {
   return axios.get(`/api/question`);
 }
 
+function getQuestionsFilterByTeacher() {
+  return axios.get(`/api/question/filter`);
+}
+
 function deleteQuestion(id: number) {
   axios.delete(`/api/question/${id}`)
     .then(response => {
@@ -71,4 +68,5 @@ function deleteQuestion(id: number) {
     })
 }
 
-export { Question, MultipleChoiceQuestion, TrueFalseQuestion, ShortAnswerQuestion, FillInTheBlankQuestion, ConstructedResponseQuestion, SortingQuestion, GroupQuestion, TrueFalseTHPTQuestion, getQuestionsByTeacher, deleteQuestion }
+export { Question, MultipleChoiceQuestion, TrueFalseQuestion, ShortAnswerQuestion, FillInTheBlankQuestion, ConstructedResponseQuestion, SortingQuestion, TrueFalseTHPTQuestion,
+  getQuestionsByTeacher, getQuestionsFilterByTeacher, deleteQuestion }
