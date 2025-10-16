@@ -1,6 +1,13 @@
 import axios from "axios";
 import { FillInTheBlankQuestion } from "./question";
 
+type FillInTheBlankError = {
+  answer?: string,
+  grade?: string,
+  difficulty?: string,
+  topic?: string
+}
+
 function getFillInTheBlankQuestionById(id: number) {
   return axios.get(`/api/question/${id}`);
 }
@@ -25,4 +32,4 @@ function updateFillInTheBlankQuestion(fitbq: FillInTheBlankQuestion, id: number)
   })
 }
 
-export { getFillInTheBlankQuestionById, insertFillInTheBlankQuestion, updateFillInTheBlankQuestion }
+export { FillInTheBlankError, getFillInTheBlankQuestionById, insertFillInTheBlankQuestion, updateFillInTheBlankQuestion }

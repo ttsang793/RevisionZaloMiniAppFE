@@ -23,7 +23,7 @@ class TrueFalseQuestion extends Question {
 }
 
 class ShortAnswerQuestion extends Question {
-  answerKey?: number;
+  answerKey: string = "";
 }
 
 class FillInTheBlankQuestion extends Question {
@@ -50,12 +50,24 @@ class TrueFalseTHPTQuestion extends Question {
   answerKeys: boolean[] = [false, false, false, false];
 }
 
+const questionType = [
+ { title: "Trắc nghiệm 4 đáp án", type: "multiple-choice" },
+ { title: "Trắc nghiệm Đúng – Sai", type: "true-false" },
+ { title: "Trắc nghiệm trả lời ngắn", type: "short-answer" },
+ { title: "Điền vào chỗ trống", type: "fill-in-the-blank" },
+ { title: "Tự luận", type: "constructed-response" },
+ { title: "Sắp xếp", type: "sorting" },
+ { title: "Nhóm câu hỏi", type: "group" },
+ { title: "Trắc nghiệm Đúng – Sai THPT", type: "true-false-thpt" }
+];
+
 function getQuestionsByTeacher() {
   return axios.get(`/api/question`);
 }
 
-function getQuestionsFilterByTeacher() {
-  return axios.get(`/api/question/filter`);
+function getQuestionsFilterByTeacher(title?: string, type: string = "default") {
+  if (!title) return axios.get(`/api/question/filter?type=${type}`);
+  return axios.get(`/api/question/filter?type=${type}&title=${title}`);
 }
 
 function deleteQuestion(id: number) {
@@ -68,5 +80,5 @@ function deleteQuestion(id: number) {
     })
 }
 
-export { Question, MultipleChoiceQuestion, TrueFalseQuestion, ShortAnswerQuestion, FillInTheBlankQuestion, ConstructedResponseQuestion, SortingQuestion, TrueFalseTHPTQuestion,
+export { questionType, Question, MultipleChoiceQuestion, TrueFalseQuestion, ShortAnswerQuestion, FillInTheBlankQuestion, ConstructedResponseQuestion, SortingQuestion, TrueFalseTHPTQuestion,
   getQuestionsByTeacher, getQuestionsFilterByTeacher, deleteQuestion }

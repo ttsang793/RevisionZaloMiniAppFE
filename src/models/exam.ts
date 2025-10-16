@@ -33,8 +33,6 @@ function getExamsByTeacher(teacherId = 2) {
 }
 
 function insertExam(exam: Exam) {
-  console.log(exam);
-
   axios.post("/api/exam", exam, {
     headers: { "Content-Type": "application/json" }
   }).then(response => {

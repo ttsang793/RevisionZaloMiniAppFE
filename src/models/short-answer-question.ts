@@ -1,6 +1,13 @@
 import axios from "axios";
 import { ShortAnswerQuestion } from "./question";
 
+type ShortAnswerError = {
+  answer?: string,
+  grade?: string,
+  difficulty?: string,
+  topic?: string
+}
+
 function getShortAnswerQuestionById(id: number) {
   return axios.get(`/api/question/${id}`);
 }
@@ -25,4 +32,4 @@ function updateShortAnswerQuestion(saq: ShortAnswerQuestion, id: number) {
   })
 }
 
-export { getShortAnswerQuestionById, insertShortAnswerQuestion, updateShortAnswerQuestion }
+export { ShortAnswerError, getShortAnswerQuestionById, insertShortAnswerQuestion, updateShortAnswerQuestion }

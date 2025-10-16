@@ -1,17 +1,7 @@
 import { PencilSquare, XLg } from "react-bootstrap-icons";
 import { Box, Text, useNavigate } from "zmp-ui";
 import { deleteQuestion, Question } from "@/models/question";
-
-const questionType = [
- { title: "Trắc nghiệm 4 đáp án", type: "multiple-choice" },
- { title: "Trắc nghiệm Đúng – Sai", type: "true-false" },
- { title: "Trắc nghiệm trả lời ngắn", type: "short-answer" },
- { title: "Điền vào chỗ trống", type: "fill-in-the-blank" },
- { title: "Tự luận", type: "constructed-response" },
- { title: "Sắp xếp", type: "sorting" },
- { title: "Nhóm câu hỏi", type: "group" },
- { title: "Trắc nghiệm Đúng – Sai THPT", type: "true-false-thpt" }
-];
+import { questionType } from "@/models/question";
 
 const QuestionList = ({question}: {question: Question}) => {
   const navTo = useNavigate();

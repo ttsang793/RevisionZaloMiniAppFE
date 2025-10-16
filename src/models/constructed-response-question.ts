@@ -1,6 +1,13 @@
 import axios from "axios";
 import { ConstructedResponseQuestion } from "./question";
 
+type ConstructedResponseError = {
+  grade?: string,
+  difficulty?: string,
+  topic?: string,
+  explanation?: string
+}
+
 function getConstructedResponseQuestionById(id: number) {
   return axios.get(`/api/question/${id}`);
 }
@@ -25,4 +32,4 @@ function updateConstructedResponseQuestion(crq: ConstructedResponseQuestion, id:
   })
 }
 
-export { getConstructedResponseQuestionById, insertConstructedResponseQuestion, updateConstructedResponseQuestion }
+export { ConstructedResponseError, getConstructedResponseQuestionById, insertConstructedResponseQuestion, updateConstructedResponseQuestion }

@@ -1,6 +1,14 @@
 import axios from "axios";
 import { TrueFalseTHPTQuestion } from "./question";
 
+type TrueFalseTHPTError = {
+  title?: string,
+  statement?: string,
+  grade?: string,
+  difficulty?: string,
+  topic?: string
+}
+
 function getTrueFalseTHPTQuestionById(id: number) {
   return axios.get(`/api/question/${id}`);
 }
@@ -25,4 +33,4 @@ function updateTrueFalseTHPTQuestion(tfq: TrueFalseTHPTQuestion, id: number) {
   })
 }
 
-export { getTrueFalseTHPTQuestionById, insertTrueFalseTHPTQuestion, updateTrueFalseTHPTQuestion }
+export { TrueFalseTHPTError, getTrueFalseTHPTQuestionById, insertTrueFalseTHPTQuestion, updateTrueFalseTHPTQuestion }

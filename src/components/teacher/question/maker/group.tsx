@@ -2,32 +2,41 @@ import { useState, useEffect } from "react";
 import { Box, Input, Select, Text, useNavigate } from "zmp-ui";
 
 import { getQuestionsFilterByTeacher, Question } from "@/models/question";
-import { GroupQuestion, getGroupQuestionById, insertGroupQuestion, updateGroupQuestion } from "@/models/group-question";
+import { GroupQuestionGet, GroupQuestionPost, getGroupQuestionById, insertGroupQuestion, updateGroupQuestion } from "@/models/group-question";
 import SelectQuestion from "../../select-question";
 
 const QuestionMakerGroup = ({id}) => {
   const { TextArea } = Input;
-  const [question, setQuestion] = useState<GroupQuestion>(new GroupQuestion());
+  const [question, setQuestion] = useState<GroupQuestionPost>(new GroupQuestionPost());
   const [filterQuestion, setFilterQuestion] = useState<Question[]>([]);
   let [selectQuestion, setSelectQuestion] = useState<Question[]>([]);
   const [selectionModal, setSelectionModal] = useState(true);
   const navTo = useNavigate();
+  const [search, setSearch] = useState("");
 
-  const handleQuestion = (value: boolean, question: Question) => {
-    if (value) setSelectQuestion(prev => [...prev, question]);
-    else setSelectQuestion(prev => prev.filter(q => q.id !== question.id));
+  const searchQuestion = (fq: Question) => {
+    return selectQuestion.findIndex(q => q.id == fq.id);
+  }
+
+  const handleQuestion = (hq: Question) => {
+    if (searchQuestion(hq) === -1) setSelectQuestion(prev => [...prev, hq]);
+    else setSelectQuestion(prev => prev.filter(q => q.id !== hq.id));
+  }
+
+  const handleSearch = value => {
+    setSearch(value);
+    getQuestionsFilterByTeacher(value).then(response => setFilterQuestion(response.data));
   }
 
   useEffect(() => {
-    if (id !== undefined) getGroupQuestionById(Number(id)).then(response => setQuestion(response.data));
+    if (id !== undefined) fetchExistingData(Number(id));
     getQuestionsFilterByTeacher().then(response => setFilterQuestion(response.data))
   }, []);
 
   return (
     <form onSubmit={e => e.preventDefault()} noValidate>
       <Input
-        label={<Text>Tiêu đề câu hỏi <span className="required">*</span></Text>}
-        placeholder="Tiêu đề câu hỏi" required value={question?.title}
+        label={<Text>Tiêu đề câu hỏi</Text>} placeholder="Tiêu đề câu hỏi" value={question?.title}
         onChange={e => setQuestion({...question, title: e.target.value})}
       />
 
@@ -82,6 +91,7 @@ const QuestionMakerGroup = ({id}) => {
           <Input
             placeholder="Nhập tiêu đề của câu hỏi"
             className="mb-0"
+            value={search} onChange={e => handleSearch(e.target.value)}
           />
 
           <Box className="border zaui-border-gray-30 min-h-0 max-h-40 overflow-auto divide-y">
@@ -96,6 +106,10 @@ const QuestionMakerGroup = ({id}) => {
         }
       </Box>
 
+      <Text className="zaui-text-red-50 text-left italic my-2" bold>
+        *: Các trường bắt buộc
+      </Text>
+
       <Box className="flex gap-x-2 justify-center mt-2">
         <input type="submit" value="Lưu" className="zaui-bg-blue-80 text-white rounded-full py-2 px-8" onClick={handleSubmit} />
         <input type="button" value="Hủy" className="zaui-bg-blue-20 zaui-text-blue-80 rounded-full py-2 px-8" onClick={() => navTo("/teacher/question")} />
@@ -103,7 +117,15 @@ const QuestionMakerGroup = ({id}) => {
     </form>
   )
 
+  async function fetchExistingData(id) {
+    const groupResponse = await getGroupQuestionById(id);
+    const groupData = await groupResponse.data;
+    setQuestion(groupData);
+    setSelectQuestion(groupData.questions);
+  }
+
   function handleSubmit() {
+    question.questions = [];
     selectQuestion.forEach(q => question.questions.push(q.id!));
     id === undefined ? insertGroupQuestion(question) : updateGroupQuestion(question, id);
   }

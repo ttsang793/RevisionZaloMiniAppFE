@@ -1,6 +1,16 @@
 import axios from "axios";
 import { MultipleChoiceQuestion } from "./question";
 
+type MultipleChoiceError = {
+  correctAnswer?: string,
+  wrongAnswer1?: string,
+  wrongAnswer2?: string,
+  wrongAnswer3?: string,
+  grade?: string,
+  difficulty?: string,
+  topic?: string
+}
+
 function getMultipleChoiceQuestionById(id: number) {
   return axios.get(`/api/question/${id}`);
 }
@@ -25,4 +35,4 @@ function updateMultipleChoiceQuestion(mcq: MultipleChoiceQuestion, id: number) {
   })
 }
 
-export { getMultipleChoiceQuestionById, insertMultipleChoiceQuestion, updateMultipleChoiceQuestion }
+export { MultipleChoiceError, getMultipleChoiceQuestionById, insertMultipleChoiceQuestion, updateMultipleChoiceQuestion }

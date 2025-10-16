@@ -1,85 +1,98 @@
-import { useState } from "react";
-import { Box, Sheet, Text, useNavigate } from "zmp-ui";
-import { ChevronDown, ChevronUp, Eye, PlusLg } from "react-bootstrap-icons";
+import { useState, useEffect } from "react";
+import { Box } from "zmp-ui";
+import { ChevronDown, ChevronUp, XLg } from "react-bootstrap-icons";
+import { Question } from "@/models/question";
+import SelectQuestion from "../../select-question";
+import { getQuestionsFilterByTeacher } from "@/models/question";
 
-const ExamGroupQuestion = () => {
-  const [showDetail, setShowDetail] = useState(false);
-  const [openAction, setOpenAction] = useState(false);
+interface ExamGroupQuestionProps {
+  numQuestion: number;
+  data: { point: number; id: number[]; type: string };
+  updateQuestion: (updated: any) => void;
+  deleteQuestion: (i: number) => void;
+}
+
+const ExamGroupQuestion = ({
+  numQuestion,
+  data,
+  updateQuestion,
+  deleteQuestion
+}: ExamGroupQuestionProps) => {
+  const [showDetail, setShowDetail] = useState(true);
+  const [availableQuestions, setAvailableQuestions] = useState<Question[]>([]);
+
+  useEffect(() => {
+    getQuestionsFilterByTeacher("", data.type).then(res => setAvailableQuestions(res.data));
+  }, []);
+
+  function handlePointChange(value: number) {
+    updateQuestion({ ...data, point: value });
+  }
+
+  function toggleSelectQuestion(q: Question) {
+    const exists = data.id.includes(q.id!);
+    const newIds = exists ?
+      data.id.filter(id => id !== q.id) :
+      (((data.type === "group" || data.type === "true-false-thpt") && data.id.length === 1) ?
+        data.id : [...data.id, q.id]);
+
+    updateQuestion({ ...data, id: newIds });
+  }
 
   return (
     <Box className={showDetail ? "border-b zaui-border-blue-80" : ""}>
-      <Box
-        className="zaui-bg-blue-20 zaui-text-blue-80 border-b zaui-border-blue-80 px-4 py-2 w-full flex items-center gap-x-1"
-      >
-        <p className="flex-1 text-left font-bold">Câu 1.</p>
-        
+      <Box className="zaui-bg-blue-20 zaui-text-blue-80 border-b zaui-border-blue-80 px-4 py-2 w-full flex items-center gap-x-1">
+        <p className="flex-1 text-left font-bold">Câu {numQuestion + 1}.</p>
+
         <input
-          className="px-2 bg-white w-12 me-1"
+          className="px-2 bg-white w-16 me-1 py-1 rounded-lg"
+          type="number"
+          step="0.05"
+          min={0} max={10}
+          value={data.point}
+          onChange={e => handlePointChange(parseFloat(e.target.value) || 0)}
           placeholder="điểm"
         />
 
         <button onClick={() => setShowDetail(!showDetail)}>
-        {
-          showDetail ? <ChevronUp size={20} /> : <ChevronDown size={20} />
-        }
+          {showDetail ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
         </button>
-        
-        <button onClick={() => setOpenAction(true)}>
-          <PlusLg size={20} />
+
+        <button onClick={() => deleteQuestion(numQuestion)}>
+          <XLg size={20} />
         </button>
-        
       </Box>
 
-      <Box className={showDetail ? "flex-1 p-2 gap-y-4" : "hidden"}>
-        <ExamQuestion />
-        <ExamQuestion />
-        <ExamQuestion />
-      </Box>
+      {showDetail && (
+        <Box className="flex-1 p-2 gap-y-4">
+          <Box className="border zaui-border-gray-30 min-h-0 max-h-40 overflow-auto divide-y">
+            {availableQuestions.map((q, i) => (
+              <SelectQuestion
+                key={i}
+                question={q}
+                filter
+                handleQuestion={() => toggleSelectQuestion(q)}
+              />
+            ))}
+          </Box>
 
-      <AddQuestionAction visible={openAction} setVisible={setOpenAction} />
-    </Box>
-  )
-}
-
-const ExamQuestion = () => {  
-  const navTo = useNavigate();
-
-  return (
-    <Box className="border-b zaui-border-gray-60 last:border-0 pb-2 mb-2 last:p-0 last:m-0">
-      <Box className="flex place-items-start">
-        <Box className="inline-block flex-1">
-          <Text bold>
-            Hàm số y=2x+3 giao với trục Ox tại:
-          </Text>
-          <Text size="small">Trắc nghiệm 4 đáp án <i>(Toán 7)</i></Text>
+          {data.id.length > 0 && (
+            <Box className="mt-2 border-t pt-2">
+              {availableQuestions
+                .filter(q => data.id.includes(q.id!))
+                .map((q, i) => (
+                  <SelectQuestion
+                    key={`selected-${i}`}
+                    question={q}
+                    handleQuestion={() => toggleSelectQuestion(q)}
+                  />
+                ))}
+            </Box>
+          )}
         </Box>
-        
-        <button>
-          <Eye size={20} />
-        </button>
-      </Box>
+      )}
     </Box>
-  )
-}
+  );
+};
 
-const AddQuestionAction = ({visible, setVisible}) => {
-  return (
-    <Sheet
-      title="Chọn dạng câu hỏi"
-      visible={visible}
-      onClose={() => setVisible(false)}
-      className="zaui-text-blue-90"
-    >
-      <ul className="divide-y divide-zinc-300 text-black cursor-pointer">
-        <li className="p-4" onClick={() => handleSelect()}>Thêm câu hỏi mới</li>
-        <li className="p-4" onClick={() => handleSelect()}>Thêm nhóm câu hỏi</li>
-      </ul>            
-    </Sheet>
-  )
-
-  function handleSelect() {
-    setVisible(false);
-  }
-}
-
-export { ExamGroupQuestion }
+export { ExamGroupQuestion };

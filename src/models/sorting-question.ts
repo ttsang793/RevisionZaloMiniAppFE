@@ -1,6 +1,13 @@
 import axios from "axios";
 import { SortingQuestion } from "./question";
 
+type SortingError = {
+  answer?: string,
+  grade?: string,
+  difficulty?: string,
+  topic?: string
+}
+
 function getSortingQuestionById(id: number) {
   return axios.get(`/api/question/${id}`);
 }
@@ -25,4 +32,4 @@ function updateSortingQuestion(sq: SortingQuestion, id: number) {
   })
 }
 
-export { getSortingQuestionById, insertSortingQuestion, updateSortingQuestion }
+export { SortingError, getSortingQuestionById, insertSortingQuestion, updateSortingQuestion }

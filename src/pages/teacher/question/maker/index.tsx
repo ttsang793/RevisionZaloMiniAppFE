@@ -8,19 +8,18 @@ import { QuestionMakerConstructedResponse as ConstructedResponse } from "@/compo
 import { QuestionMakerSorting as Sorting } from "@/components/teacher/question/maker/sorting";
 import { QuestionMakerGroup as Group } from "@/components/teacher/question/maker/group";
 import { QuestionMakerTrueFalseTHPT as TrueFalseTHPT } from "@/components/teacher/question/maker/true-false-thpt";
-
-const questionType = ["multiple-choice", "true-false", "short-answer", "fill-in-the-blank", "constructed-response", "sorting", "group", "true-false-thpt"]
+import { questionType } from "@/models/question";
 
 function renderQuestionMaker(type, id) {
   switch (type) {
-    case questionType[0]: return <MultipleChoice id={id} />;
-    case questionType[1]: return <TrueFalse id={id} />;
-    case questionType[2]: return <ShortAnswer id={id} />;
-    case questionType[3]: return <FillInTheBlank id={id} />;
-    case questionType[4]: return <ConstructedResponse id={id} />;
-    case questionType[5]: return <Sorting id={id} />;
-    case questionType[6]: return <Group id={id} />;
-    case questionType[7]: return <TrueFalseTHPT id={id} />;
+    case questionType[0].type: return <MultipleChoice id={id} />;
+    case questionType[1].type: return <TrueFalse id={id} />;
+    case questionType[2].type: return <ShortAnswer id={id} />;
+    case questionType[3].type: return <FillInTheBlank id={id} />;
+    case questionType[4].type: return <ConstructedResponse id={id} />;
+    case questionType[5].type: return <Sorting id={id} />;
+    case questionType[6].type: return <Group id={id} />;
+    case questionType[7].type: return <TrueFalseTHPT id={id} />;
     default: return <>Hello World</>;
   }
 }

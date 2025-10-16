@@ -5,13 +5,14 @@ import { useState, useEffect } from "react";
 import { Topic } from "@/models/topic";
 
 import { TrueFalseQuestion } from "@/models/question";
-import { getTrueFalseQuestionById, insertTrueFalseQuestion, updateTrueFalseQuestion } from "@/models/true-false-question";
+import { getTrueFalseQuestionById, insertTrueFalseQuestion, TrueFalseError, updateTrueFalseQuestion } from "@/models/true-false-question";
 import "./radio-checkbox.css"
 
 const QuestionMakerTrueFalse = ({id}) => {
   const { TextArea } = Input;
   const [topicList, setTopicList] = useState([]);
   const [question, setQuestion] = useState<TrueFalseQuestion>(new TrueFalseQuestion());
+  const [error, setError] = useState<TrueFalseError>({});
   const navTo = useNavigate();
 
   useEffect(() => {
@@ -22,8 +23,7 @@ const QuestionMakerTrueFalse = ({id}) => {
   return (
     <form onSubmit={e => e.preventDefault()} noValidate>
       <Input
-        label={<Text>Tiêu đề câu hỏi <span className="required">*</span></Text>}
-        placeholder="Tiêu đề câu hỏi" required value={question?.title}
+        label={<Text>Tiêu đề câu hỏi</Text>} placeholder="Tiêu đề câu hỏi" value={question?.title}
         onChange={e => setQuestion({...question, title: e.target.value})}
       />
 
@@ -51,7 +51,11 @@ const QuestionMakerTrueFalse = ({id}) => {
       <Select
         label={<Text className="mt-2">Lớp <span className="required">*</span></Text>}
         value={question?.grade} closeOnSelect
-        onChange={(e: number) => setQuestion({...question, grade: e})}
+        onChange={(e: number) => {
+          setQuestion({...question, grade: e});
+          setError({...error, grade: ""})
+        }}
+        errorText={error.grade} status={!error.grade ? "" : "error"}
       >
         <Select.Option value={-1} title="Lớp" disabled />
         <Select.Option value={6} title="Lớp 6" />
@@ -63,15 +67,16 @@ const QuestionMakerTrueFalse = ({id}) => {
         <Select.Option value={12} title="Lớp 12" />
       </Select>
 
-      <Input
-        label={<Text className="mt-2">Dạng câu hỏi</Text>}
-        value="Trắc nghiệm Đúng – Sai" readOnly
-      />
+      <Input label={<Text className="mt-2">Dạng câu hỏi</Text>} value="Trắc nghiệm Đúng – Sai" disabled />
 
       <Select
         label={<Text className="mt-2">Độ khó <span className="required">*</span></Text>}
         closeOnSelect value={question.difficulty}
-        onChange={(e: number) => setQuestion({...question, difficulty: e})}
+        onChange={(e: number) => {
+          setQuestion({...question, difficulty: e});
+          setError({...error, difficulty: ""});
+        }}
+        errorText={error.difficulty} status={!error.difficulty ? "" : "error"}
       >
         <Select.Option value={-1} title="Độ khó" disabled />
         <Select.Option value={1} title="Nhận biết" />
@@ -83,7 +88,11 @@ const QuestionMakerTrueFalse = ({id}) => {
       <Select
         label={<Text className="mt-2">Chủ đề <span className="required">*</span></Text>}
         closeOnSelect value={question.topicId}
-        onChange={(e: string) => setQuestion({...question, topicId: e})}
+        onChange={(e: string) => {
+          setQuestion({...question, topicId: e});
+          setError({...error, topic: ""});
+        }}
+        errorText={error.topic} status={!error.topic ? "" : "error"}
       >
         <Select.Option value="-1" title="Chủ đề" disabled />
         {
@@ -99,7 +108,7 @@ const QuestionMakerTrueFalse = ({id}) => {
         onChange={e => setQuestion({...question, explanation: e.target.value})}
       />
 
-      <Text className="required text-left italic mb-2" bold>
+      <Text className="required text-left italic my-2" bold>
         *: Các trường bắt buộc
       </Text>
 
@@ -110,9 +119,18 @@ const QuestionMakerTrueFalse = ({id}) => {
     </form>
   )
 
-  function handleSubmit() {
-    question.type = 'true-false';
-    (id === undefined) ? insertTrueFalseQuestion(question) : updateTrueFalseQuestion(question, id);
+  function handleSubmit(): void {
+    const newError: TrueFalseError = {};
+    if (question.grade === -1) newError.grade = "Vui lòng chọn lớp!";
+    if (question.difficulty === -1) newError.difficulty = "Vui lòng chọn độ khó!";
+    if (question.topicId === "-1") newError.topic = "Vui lòng chọn chủ đề!";
+
+    setError(newError);
+
+    if (Object.keys(newError).length === 0) {
+      question.type = 'true-false';
+      (id === undefined) ? insertTrueFalseQuestion(question) : updateTrueFalseQuestion(question, id);
+    }
   }
 }
 
