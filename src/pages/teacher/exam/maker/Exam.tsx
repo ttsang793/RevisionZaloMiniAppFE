@@ -4,7 +4,7 @@ import { ChevronUp } from "react-bootstrap-icons";
 import AppHeader from "@/components/header";
 import { ExamPart } from "@/components/teacher/exam/maker/exam-part";
 import { backToTop } from "@/script/util";
-import { ExamQuestion, GetExamQuestion, UpdateExam } from "@/models/exam-question";
+import { ExamQuestion, getExamQuestion, updateExam } from "@/models/exam-question";
 
 export default function ExamQuestions() {
   const { id } = useParams();
@@ -42,8 +42,7 @@ export default function ExamQuestions() {
 
   useEffect(() => {
     if (loading) {
-      GetExamQuestion(Number(id)).then(response => {
-        console.log(response.data)
+      getExamQuestion(Number(id)).then(response => {
         const partTitles: any[] = [];
         response.data.forEach((d, i) => {
           const questionTypes: any[] = [];
@@ -69,7 +68,7 @@ export default function ExamQuestions() {
             type="submit"
             value="Lưu"
             className="zaui-bg-blue-80 text-white rounded-full py-2 px-6"
-            onClick={() => UpdateExam(examQuestions, examQuestionList)}
+            onClick={() => updateExam(examQuestions, examQuestionList)}
           />
           <input
             type="button"

@@ -1,11 +1,15 @@
 import axios from "axios";
-import { Question } from "./question";
+import { Question, } from "./question";
 
 class ExamQuestionGet {
-  examId?: number;
+  examId: number = -1;
   partTitles: string[] = [];
   questionTypes: string[][] = [];
   questions: Question[] = [];
+
+  constructor(id: number) {
+    this.examId = id;
+  }
 }
 
 class ExamQuestion {
@@ -26,13 +30,16 @@ class ExamQuestionItem {
   point: number = -1;
 }
 
-function GetExamQuestion(id: number) {
+function getExamQuestion(id: number) {
   return axios.get(`/api/exam/question/${id}`);
 }
 
-function UpdateExam(exam: ExamQuestion, list: any[][]) {
-  console.log(list);
-  /*exam.examQuestions = [];
+function getExamQuestionWithQuestions(id: number) {
+  return axios.get(`/api/exam/question/${id}/detail`);
+}
+
+function updateExam(exam: ExamQuestion, list: any[][]) {
+  exam.examQuestions = [];
   exam.questionTypes = [];
 
   for (let i = 0; i < list.length; i++) {
@@ -51,7 +58,7 @@ function UpdateExam(exam: ExamQuestion, list: any[][]) {
     })
     .catch(err => {
       console.error(err);
-    })*/
+    })
 }
 
-export { ExamQuestion, GetExamQuestion, UpdateExam }
+export { ExamQuestion, getExamQuestion, getExamQuestionWithQuestions, updateExam }
