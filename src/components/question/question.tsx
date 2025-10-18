@@ -1,6 +1,6 @@
 import { Box, Input, Radio, Select, Text } from "zmp-ui";
 import "./question.css"
-import { useRef, useState } from "react";
+import { useState, useEffect } from "react";
 
 const TracNghiem = ({i, question, answer, updateAnswer}) => {
   return (
@@ -10,16 +10,19 @@ const TracNghiem = ({i, question, answer, updateAnswer}) => {
       </Text>
 
       <Box>
-        <Radio.Group value={answer}>
-          <Radio label={question.correctAnswer} value={question.correctAnswer} onChange={e => updateAnswer(e.target.value)} />
-          <Radio label={question.wrongAnswer1} value={question.wrongAnswer1} onChange={e => updateAnswer(e.target.value)} />
-          <Radio label={question.wrongAnswer2} value={question.wrongAnswer2} onChange={e => updateAnswer(e.target.value)} />
-          <Radio label={question.wrongAnswer3} value={question.wrongAnswer3} onChange={e => updateAnswer(e.target.value)} />
+        <Radio.Group
+          value={answer || ""}
+          onChange={updateAnswer}
+        >
+          <Radio label={question.correctAnswer} value={question.correctAnswer} />
+          <Radio label={question.wrongAnswer1} value={question.wrongAnswer1} />
+          <Radio label={question.wrongAnswer2} value={question.wrongAnswer2} />
+          <Radio label={question.wrongAnswer3} value={question.wrongAnswer3} />
         </Radio.Group>
       </Box>
     </Box>
   );
-}
+};
 
 const DungSai = ({i, question, answer, updateAnswer}) => {
   return (
@@ -176,7 +179,7 @@ const DungSaiTHPT = ({i, question, answer, updateAnswer}) => {
       {
         question.statements.map((s, j) => (
           <Box className="flex items-center" key={`stm_${i}_${j}`}>
-            <Text className="flex-1">${s}</Text>
+            <Text className="flex-1">{s}</Text>
             <Radio.Group className="flex" value={cell[j]}>
               <Radio value={true} checked={cell[j] == true} onChange={e => handleCell(j, e.target.value)} />
               <Radio value={false} checked={cell[j] == false} onChange={e => handleCell(j, e.target.value)} />

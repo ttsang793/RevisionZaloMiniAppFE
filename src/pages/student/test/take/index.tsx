@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { ExamQuestion, getExamQuestionWithQuestions } from "@/models/exam-question";
 import { ExamPart } from "@/components/test/exam-part";
 import { Exam, getExamById } from "@/models/exam";
+import { insertAttempt } from "@/models/exam-attempt";
 
 export default function TakeTestPage() {
   const { id } = useParams();
@@ -114,7 +115,7 @@ export default function TakeTestPage() {
 
   function turnIn() {
     setEarlySubmitVisible(false);
-    console.log(examAnswerList);
+    insertAttempt(examInfo.id!, examQuestionList, examAnswerList);
     //navTo("/");
   }
 }

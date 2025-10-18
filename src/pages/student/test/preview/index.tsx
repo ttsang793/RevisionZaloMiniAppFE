@@ -93,7 +93,7 @@ export default function TestPreviewPage() {
           }
         ]}
 
-        description={`Bạn sẽ cần dành ra 90 phút cho bài thi này.`}
+        description={`Bạn sẽ cần dành ra ${examInfo.timeLimit / 60} phút cho bài thi này.`}
         title="Bạn đã sẵn sàng làm bài?"
         visible={takeVisible}
       />
