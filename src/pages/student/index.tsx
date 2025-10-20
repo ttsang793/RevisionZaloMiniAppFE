@@ -1,6 +1,6 @@
 import StudentHeader from "@/components/header";
 import { Box, Page, Text } from "zmp-ui";
-import ExamHolder from "@/components/exam-holder";
+import ExamHolder from "@/components/student/exam/exam-holder";
 import { useState, useEffect } from "react";
 import { Exam, getAllExams } from "@/models/exam";
 

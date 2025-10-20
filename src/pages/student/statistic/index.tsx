@@ -1,5 +1,5 @@
 import axios from "axios";
-import AchievementRow from "@/components/statistic/achievement";
+import AchievementRow from "@/components/student/statistic/achievement";
 import AppHeader from "@/components/header";
 import { Tabs, Box, Text, Page } from "zmp-ui";
 import { useState, useEffect } from "react";

@@ -1,7 +1,7 @@
-import TestHolder from "@/components/exam-holder";
+import ExamHolder from "@/components/student/exam/exam-holder";
 import { Page } from "zmp-ui";
 import AppHeader from "@/components/header";
-import StudentFooter from "@/components/student-footer";
+import StudentFooter from "@/components/student/footer";
 
 export default function FavoritePage() {
   return (

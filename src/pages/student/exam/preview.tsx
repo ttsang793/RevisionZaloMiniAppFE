@@ -1,5 +1,5 @@
 import { Calendar3, PersonFill, ClockFill, TrophyFill, ChatTextFill, Heart } from "react-bootstrap-icons"
-import CommentBlock from "@/components/test/comment";
+import CommentBlock from "@/components/student/exam/comment";
 import { useNavigate, useParams } from "react-router-dom";
 import { Avatar, Text, Page, Modal } from "zmp-ui";
 import { useState, useEffect } from "react";
@@ -52,7 +52,7 @@ export default function TestPreviewPage() {
           <button onClick={() => setTakeVisible(true)} className="zaui-bg-orange-60 text-white rounded-full py-1 px-4 text-sm me-1">
             Làm bài
           </button>
-          <button onClick={() => navTo(`/student/test/practice/${id}`)} className="zaui-bg-green-70 text-white rounded-full py-1 px-4 text-sm">
+          <button onClick={() => navTo(`/student/exam/practice/${id}`)} className="zaui-bg-green-70 text-white rounded-full py-1 px-4 text-sm">
             Luyện tập
           </button>
         </div>
@@ -102,6 +102,6 @@ export default function TestPreviewPage() {
 
   function handleTake() {
     setTakeVisible(false);
-    navTo(`/student/test/take/${id}`);
+    navTo(`/student/exam/take/${id}`);
   }
 }

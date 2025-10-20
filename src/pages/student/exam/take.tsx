@@ -1,16 +1,19 @@
 import { Box, Page, Text, Modal, useParams, useNavigate } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { ExamQuestion, getExamQuestionWithQuestions } from "@/models/exam-question";
-import { ExamPart } from "@/components/test/exam-part";
+import { ExamPart } from "@/components/student/exam/exam-part";
 import { Exam, getExamById } from "@/models/exam";
-import { insertAttempt } from "@/models/exam-attempt";
+import { ExamAttempt, insertAttempt } from "@/models/exam-attempt";
+import { fisherYatesShuffle } from "@/script/util";
+import { Countdown } from "@/components/student/exam/countdown";
 
-export default function TakeTestPage() {
+export default function TakeExamPage({practice}: {practice: boolean}) {
   const { id } = useParams();
   const navTo = useNavigate();
   const [allowEarlySubmit, setAllowEarlySubmit] = useState(false);
   const [earlySubmitVisible, setEarlySubmitVisible] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [examAttempt, setExamAttempt] = useState<ExamAttempt>(new ExamAttempt(Number(id), practice));
   const [examInfo, setExamInfo] = useState<Exam>(new Exam());
   const [examQuestions, setExamQuestions] = useState<ExamQuestion>(new ExamQuestion(Number(id)));
   const [examQuestionList, setExamQuestionList] = useState<any[][]>([]);
@@ -27,22 +30,37 @@ export default function TakeTestPage() {
     if (loading) {
       getExamById(Number(id)).then(response => setExamInfo(response.data));
       getExamQuestionWithQuestions(Number(id)).then(response => {
+        const shufflePart = fisherYatesShuffle(response.data);
+        
+        const partIds: number[] = [];
         const partTitles: any[] = [];
         const answerList: any[] = [];
-        response.data.forEach((d, i) => {
+        shufflePart.forEach((d, i) => {
+          const shuffleQuestion = fisherYatesShuffle(shufflePart[i].examQuestions);
+          console.log(shuffleQuestion);
           const questionTypes: any[] = [];
           const questionAnswer: any[] = [];
+          const questionIndex: number[] = [];
+          partIds.push(d.id);
           partTitles.push(d.partTitle);
-          d.questionTypes.forEach((_, j) => {
-            questionTypes.push({question: response.data[i].examQuestions.filter(q => q.orderIndex === j + 1)[0]});
-            questionAnswer.push("")
-          })
+
+          shuffleQuestion.forEach(sq => {
+            if (!questionIndex.includes(sq.orderIndex)) {
+              if (sq.question.type === "multiple-choice")
+                sq.question.answerKeys = fisherYatesShuffle([sq.question.correctAnswer, sq.question.wrongAnswer1, sq.question.wrongAnswer2, sq.question.wrongAnswer3]);
+              questionTypes.push({question: sq});
+              questionAnswer.push("");
+              questionIndex.push(sq.orderIndex);
+            }
+          });
           setExamQuestionList(prev => [...prev, questionTypes]);
           answerList.push(questionAnswer);
         })
+
         setExamQuestions({...examQuestions, partTitles});
         setExamAnswerList(answerList);
         setLoading(false);
+        setExamAttempt({...examAttempt, startedAt: new Date(), partOrder: partIds});
       })
     }
   }, []);
@@ -57,24 +75,28 @@ export default function TakeTestPage() {
 
       <hr />
 
-      <Box className="mb-2">
-        <b>Phần:</b>
-        {
-          examQuestions.partTitles.map((e, i) =>
-            <button
-              className={`rounded-full size-6 ms-1 border ${currentPart === i ? "zaui-border-blue-70 zaui-bg-blue-70 zaui-text-blue-10" : "zaui-border-blue-70 zaui-bg-blue-10 zaui-text-blue-70"}`}
-              onClick={() => setCurrentPart(i)} key={e}
-            >
-              {i + 1}
-            </button>
-          )
-        }
+      <Box className="mb-2 flex justify-between align-center">
+        <Box>
+          <Text bold className="inline">Phần:</Text>
+          {
+            examQuestions.partTitles.map((e, i) =>
+              <button
+                className={`rounded-full size-6 ms-1 border ${currentPart === i ? "zaui-border-blue-70 zaui-bg-blue-70 zaui-text-blue-10" : "zaui-border-blue-70 zaui-bg-blue-10 zaui-text-blue-70"}`}
+                onClick={() => setCurrentPart(i)} key={e}
+              >
+                {i + 1}
+              </button>
+            )
+          }
+        </Box>
+
+        <Countdown timeLimit={examInfo.timeLimit} />
       </Box>
 
       {/* Danh sách câu hỏi của phần */}
       {        
         <ExamPart
-          i={currentPart}
+          i={currentPart} practice={practice}
           partTitle={examQuestions.partTitles[currentPart]}
           partQuestions={examQuestionList[currentPart]}
           answerList={examAnswerList[currentPart]}
@@ -115,7 +137,7 @@ export default function TakeTestPage() {
 
   function turnIn() {
     setEarlySubmitVisible(false);
-    insertAttempt(examInfo.id!, examQuestionList, examAnswerList);
+    insertAttempt(examAttempt, examQuestionList, examAnswerList);
     //navTo("/");
   }
 }

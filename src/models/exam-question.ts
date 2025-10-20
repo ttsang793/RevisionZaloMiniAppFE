@@ -14,6 +14,7 @@ class ExamQuestionGet {
 
 class ExamQuestion {
   examId: number = -1;
+  partIds?: number[];
   partTitles: string[] = [""];
   questionTypes: string[][] = [];
   examQuestions: ExamQuestionItem[] = [];

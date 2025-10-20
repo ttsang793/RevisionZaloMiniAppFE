@@ -17,7 +17,7 @@ const ExamListAction = ({exam, visible, setVisible}: {exam: Exam, visible: boole
             <li className="p-4" onClick={() => navTo(`question/${exam.displayType === "PDF" ? "pdf/" : ""}${exam.id}`)}>Chỉnh sửa danh sách câu hỏi</li>
             <li className="p-4" onClick={() => navTo("")}>Làm đề thi thử</li>
             <li className="p-4" onClick={() => {}}>Xuất bản đề thi</li>
-            <li className="p-4" onClick={() => navTo(`maker/${exam.displayType === "PDF" ? "pdf" : "normal"}/${exam.id}`)}>Cập nhật đề thi</li>
+            <li className="p-4" onClick={() => navTo(`maker/${exam.displayType === "PDF" ? "pdf/" : ""}${exam.id}`)}>Cập nhật đề thi</li>
             <li className="p-4" onClick={() => deleteExam(exam.id!)}>Xóa đề thi</li>
           </>
         ) : (

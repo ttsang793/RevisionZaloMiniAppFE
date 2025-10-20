@@ -5,16 +5,20 @@ class ExamAttempt {
   examId: number = -1;
   studentId: number = 1;
   score?: number;
-  duration: number = 1200;
+  startedAt?: Date;
+  partOrder: number[] = [];
+  isPractice: boolean = false;
   examAttemptAnswers: ExamAttemptAnswer[] = [];
 
-  constructor(examId: number) {
+  constructor(examId: number, isPractice: boolean) {
     this.examId = examId;
+    this.isPractice = isPractice;
   }
 }
 
 class ExamAttemptAnswer {
   examQuestionId: number = -1;
+  answerOrder?: string[];
   studentAnswer: string = "";
   answerType: "string" | "array" = "string";
   isCorrect: string = "";
@@ -53,9 +57,12 @@ function checkTrueFalseTHPT(question, answer): {numCorrect: number, point: numbe
   }
 }
 
-function insertAttempt(examId: number, questionList: any[][], answerList: any[][]) {
-  console.log(questionList);
-  const examAttempt = new ExamAttempt(examId);
+function getLatestAttempt(id: number) {
+  return axios.get(`/api/exam-attempt?studentId=1&examId=${id}`);
+}
+
+function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], answerList: any[][]) {
+  //console.log(questionList);
   const examAttemptAnswers: ExamAttemptAnswer[] = [];
   let score = 0;
 
@@ -74,6 +81,7 @@ function insertAttempt(examId: number, questionList: any[][], answerList: any[][
           if (result) {
             answer.isCorrect = result;
             score += currentQuestion.point;
+            answer.answerOrder = currentQuestion.question.answerKeys;
           }
           break;
         }
@@ -92,6 +100,10 @@ function insertAttempt(examId: number, questionList: any[][], answerList: any[][
             answer.isCorrect = result;
             score += currentQuestion.point;
           }
+          break;
+        }
+        case "fill-in-the-blank": {
+          answer.isCorrect = "";
           break;
         }
         case "true-false-thpt": {
@@ -114,6 +126,7 @@ function insertAttempt(examId: number, questionList: any[][], answerList: any[][
 
   examAttempt.score = score;
   examAttempt.examAttemptAnswers = examAttemptAnswers;
+  //console.log(examAttempt);
   postAttempt(examAttempt);
 }
 
@@ -127,4 +140,4 @@ function postAttempt(examAttempt: ExamAttempt) {
   })
 }
 
-export { ExamAttempt, insertAttempt };
+export { ExamAttempt, getLatestAttempt, insertAttempt };

@@ -2,7 +2,7 @@ import { Heart } from "react-bootstrap-icons";
 import { Box, useNavigate } from "zmp-ui";
 import { Exam } from "@/models/exam";
 
-const ExamHolder = ({ exam, latest = "28/09/2025" }: { exam: Exam, latest: string }) => {
+const ExamHolder = ({ exam, latest = "" }: { exam: Exam, latest: string }) => {
   const navTo = useNavigate();
   
   return (
@@ -36,14 +36,14 @@ const ExamHolder = ({ exam, latest = "28/09/2025" }: { exam: Exam, latest: strin
                 Xem kết quả</button>
               <button 
                 className="zaui-bg-blue-80 text-white rounded-full py-1 px-2 text-sm"
-                onClick={() => navTo(`/student/test/preview/${exam.id}`)}
+                onClick={() => navTo(`/student/exam/preview/${exam.id}`)}
               >
                 Làm lại bài</button>
             </>
           ) : (
             <button 
               className="zaui-bg-blue-80 text-white rounded-full py-1 px-2 text-sm"
-              onClick={() => navTo(`/student/test/preview/${exam.id}`)}
+              onClick={() => navTo(`/student/exam/preview/${exam.id}`)}
             >
               Làm bài</button>
           )

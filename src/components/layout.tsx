@@ -11,15 +11,15 @@ import ChooseRolePage from "@/pages";
 import HomePage from "@/pages/student/index";
 import FavoritePage from "@/pages/student/favorite";
 import StatisticPage from "@/pages/student/statistic";
-import StudentFooter from "./student-footer";
+import StudentFooter from "./student/footer";
 import HistoryPage from "@/pages/student/history";
 import StudentSettingPage from "@/pages/student/setting";
-import TestPreviewPage from "@/pages/student/test/preview";
+import ExamPreviewPage from "@/pages/student/exam/preview";
 import TeacherDetailPage from "@/pages/student/teacher-detail";
-import TakeTestPage from "@/pages/student/test/take";
+import TakeExamPage from "@/pages/student/exam/take";
 
 // Teacher
-import TeacherFooter from "./teacher-footer";
+import TeacherFooter from "./teacher/footer";
 import QuestionManagement from "@/pages/teacher/question";
 import QuestionMaker from "@/pages/teacher/question/maker";
 import QuestionImportWord from "@/pages/teacher/question/import-word";
@@ -36,6 +36,7 @@ import AdminLogin from "@/pages/admin/login";
 import SubjectManagement from "@/pages/admin/subject";
 import TopicManagement from "@/pages/admin/topic";
 import { AdminFooter, AdminHeader } from "./admin/head-foot";
+import ExamResultPage from "@/pages/student/exam/result";
 
 // Inline layout wrappers
 const TeacherLayout = () => (
@@ -113,10 +114,11 @@ const Layout = () => {
             </Route>
 
             {/* Test routes */}
-            <Route path="/student/test" element={<NoFooter />}>
-              <Route path="preview/:id" element={<TestPreviewPage />} />
-              <Route path="take/:id" element={<TakeTestPage />} />
-              <Route path="practice/:id" element={<TakeTestPage />} />              
+            <Route path="/student/exam" element={<NoFooter />}>
+              <Route path="preview/:id" element={<ExamPreviewPage />} />
+              <Route path="take/:id" element={<TakeExamPage practice={false} />} />
+              <Route path="practice/:id" element={<TakeExamPage practice />} />
+              <Route path="result/:id" element={<ExamResultPage />} />
             </Route>
           </Routes>
         </ZMPRouter>

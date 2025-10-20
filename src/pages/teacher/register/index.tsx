@@ -17,7 +17,7 @@ export default function TeacherRegisterPage() {
   return (
     <Page className="flex flex-col justify-center text-center zaui-bg-blue-20 p-5">
       <div className="section-container flex flex-col gap-4">
-        <Text.Title size="xLarge border-b border-b-black pb-3">Chào mừng thầy/cô đến với hệ thống MáyÔnThi!</Text.Title>
+        <Text.Title size="xLarge" className="border-b border-b-black pb-3">Chào mừng thầy/cô đến với hệ thống MáyÔnThi!</Text.Title>
         <Text.Title className="italic font-normal">
           Trước khi đăng nhập, thầy/cô hãy điền các thông tin sau:
         </Text.Title>
