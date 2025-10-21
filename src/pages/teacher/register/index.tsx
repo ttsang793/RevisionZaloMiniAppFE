@@ -1,12 +1,16 @@
 import { Page, Button, Text, Input, Select } from "zmp-ui";
-import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getSubjects, Subject } from "@/models/subject";
+import { getUserInfo } from "zmp-sdk";
+
+import { Teacher, addTeacher } from "@/models/teacher";
 
 export default function TeacherRegisterPage() {
-  const navTo = useNavigate();
   const { TextArea } = Input;
+  const [teacher, setTeacher] = useState<Teacher>(new Teacher());
+  const [level, setLevel] = useState("-1");
+  const navTo = useNavigate();
 
   const [subjectList, setSubjectList] = useState([]);
 
@@ -24,14 +28,15 @@ export default function TeacherRegisterPage() {
 
         <form action="">
           <Input
-            placeholder="Họ và tên*"
-            label={<Text>Họ và tên <span className="zaui-text-red-50">*</span></Text>}
-            required
+            placeholder="Tên hiển thị"
+            label={<Text>Tên hiển thị</Text>}
+            onChange={e => setTeacher({...teacher, name: e.target.value})}
+            helperText={<Text className="text-left">Nếu để trống, tên hiển thị là tên Zalo của thầy/cô.</Text>}
           />
+
           <Select
-            label={<Text className="mt-1">Khối <span className="zaui-text-red-50">*</span></Text>}
-            closeOnSelect
-            defaultValue="-1"
+            label={<Text className="mt-3">Khối <span className="required">*</span></Text>}
+            closeOnSelect value={level} onChange={(e: string) => setLevel(e)}
           >
             <Select.Option value="-1" title="Chọn khối" disabled />
             <Select.Option value="THCS" title="THCS" />
@@ -39,9 +44,8 @@ export default function TeacherRegisterPage() {
           </Select>
 
           <Select
-            label={<Text className="mt-1">Môn học <span className="zaui-text-red-50">*</span></Text>}
-            closeOnSelect
-            defaultValue="-1"
+            label={<Text className="mt-2">Môn học <span className="required">*</span></Text>}
+            closeOnSelect value={teacher.subjectId} onChange={(e: string) => setTeacher({...teacher, subjectId: e})}
           >
             <Select.Option value="-1" title="Chọn môn học" disabled />
             {
@@ -50,19 +54,35 @@ export default function TeacherRegisterPage() {
           </Select>
 
           <TextArea
-            placeholder="Giới thiệu"
-            label="Giới thiệu"
-          />
+            size="large"
+            placeholder="Giới thiệu" value={teacher.introduction}
+            onChange={e => setTeacher({...teacher, introduction: e.target.value})}
+            label={<Text className="mt-2">Giới thiệu</Text>}
+            />
 
-          <Text className="zaui-text-red-50 text-left italic mb-2" bold>
+          <Text className="required text-left italic mb-2" bold>
             *: Các trường bắt buộc
           </Text>
 
-          <Button fullWidth onClick={() => navTo("/teacher")}>
+          <Button fullWidth onClick={handleSubmit}>
             <Text size="large">Đăng ký</Text>
           </Button>
         </form>
       </div>
     </Page>
   )
+
+  async function handleSubmit() {
+    const userResponse = await getUserInfo({ autoRequestPermission: false });
+    
+    teacher.zaloId = userResponse.userInfo.id;
+    teacher.name = (!teacher.name) ? userResponse.userInfo.name : teacher.name;
+    teacher.avatar = userResponse.userInfo.avatar;
+    teacher.grades = (level === "THCS") ? [6,7,8,9] : [10,11,12];
+
+    addTeacher(teacher).then(status => {
+      if (status === 201) navTo("/teacher");
+      else console.error(status);
+    }).catch(err => console.error(err));
+  }
 }

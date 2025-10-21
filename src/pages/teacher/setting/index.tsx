@@ -50,11 +50,11 @@ export default function TeacherSettingPage() {
           <form onSubmit={e => e.preventDefault()}>
             <Input
               placeholder="Họ và tên*" value={teacher.name}
-              label={<Text>Họ và tên <span className="zaui-text-red-50">*</span></Text>}
+              label={<Text>Họ và tên <span className="required">*</span></Text>}
               required onChange={e => setTeacher({...teacher, name: e.target.value})}
             />
             <Select
-              label={<Text className="mt-2">Khối <span className="zaui-text-red-50">*</span></Text>}
+              label={<Text className="mt-2">Khối <span className="required">*</span></Text>}
               closeOnSelect value={level} onChange={(e: string) => setLevel(e)}
             >
               <Select.Option value="-1" title="Chọn khối" disabled />
@@ -63,7 +63,7 @@ export default function TeacherSettingPage() {
             </Select>
 
             <Select
-              label={<Text className="mt-2">Môn học <span className="zaui-text-red-50">*</span></Text>}
+              label={<Text className="mt-2">Môn học <span className="required">*</span></Text>}
               closeOnSelect value={teacher.subjectId} onChange={(e: string) => setTeacher({...teacher, subjectId: e})}
             >
               <Select.Option value="-1" title="Chọn môn học" disabled />
@@ -78,7 +78,7 @@ export default function TeacherSettingPage() {
               label={<Text className="mt-2">Giới thiệu</Text>}
             />
 
-            <Text className="zaui-text-red-50 text-left italic mb-2" bold>
+            <Text className="required text-left italic mb-2" bold>
               *: Các trường bắt buộc
             </Text>
 
@@ -99,7 +99,6 @@ export default function TeacherSettingPage() {
   )
 
   function handleSubmit() {
-    teacher.id = 2;
     teacher.grades = (level === "THCS") ? [6,7,8,9] : [10,11,12];
     updateTeacher(teacher);
   }

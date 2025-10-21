@@ -15,15 +15,7 @@ const DungSaiTHPT = ({i, question, answer, practice, updateAnswer}) => {
   const { TextArea } = Input;
 
   const handleCorrect = (a: string, i: number) => {
-    //console.log(a);
-    const curAns = (a === "true");
-    
-    // let curAns;
-    // if (answer[i] === "true" && a === "true") curAns = true;
-    // else if (answer[i] === "false" && a === "false") curAns = false;
-    // else return;
-    //console.log(cur + "-" + i);
-    
+    const curAns = (a === "true");    
     if (checkCorrect) return showCorrect(question.answerKeys[i] === curAns);
     return <></>
   }
@@ -86,4 +78,36 @@ const DungSaiTHPT = ({i, question, answer, practice, updateAnswer}) => {
   )
 }
 
-export { DungSaiTHPT }
+const DungSaiTHPTResult = ({i, answer}) => {
+  const question = answer.question;
+  const studentAnswerArr = JSON.parse(answer.studentAnswer.replace(/'/g, '"'));
+  console.log(studentAnswerArr);
+
+  const handleCorrect = (a: string, i: number) => {
+    const curAns = (a === "true");    
+    return showCorrect(question.answerKeys[i] === curAns);
+  }
+
+  return (
+    <Box className="border border-gray-300 py-1 px-2">
+      <Text size="small" bold className="text-justify">
+        Câu {i + 1}. {question.title}
+      </Text>
+      {
+        question.statements.map((s, j) => (
+          <Box className="flex items-center" key={`stm_${i}_${j}`}>
+            <Text className="flex-1">{s}</Text>
+            <Radio.Group className="flex" value={studentAnswerArr[j]} disabled>
+              <Radio value="true" />
+              <Radio value="false" />
+            </Radio.Group>
+            
+            {handleCorrect(studentAnswerArr[j], j)}
+          </Box>
+        ))
+      }
+    </Box>
+  )
+}
+
+export { DungSaiTHPT, DungSaiTHPTResult }

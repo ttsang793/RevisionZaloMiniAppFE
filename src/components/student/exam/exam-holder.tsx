@@ -31,7 +31,7 @@ const ExamHolder = ({ exam, latest = "" }: { exam: Exam, latest: string }) => {
             <>
               <button 
                 className="zaui-bg-blue-80 text-white rounded-full py-1 px-2 text-sm"
-                onClick={() => {}}
+                onClick={() => navTo(`/student/exam/result/${exam.id}`)}
               >
                 Xem kết quả</button>
               <button 

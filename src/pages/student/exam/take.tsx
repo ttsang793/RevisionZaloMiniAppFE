@@ -37,7 +37,7 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
         const answerList: any[] = [];
         shufflePart.forEach((d, i) => {
           const shuffleQuestion = fisherYatesShuffle(shufflePart[i].examQuestions);
-          console.log(shuffleQuestion);
+          //console.log(shuffleQuestion);
           const questionTypes: any[] = [];
           const questionAnswer: any[] = [];
           const questionIndex: number[] = [];
@@ -94,7 +94,7 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
       </Box>
 
       {/* Danh sách câu hỏi của phần */}
-      {        
+      {
         <ExamPart
           i={currentPart} practice={practice}
           partTitle={examQuestions.partTitles[currentPart]}

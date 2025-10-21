@@ -28,7 +28,7 @@ function HomePage() {
       <StudentHeader />
       <Box className="flex gap-5 flex-wrap justify-center">
       {
-        loading ? <>Cho 1 chut</> : examList.map((exam: Exam) => <ExamHolder exam={exam} key={`exam-${exam.id}`} />)
+        loading ? <>Cho 1 chut</> : examList.map((exam: Exam) => <ExamHolder exam={exam} latest="21/10/2025" key={`exam-${exam.id}`} />)
       }
       </Box>
     </Page>

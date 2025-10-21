@@ -70,4 +70,33 @@ const TracNghiem = ({i, part, question, answer, practice, updateAnswer}) => {
   );
 };
 
-export { TracNghiem }
+const TracNghiemResult = ({i, part, answer}) => {
+  const question = answer.question;
+
+  const handleCorrect = (a: string) => {
+    if (answer.studentAnswer === a || a === question.correctAnswer) return showCorrect(a === question.correctAnswer);
+    return <></>
+  }
+
+  return (
+    <Box className="border border-gray-300 py-1 px-2">
+      <Text size="small" bold className="text-justify">
+        Câu {i + 1}. {question.title}
+      </Text>
+
+      <Box>
+        <Radio.Group value={answer.studentAnswer}>
+        {
+          answer.answerOrder.map((ans: string, j: number) =>
+            <Box className="flex items-center gap-x-1" key={`answer_${part}_${i}_${j}`}>
+              <Radio disabled label={ans} value={ans} /> {handleCorrect(ans)} 
+            </Box>
+          )
+        }
+        </Radio.Group>
+      </Box>
+    </Box>
+  )
+}
+
+export { TracNghiem, TracNghiemResult }

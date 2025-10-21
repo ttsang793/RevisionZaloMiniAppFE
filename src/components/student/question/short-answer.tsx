@@ -113,4 +113,41 @@ const TraLoiNgan = ({i, question, answer, practice, updateAnswer}) => {
   )
 }
 
-export { TraLoiNgan }
+const TraLoiNganResult = ({i, answer}) => {
+  const question = answer.question;
+  const studentAnswerArray = answer.studentAnswer.split("");
+
+  return (
+    <Box className="border border-gray-300 py-1 px-2">
+      <Text size="small" bold className="text-justify">
+        Câu {i + 1}. {question.title}
+      </Text>
+      <Box className="mt-1">
+        {[0, 1, 2, 3].map((j) => (
+          <input
+            className={`size-8 text-center border border-gray-400 rounded-lg me-2 font-bold zaui-text-${question.answerKey === answer.studentAnswer ? "green" : "red"}-70`}
+            value={studentAnswerArray[j]}
+            maxLength={1} key={j} readOnly
+          />
+        ))} { showCorrect(question.answerKey === answer.studentAnswer) }
+      </Box>
+
+      {
+        (question.answerKey !== answer.studentAnswer) ? (
+          <Box className="mt-2">
+            <>
+              {question.answerKey.split("").map((ak: string, i: number) => (
+                <input
+                  className="size-8 text-center font-bold border border-gray-400 rounded-lg me-2 zaui-text-green-70"
+                  value={ak} readOnly
+                />
+              ))} <CheckLg size={24} className="zaui-text-green-70 inline" />
+            </>
+          </Box>
+        ) : <></>
+      }
+    </Box>
+  )
+}
+
+export { TraLoiNgan, TraLoiNganResult }

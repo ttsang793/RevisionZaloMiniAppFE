@@ -32,7 +32,7 @@ import TeacherSettingPage from "@/pages/teacher/setting";
 import TeacherRegisterPage from "@/pages/teacher/register";
 
 // Admin
-import AdminLogin from "@/pages/admin/login";
+import AdminLoginPage from "@/pages/admin/login";
 import SubjectManagement from "@/pages/admin/subject";
 import TopicManagement from "@/pages/admin/topic";
 import { AdminFooter, AdminHeader } from "./admin/head-foot";
@@ -78,7 +78,7 @@ const Layout = () => {
               <Route index element={<Navigate to="/admin/subject" replace />} />
               <Route path="subject" element={<SubjectManagement />} />
               <Route path="topic" element={<TopicManagement />} />
-              <Route path="login" element={<AdminLogin />} />
+              <Route path="login" element={<AdminLoginPage />} />
             </Route>
 
             {/* Teacher routes */}

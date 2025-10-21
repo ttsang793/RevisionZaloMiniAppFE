@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { BoxArrowLeft, Gear } from "react-bootstrap-icons";
+import { useLocation } from 'react-router-dom';
 
 const AdminHeader = () => {
   const [isAccountHover, setIsAccountHover] = useState(false);
+  let pathname = useLocation().pathname;
+  if (pathname.endsWith("/")) pathname = pathname.substring(0, pathname.length);
 
-  return (
+  return (pathname === "/admin/login") ? <></> : (
     <header className="flex items-center bg-blue-200 fixed top-0 left-0 right-0 px-4">
       <div className="flex-1 flex">
         <input type="button" value="MayOnThi" />

@@ -1,9 +1,11 @@
+import { AdminLogin, vertifyAdmin } from "@/models/teacher";
 import { useState, FormEvent } from "react";
+import { useNavigate } from "zmp-ui";
 
-export default function AdminLogin() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<{ username?: string, password?: string }>();
+export default function AdminLoginPage() {
+  const [admin, setAdmin] = useState<AdminLogin>(new AdminLogin());
+  const [errors, setErrors] = useState<{ id?: string, password?: string }>();
+  const navTo = useNavigate();
 
   return (
     <div className="flex h-dvh justify-center items-center px-20 bg-blue-100">
@@ -16,22 +18,22 @@ export default function AdminLogin() {
 
         <div className="pb-4">
           <label
-            htmlFor="username"
+            htmlFor="id"
             className="block pb-1"
           >
             ID tài khoản:
           </label>
           <input
-            id="username"
-            value={username}
+            id="id"
+            value={admin.id}
             className="border border-zinc-300 py-2 px-4 rounded-md w-full focus:border-blue-800"
             placeholder="ID tài khoản"
             onChange={e => {
-              setUsername(e.target.value);
-              setErrors({...errors, username: ""})
+              setAdmin({...admin, id: e.target.value});
+              setErrors({...errors, id: ""})
             }}
           />
-          <p className="zaui-text-red-60">{errors?.username}</p>
+          <p className="zaui-text-red-60">{errors?.id}</p>
         </div>
 
         <div>
@@ -44,11 +46,11 @@ export default function AdminLogin() {
           <input
             type="password"
             id="password"
-            value={password}
+            value={admin.password}
             className="border border-zinc-300 py-2 px-4 rounded-md w-full focus:border-blue-800"
             placeholder="Mật khẩu"
             onChange={e => {
-              setPassword(e.target.value);
+              setAdmin({...admin, password: e.target.value});
               setErrors({...errors, password: ""})
             }}
           />
@@ -66,21 +68,27 @@ export default function AdminLogin() {
     </div>
   )
 
-  function Login(e: FormEvent<HTMLFormElement>) {
+  async function Login(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-       
-    const formData = new FormData(e.currentTarget);    
-    const username = formData.get("username") as string;
-    const password = formData.get("password") as string;
-    const newError: { username?: string, password?: string } = {};
+    const newError: { id?: string, password?: string } = {};
     
-    if (username === "") newError.username = "Vui lòng nhập ID tài khoản!";
-    if (password === "") newError.password = "Vui lòng nhập mật khẩu!";
+    if (!admin.id) newError.id = "Vui lòng nhập ID tài khoản!";
+    if (!admin.password) newError.password = "Vui lòng nhập mật khẩu!";
 
     setErrors(newError);
     if (Object.keys(newError).length === 0) {
-      alert("Đăng nhập thành công!");
-      location.href = "/admin";
+      const response = await vertifyAdmin(admin);
+      
+      if (response.status === 200) {
+        //navTo("/admin");
+      }
+      else if (response.status === 400) {
+        const data = response.response.data;
+        console.log(data);
+        if (data.idError !== null) newError.id = data.idError;
+        if (data.passwordError !== null) newError.password = data.passwordError;
+        setErrors({...newError});
+      }
     }
   }
 }
