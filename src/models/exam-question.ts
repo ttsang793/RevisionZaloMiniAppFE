@@ -1,16 +1,4 @@
 import axios from "axios";
-import { Question, } from "./question";
-
-class ExamQuestionGet {
-  examId: number = -1;
-  partTitles: string[] = [];
-  questionTypes: string[][] = [];
-  questions: Question[] = [];
-
-  constructor(id: number) {
-    this.examId = id;
-  }
-}
 
 class ExamQuestion {
   examId: number = -1;

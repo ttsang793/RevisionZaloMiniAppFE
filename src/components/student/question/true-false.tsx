@@ -71,4 +71,42 @@ const DungSai = ({i, question, answer, practice, updateAnswer}) => {
   )
 }
 
-export { DungSai }
+const DungSaiResult = ({i, answer}) => {
+  const question = answer.question;
+  const { TextArea } = Input;
+
+  const handleCorrect = (a: string) => {
+    let curAns;
+    if ((answer.studentAnswer === "true" || question.answerKey) && a === "true") curAns = true;
+    else if ((answer.studentAnswer === "false" || !question.answerKey) && a === "false") curAns = false;
+    else return;
+
+    return showCorrect(question.answerKey === curAns);
+  }
+
+  return (
+    <>
+      <Box className="border border-gray-300 py-1 px-2 mb-2">
+        <Text size="small" bold className="text-justify">
+          Câu {i + 1}. {question.title}
+        </Text>
+        <Box>
+          <Radio.Group value={answer.studentAnswer} disabled>
+            <Box className="flex items-center gap-x-1">
+              <Radio label="Đúng" value="true" /> {handleCorrect("true")}
+            </Box>
+            <Box className="flex items-center gap-x-1">
+              <Radio label="Sai" value="false" /> {handleCorrect("false")}
+            </Box>
+          </Radio.Group>
+        </Box>
+      </Box>
+
+      {
+        !question.explanation ? <></> : <TextArea label={<Text>Giải thích:</Text>} readOnly value={question.explanation} />
+      }
+    </>
+  )
+}
+
+export { DungSai, DungSaiResult }

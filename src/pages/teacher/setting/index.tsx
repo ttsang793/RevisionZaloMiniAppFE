@@ -12,10 +12,11 @@ export default function TeacherSettingPage() {
   const [teacher, setTeacher] = useState<Teacher>(new Teacher());
   const [level, setLevel] = useState("-1");
 
+  const [allSubject, setAllSubject] = useState([]);
   const [subjectList, setSubjectList] = useState([]);
 
   useEffect(() => {
-    getSubjects().then(subject => setSubjectList(subject))
+    getSubjects().then(subject => setAllSubject(subject))
   }, [])
 
   return (
@@ -49,13 +50,14 @@ export default function TeacherSettingPage() {
 
           <form onSubmit={e => e.preventDefault()}>
             <Input
-              placeholder="Họ và tên*" value={teacher.name}
-              label={<Text>Họ và tên <span className="required">*</span></Text>}
-              required onChange={e => setTeacher({...teacher, name: e.target.value})}
+              placeholder="Tên hiển thị"
+              label={<Text>Tên hiển thị</Text>}
+              onChange={e => setTeacher({...teacher, name: e.target.value})}
+              helperText={<Text className="text-left">Nếu để trống, tên hiển thị là tên Zalo của thầy/cô.</Text>}
             />
             <Select
               label={<Text className="mt-2">Khối <span className="required">*</span></Text>}
-              closeOnSelect value={level} onChange={(e: string) => setLevel(e)}
+              closeOnSelect value={level} onChange={(e: string) => fetchSubject(e)}
             >
               <Select.Option value="-1" title="Chọn khối" disabled />
               <Select.Option value="THCS" title="THCS" />
@@ -63,6 +65,7 @@ export default function TeacherSettingPage() {
             </Select>
 
             <Select
+              className={subjectList.length === 0 ? "hidden" : ""}
               label={<Text className="mt-2">Môn học <span className="required">*</span></Text>}
               closeOnSelect value={teacher.subjectId} onChange={(e: string) => setTeacher({...teacher, subjectId: e})}
             >
@@ -97,6 +100,18 @@ export default function TeacherSettingPage() {
       </div>
     </Page>
   )
+
+  async function fetchSubject(level: string) {
+    setLevel(level);
+    setTeacher({...teacher, subjectId: "-1"});
+
+    let newSubjectList = [];
+    
+    if (level === "THCS")
+      newSubjectList = allSubject.filter((x: Subject) => x.grades.includes(6) || x.grades.includes(7) || x.grades.includes(8) || x.grades.includes(9));
+    else newSubjectList = allSubject.filter((x: Subject) => x.grades.includes(10) || x.grades.includes(11) || x.grades.includes(12));
+    setSubjectList(newSubjectList);
+  }
 
   function handleSubmit() {
     teacher.grades = (level === "THCS") ? [6,7,8,9] : [10,11,12];

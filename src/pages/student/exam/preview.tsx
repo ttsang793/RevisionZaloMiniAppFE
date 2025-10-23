@@ -5,6 +5,7 @@ import { Avatar, Text, Page, Modal } from "zmp-ui";
 import { useState, useEffect } from "react";
 import AppHeader from "@/components/header";
 import { Exam, getExamById } from "@/models/exam";
+import { handleFavorite } from "@/models/student";
 
 export default function TestPreviewPage() {
   const { id } = useParams();
@@ -25,7 +26,7 @@ export default function TestPreviewPage() {
     else setLoading(false);
   }, []);
 
-  return (
+  return loading ? <></> : (
     <Page className="page page-wo-footer">
       <AppHeader title="Thông tin bài kiểm tra" showBackIcon />
       <div className="section-container">        
@@ -43,7 +44,7 @@ export default function TestPreviewPage() {
             </div>
           </div>
 
-          <Heart className="zaui-text-blue-80" size={32} />
+          <Heart className="zaui-text-blue-80" size={32} onClick={() => handleFavorite(Number(id))} />
         </div>
 
         <hr />
@@ -102,6 +103,8 @@ export default function TestPreviewPage() {
 
   function handleTake() {
     setTakeVisible(false);
-    navTo(`/student/exam/take/${id}`);
+    console.log(examInfo.displayType)
+    if (examInfo.displayType === "pdf") navTo(`/student/exam/pdf/take/${id}`);
+    else navTo(`/student/exam/take/${id}`);
   }
 }

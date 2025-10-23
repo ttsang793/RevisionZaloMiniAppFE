@@ -58,4 +58,23 @@ const TuLuan = ({i, question, answer, practice, updateAnswer}) => {
   )
 }
 
-export { TuLuan }
+const TuLuanResult = ({i, answer}) => {
+  const question = answer.question;
+  const { TextArea } = Input;
+
+  return (
+    <>
+      <Box className="border border-gray-300 py-1 px-2 mb-2">
+        <Text size="small" bold className="text-justify">
+          Câu {i + 1}. {question.title}
+        </Text>
+
+        <TextArea value={answer} readOnly size="small" autoHeight />
+      </Box>
+
+      <TextArea className="mt-2" label={<Text>Lời giải/Giải thích</Text>} value={question.explanation} readOnly />      
+    </>
+  )
+}
+
+export { TuLuan, TuLuanResult }

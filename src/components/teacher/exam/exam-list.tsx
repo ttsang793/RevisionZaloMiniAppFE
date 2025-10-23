@@ -7,8 +7,7 @@ import { Exam } from "@/models/exam";
 const ExamList = ({exam}: {exam: Exam}) => {
   const showAction = () => {
     return (
-      (exam.state === 2) ? <button><Eye size={24} /></button>
-        : <button onClick={() => setOpenAction(true)}><ThreeDotsVertical size={24} /></button>
+      <button onClick={() => setOpenAction(true)}><ThreeDotsVertical size={24} /></button>
     )
   }
 
@@ -19,7 +18,7 @@ const ExamList = ({exam}: {exam: Exam}) => {
       <div className="flex place-items-start">
         <div className="inline-block flex-1">
           <Text bold>
-            {exam.title} &minus; {exam.subjectName} {exam.grade} { (exam.state < 3) ? (exam.state == 1 ? <span className="zaui-text-red-50 italic">(Chưa xuất bản)</span> : <span className="zaui-text-blue-50 italic">(Đang chờ duyệt)</span>) : ""}
+            {exam.title} &minus; {exam.subjectName} {exam.grade} { exam.state == 1 ? <span className="zaui-text-red-50 italic">(Chưa xuất bản)</span> : "" }
           </Text>
           <Text size="small">
             {

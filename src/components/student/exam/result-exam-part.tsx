@@ -1,10 +1,10 @@
 import { Box } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { TracNghiemResult } from "../question/multiple-choice";
-import { DungSai } from "../question/true-false";
+import { DungSaiResult } from "../question/true-false";
 import { TraLoiNganResult } from "../question/short-answer";
-import { DienVaoChoTrong } from "../question/fill-in-the-blank";
-import { TuLuan } from "../question/constructed-response";
+import { DienVaoChoTrongResult } from "../question/fill-in-the-blank";
+import { TuLuanResult } from "../question/constructed-response";
 import { SapXep } from "../question/sorting";
 import { DungSaiTHPTResult } from "../question/true-false-thpt";
 
@@ -12,10 +12,10 @@ function displayQuestion(answer, partIndex, questionIndex) {
   //console.log(question);
   switch (answer.question.type) {
     case "multiple-choice": return <TracNghiemResult i={questionIndex} part={partIndex} answer={answer} key={`question-${partIndex}_${questionIndex}`} />
-    //case "true-false": return <DungSaiResult i={questionIndex} answer={answer} />
+    case "true-false": return <DungSaiResult i={questionIndex} answer={answer} />
     case "short-answer": return <TraLoiNganResult i={questionIndex} answer={answer} />
-    //case "fill-in-the-blank": return <DienVaoChoTrongResult i={questionIndex} answer={answer} />
-    //case "constructed-response": return <TuLuanResult i={questionIndex} answer={answer} />
+    case "fill-in-the-blank": return <DienVaoChoTrongResult i={questionIndex} answer={answer} />
+    case "constructed-response": return <TuLuanResult i={questionIndex} answer={answer} />
     //case "sorting": return <SapXepResult i={questionIndex} answer={answer} />
     case "true-false-thpt": return <DungSaiTHPTResult i={questionIndex} answer={answer} />
     default: return null;

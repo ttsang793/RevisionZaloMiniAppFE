@@ -2,20 +2,19 @@ import { Box, Page, Text, Modal, useParams, useNavigate } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { ResultExamPart } from "@/components/student/exam/result-exam-part";
 import { Exam, getExamById } from "@/models/exam";
-import { ExamAttempt, getLatestAttempt } from "@/models/exam-attempt";
+import { ExamAttemptGet, getLatestAttempt } from "@/models/exam-attempt";
 
 export default function ExamResultPage() {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [examInfo, setExamInfo] = useState<Exam>(new Exam());
-  const [examAttempt, setExamAttempt] = useState([]);
+  const [examAttempt, setExamAttempt] = useState<ExamAttemptGet>(new ExamAttemptGet());
   const [currentPart, setCurrentPart] = useState(0);
 
   useEffect(() => {
     if (loading) {
       getExamById(Number(id)).then(response => setExamInfo(response.data));
       getLatestAttempt(Number(id)).then(response => {
-        console.log(response.data);
         setExamAttempt(response.data);
         setLoading(false);
       });

@@ -1,5 +1,10 @@
 import axios from "axios";
 
+class ExamAttemptGet {
+  score?: number;
+  examParts: any[] = [];
+}
+
 class ExamAttempt {
   id?: number;
   examId: number = -1;
@@ -140,4 +145,4 @@ function postAttempt(examAttempt: ExamAttempt) {
   })
 }
 
-export { ExamAttempt, getLatestAttempt, insertAttempt };
+export { ExamAttempt, ExamAttemptGet, getLatestAttempt, insertAttempt };

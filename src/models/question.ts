@@ -57,7 +57,6 @@ const questionType = [
  { title: "Điền vào chỗ trống", type: "fill-in-the-blank" },
  { title: "Tự luận", type: "constructed-response" },
  { title: "Sắp xếp", type: "sorting" },
- { title: "Nhóm câu hỏi", type: "group" },
  { title: "Trắc nghiệm Đúng – Sai THPT", type: "true-false-thpt" }
 ];
 

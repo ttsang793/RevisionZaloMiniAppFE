@@ -65,4 +65,39 @@ const DienVaoChoTrong = ({i, question, answer, practice, updateAnswer}) => {
   )
 }
 
-export { DienVaoChoTrong }
+const DienVaoChoTrongResult = ({i, answer}) => {
+  const question = answer.question;
+  const { TextArea } = Input;
+
+  return (
+    <>
+      <Box className="border border-gray-300 py-1 px-2 mb-2">
+        <Text size="small" bold className="text-justify">
+          Câu {i + 1}. {question.title}
+        </Text>
+
+        <input
+          className={`h-8 w-full border border-gray-400 rounded-lg mt-1 px-2 ${(question.markAsWrong ? `font-bold zaui-text-${question.answerKeys.includes(answer.studentAnswer) ? "green" : "red"}-70` : "")}`}
+          value={answer.studentAnswer}
+          readOnly
+        />
+
+        {
+          <Box>
+            <Text className="mt-2 italic font-bold">Đáp án{question.markAsWrong ? ":" : " tham khảo:"}</Text>
+            <input
+              className="h-8 w-full border border-gray-400 rounded-lg mt-1 px-2 font-bold zaui-text-green-70"
+              value={question.answerKeys.join("; ")} readOnly
+            />
+          </Box>
+        }
+      </Box>      
+
+      {
+        !question.explanation ? <></> : <TextArea label={<Text>Giải thích:</Text>} readOnly value={question.explanation} />
+      }
+    </>
+  )
+}
+
+export { DienVaoChoTrong, DienVaoChoTrongResult }

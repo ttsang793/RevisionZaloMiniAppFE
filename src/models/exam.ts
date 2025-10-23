@@ -61,6 +61,15 @@ function deleteExam(id: number) {
     })
 }
 
+function publishExam(id: number) {
+  axios.put(`/api/exam/publish/${id}`)
+    .then(response => {
+      console.log(response.status);
+    }).catch(err => {
+      console.error(err);
+    })
+}
+
 function unpublishExam(id: number) {
   axios.delete(`/api/exam/unpublish/${id}`)
     .then(response => {
@@ -70,4 +79,5 @@ function unpublishExam(id: number) {
     })
 }
 
-export { Exam, getAllExams, getExamById, getExamsByTeacher, insertExam, updateExam, deleteExam, unpublishExam }
+export { Exam, getAllExams, getExamById, getExamsByTeacher,
+  insertExam, updateExam, deleteExam, publishExam, unpublishExam }

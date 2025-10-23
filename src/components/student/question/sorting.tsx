@@ -37,4 +37,22 @@ const SapXep = ({i, question, answer, practice, updateAnswer}) => {
   )
 }
 
-export { SapXep }
+const SapXepResult = ({i, answer}) => {
+  const question = answer.question;
+
+  return (
+    <Box className="border border-gray-300 py-1 px-2">
+      <Text size="small" bold className="text-justify">
+        Câu {i + 1}. {question.title}
+      </Text>
+
+      {
+        question.corectOrder.map((od: string, j: number) => (
+          <Select closeOnSelect value={od} key={j} disabled></Select>
+        )
+      )}
+    </Box>
+  )
+}
+
+export { SapXep, SapXepResult }

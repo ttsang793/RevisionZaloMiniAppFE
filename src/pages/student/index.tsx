@@ -4,7 +4,6 @@ import ExamHolder from "@/components/student/exam/exam-holder";
 import { useState, useEffect } from "react";
 import { Exam, getAllExams } from "@/models/exam";
 
-
 function HomePage() {
   const [examList, setExamList] = useState([]);
   const [loading, setLoading] = useState(true);

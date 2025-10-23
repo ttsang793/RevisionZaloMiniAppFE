@@ -17,6 +17,7 @@ import StudentSettingPage from "@/pages/student/setting";
 import ExamPreviewPage from "@/pages/student/exam/preview";
 import TeacherDetailPage from "@/pages/student/teacher-detail";
 import TakeExamPage from "@/pages/student/exam/take";
+import TakePDFExamPage from "@/pages/student/exam/pdf-take";
 
 // Teacher
 import TeacherFooter from "./teacher/footer";
@@ -119,6 +120,8 @@ const Layout = () => {
               <Route path="take/:id" element={<TakeExamPage practice={false} />} />
               <Route path="practice/:id" element={<TakeExamPage practice />} />
               <Route path="result/:id" element={<ExamResultPage />} />
+              <Route path="pdf/take/:id" element={<TakePDFExamPage practice={false} />} />
+              <Route path="pdf/practice/:id" element={<TakePDFExamPage practice />} />
             </Route>
           </Routes>
         </ZMPRouter>
