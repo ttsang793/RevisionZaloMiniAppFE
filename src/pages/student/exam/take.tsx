@@ -13,6 +13,7 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
   const [allowEarlySubmit, setAllowEarlySubmit] = useState(false);
   const [earlySubmitVisible, setEarlySubmitVisible] = useState(false);
   const [loading, setLoading] = useState(true);
+
   const [examAttempt, setExamAttempt] = useState<ExamAttempt>(new ExamAttempt(Number(id), practice));
   const [examInfo, setExamInfo] = useState<Exam>(new Exam());
   const [examQuestions, setExamQuestions] = useState<ExamQuestion>(new ExamQuestion(Number(id)));
@@ -71,7 +72,7 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
       <Text.Title className="text-center uppercase">{examInfo.title}</Text.Title>
       <Text.Title className="text-center">
         Môn: {examInfo.subjectName} &minus; Thời gian: {examInfo.timeLimit / 60} phút
-      </Text.Title>
+      </Text.Title>      
 
       <hr />
 
@@ -104,7 +105,7 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
         />
       }
 
-      <footer className="fixed bottom-2 right-0 left-0 text-center bg-white">
+      <footer className="fixed bottom-0 right-0 left-0 text-center bg-white">
         <button
           className="rounded-full zaui-bg-blue-70 zaui-text-blue-10 py-2 px-8"
           onClick={() => setEarlySubmitVisible(true)}
@@ -135,9 +136,9 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
     </Page>
   )
 
-  function turnIn() {
+  async function turnIn() {
     setEarlySubmitVisible(false);
-    insertAttempt(examAttempt, examQuestionList, examAnswerList);
-    //navTo("/");
+    const submitStatus = await insertAttempt(examAttempt, examQuestionList, examAnswerList);
+    if (submitStatus === 201) navTo(`/student/exam/result/${id}`);
   }
 }

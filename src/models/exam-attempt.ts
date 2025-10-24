@@ -66,7 +66,7 @@ function getLatestAttempt(id: number) {
   return axios.get(`/api/exam-attempt?studentId=1&examId=${id}`);
 }
 
-function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], answerList: any[][]) {
+async function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], answerList: any[][]): Promise<number> {
   //console.log(questionList);
   const examAttemptAnswers: ExamAttemptAnswer[] = [];
   let score = 0;
@@ -132,17 +132,18 @@ function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], answerLi
   examAttempt.score = score;
   examAttempt.examAttemptAnswers = examAttemptAnswers;
   //console.log(examAttempt);
-  postAttempt(examAttempt);
+  return await postAttempt(examAttempt);
 }
 
-function postAttempt(examAttempt: ExamAttempt) {
-  axios.post("/api/exam-attempt", examAttempt, {
-    headers: { "Content-Type": "application/json" }
-  }).then(response => {
-    console.log(response.status);
-  }).catch(err => {
+async function postAttempt(examAttempt: ExamAttempt): Promise<number> {
+  try {
+    const response = await axios.post("/api/exam-attempt", examAttempt, { headers: { "Content-Type": "application/json" } });
+    return response.status;
+  }
+  catch (err) {
     console.error(err);
-  })
+    return 500;
+  }
 }
 
 export { ExamAttempt, ExamAttemptGet, getLatestAttempt, insertAttempt };

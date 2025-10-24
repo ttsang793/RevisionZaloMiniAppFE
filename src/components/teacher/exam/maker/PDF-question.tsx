@@ -2,7 +2,6 @@ import { Box, Text } from "zmp-ui";
 import { useState } from "react";
 import { ExamCodeQuestion } from "@/models/pdf-exam-code";
 import { XLg } from "react-bootstrap-icons";
-import "./PDF-question.css"
 
 class PDFQuestionProps {
   question: ExamCodeQuestion;
@@ -209,8 +208,9 @@ const PDFAnswer = ({question, partIndex, questionIndex, updateQuestion, deleteQu
       {renderComponent(new PDFQuestionProps(question, partIndex, questionIndex + 1, updateQuestion))}
       <input
         className="px-2 w-16 h-[28px] bg-white border zaui-border-blue-80 rounded-md text-right"
-        type="number" min={0} max={10} step={0.05}
-        value={question.point} onChange={e => updateQuestion("point", parseFloat(e.target.value))}
+        type="number" min={0} max={10} step={0.05} value={question.point}
+        readOnly={question.type === "true-false-thpt"}
+        onChange={e => updateQuestion("point", parseFloat(e.target.value))}
       />
 
       <XLg className="inline cursor-pointer" size={20} onClick={() => deleteQuestion(partIndex, questionIndex)} />

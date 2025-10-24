@@ -17,7 +17,9 @@ import StudentSettingPage from "@/pages/student/setting";
 import ExamPreviewPage from "@/pages/student/exam/preview";
 import TeacherDetailPage from "@/pages/student/teacher-detail";
 import TakeExamPage from "@/pages/student/exam/take";
+import ExamResultPage from "@/pages/student/exam/result";
 import TakePDFExamPage from "@/pages/student/exam/pdf-take";
+import PDFExamResultPage from "@/pages/student/exam/pdf-result";
 
 // Teacher
 import TeacherFooter from "./teacher/footer";
@@ -37,7 +39,6 @@ import AdminLoginPage from "@/pages/admin/login";
 import SubjectManagement from "@/pages/admin/subject";
 import TopicManagement from "@/pages/admin/topic";
 import { AdminFooter, AdminHeader } from "./admin/head-foot";
-import ExamResultPage from "@/pages/student/exam/result";
 
 // Inline layout wrappers
 const TeacherLayout = () => (
@@ -122,6 +123,7 @@ const Layout = () => {
               <Route path="result/:id" element={<ExamResultPage />} />
               <Route path="pdf/take/:id" element={<TakePDFExamPage practice={false} />} />
               <Route path="pdf/practice/:id" element={<TakePDFExamPage practice />} />
+              <Route path="pdf/result/:id" element={<PDFExamResultPage />} />
             </Route>
           </Routes>
         </ZMPRouter>

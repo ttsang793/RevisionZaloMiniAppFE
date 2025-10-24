@@ -5,6 +5,7 @@ class ExamCode {
   code: string = "";
   taskPDF: string = "/pdf/sample.pdf";
   answerPDF: string = "/pdf/sample.pdf";
+  numPart: number = -1;
   questions: ExamCodeQuestion[][] = []
 
   constructor(examId: number) {
@@ -13,7 +14,7 @@ class ExamCode {
 }
 
 class ExamCodeQuestion {
-  type: string = "";
+  type: string;
   answerKey: string = "";
   answerKeys: string[] = [];
   partIndex: number = 0;
@@ -43,6 +44,26 @@ class ExamCodePost {
   }
 }
 
+class ExamCodeGet {
+  id: number = -1;
+  examId: number = -1;
+  code: string = "";
+  taskPDF: string = "";
+  answerPDF: string = "";
+  numPart: number = -1;
+  questions: ExamCodeQuestionGet[] = []
+}
+
+class ExamCodeQuestionGet {
+  type: string = "";
+  answerKey: string = "";
+  studentAnswer?: string;
+  studentAnswers: string[] = [];
+  partIndex: number = 0;
+  questionIndex: number = 0;
+  point: number = 0;
+}
+
 function getExamCodeByExamId(examId: number) {
   return axios.get(`/api/pdf-exam-code/${examId}`);
 }
@@ -69,4 +90,4 @@ function insertCode(examCodes: ExamCode[]) {
   }).catch(err => console.error(err))
 }
 
-export { ExamCode, ExamCodeQuestion, getExamCodeByExamId, insertCode }
+export { ExamCode, ExamCodeQuestion, ExamCodeGet, ExamCodeQuestionGet, getExamCodeByExamId, insertCode }

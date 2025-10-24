@@ -33,7 +33,9 @@ const PDFExamCode = ({i, examCode, updateExamCode, deleteExamCode}: PDFExamCodeP
 
   const addQuestion = (j: number, type: string): void => {
     const newQuestions = [...examCode.questions];
-    newQuestions[j].push(new ExamCodeQuestion(type));
+    const question = new ExamCodeQuestion(type);
+    if (question.type === "true-false-thpt") question.point = 1;
+    newQuestions[j].push(question);
     updateExamCode(i, {...examCode, questions: newQuestions});
   }
 
