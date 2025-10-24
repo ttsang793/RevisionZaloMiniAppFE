@@ -8,7 +8,7 @@ class PdfExamAttempt {
   startedAt: Date = new Date();
   codeId: number = -1;
   studentAnswer: string[] = [];
-  correctBoard: number[] = [];
+  scoreBoard: number[] = [];
 
   constructor(examId: number) {
     this.examId = examId;
@@ -19,7 +19,7 @@ function getPdfExamAttempt(examId: number) {
   return axios.get(`/api/exam-attempt/pdf?studentId=1&examId=${examId}`);
 }
 
-function handleTrueFalseTHPTQuestion(q: ExamCodeQuestionGet): { correct: number, point: number } {
+function handleTrueFalseTHPTQuestion(q: ExamCodeQuestionGet): number {
   let defaultCorrect = 0b0000;
   let count = 0;
   for (let i = 0; i < 4; i++)
@@ -29,45 +29,45 @@ function handleTrueFalseTHPTQuestion(q: ExamCodeQuestionGet): { correct: number,
     }
   
   switch (count) {
-    case 0: return { correct: 0, point: 0 }
-    case 1: return { correct: defaultCorrect, point: 0.1 }
-    case 2: return { correct: defaultCorrect, point: 0.25 }
-    case 3: return { correct: defaultCorrect, point: 0.5 }
-    case 4: return { correct: defaultCorrect, point: 1 }
+    case 1: return 0.1;
+    case 2: return 0.25;
+    case 3: return 0.5;
+    case 4: return 1;
+    default: return 0;
   }
 }
 
 async function insertPdfExamAttempt(examAnswer: ExamCodeQuestionGet[], pdfExamAttempt: PdfExamAttempt): Promise<number> {
   let score = 0;
-  const correct: number[] = [];
+  const scoreBoard: number[] = [];
   pdfExamAttempt.studentAnswer = [];
   examAnswer.forEach(ea => {
     switch (ea.type) {
       case "multiple-choice": case "true-false":
         pdfExamAttempt.studentAnswer.push(ea.studentAnswer || "");
-        if (ea.answerKey === ea.studentAnswer!) { correct.push(1); score += ea.point; }
-        else correct.push(0);
+        if (ea.answerKey === ea.studentAnswer!) { scoreBoard.push(ea.point); score += ea.point; }
+        else scoreBoard.push(0);
         break;
       case "short-answer":
         pdfExamAttempt.studentAnswer.push(ea.studentAnswers.join("") || "");
-        if (ea.answerKey === ea.studentAnswers.join("")) { correct.push(1); score += ea.point }
-        else correct.push(0);
+        if (ea.answerKey === ea.studentAnswers.join("")) { scoreBoard.push(ea.point); score += ea.point }
+        else scoreBoard.push(0);
         break;
       case "fill-in-the-blank": case "constructed-response":
         pdfExamAttempt.studentAnswer.push(ea.studentAnswer || "");
-        correct.push(2);
+        scoreBoard.push(-1);
         break;
       case "true-false-thpt":
         pdfExamAttempt.studentAnswer.push(ea.studentAnswers.join("") || "");
-        const result = handleTrueFalseTHPTQuestion(ea);
-        correct.push(result.correct);
-        score += result.point;
+        const point = handleTrueFalseTHPTQuestion(ea);
+        scoreBoard.push(point);
+        score += point;
         break;
     }
   })
 
   pdfExamAttempt.score = Math.round(score * 100) / 100;
-  pdfExamAttempt.correctBoard = correct;
+  pdfExamAttempt.scoreBoard = scoreBoard;
 
   try {
     const response = await axios.post("/api/exam-attempt/pdf", pdfExamAttempt, { headers: { "Content-Type": "application/json" } });

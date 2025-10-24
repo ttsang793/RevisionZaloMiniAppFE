@@ -2,7 +2,7 @@ import AppHeader from "@/components/header";
 import ExamHolder from "@/components/student/exam/exam-holder"
 import { Text, Page, Box } from "zmp-ui";
 import { useState, useEffect } from 'react';
-import { Teacher, getTeacherById } from "@/models/teacher";
+import { Teacher, getTeacherById } from "@/models/user";
 import { Exam, getExamsByTeacher } from "@/models/exam";
 
 export default function TeacherDetailPage() {

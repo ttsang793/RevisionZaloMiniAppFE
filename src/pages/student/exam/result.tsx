@@ -1,11 +1,13 @@
-import { Box, Page, Text, Modal, useParams, useNavigate } from "zmp-ui";
+import { Box, Page, Text, useParams, useNavigate } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { ResultExamPart } from "@/components/student/exam/result-exam-part";
 import { Exam, getExamById } from "@/models/exam";
 import { ExamAttemptGet, getLatestAttempt } from "@/models/exam-attempt";
+import AppHeader from "@/components/header";
 
 export default function ExamResultPage() {
   const { id } = useParams();
+  const navTo = useNavigate();
   const [loading, setLoading] = useState(true);
   const [examInfo, setExamInfo] = useState<Exam>(new Exam());
   const [examAttempt, setExamAttempt] = useState<ExamAttemptGet>(new ExamAttemptGet());
@@ -22,7 +24,8 @@ export default function ExamResultPage() {
   }, [])
 
   return loading ? <></> : (
-    <Page className="page-test">
+    <Page className="page bg-white">
+      <AppHeader title="Bài làm" showBackIcon />
       {/* Tiêu đề và các phần */}
       <Text.Title className="text-center uppercase">{examInfo.title}</Text.Title>
       <Text.Title className="text-center">
@@ -56,6 +59,15 @@ export default function ExamResultPage() {
           partAnswers={examAttempt.examParts[currentPart].examAttemptAnswers}
         />
       }
+      
+      <footer className="fixed bottom-0 right-0 left-0 text-center bg-white py-2">
+        <button
+          className="rounded-full zaui-bg-blue-70 zaui-text-blue-10 py-2 px-8"
+          onClick={() => navTo(`/student/exam/preview/${id}`)}
+        >
+          Làm lại bài
+        </button>
+      </footer>
     </Page>
   )
 }

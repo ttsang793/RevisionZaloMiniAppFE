@@ -2,7 +2,7 @@ import { Book, Mortarboard } from "react-bootstrap-icons";
 import { Text, Page } from "zmp-ui";
 import { useNavigate } from "react-router-dom";
 import { getUserInfo } from "zmp-sdk";
-import { addStudent } from "@/models/student";
+import { addStudent } from "@/models/user";
 
 export default function ChooseRolePage() {
   const navTo = useNavigate();

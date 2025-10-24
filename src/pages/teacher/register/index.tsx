@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { getSubjects, Subject } from "@/models/subject";
 import { getUserInfo } from "zmp-sdk";
 
-import { Teacher, addTeacher } from "@/models/teacher";
+import { Teacher, addTeacher } from "@/models/user";
 
 export default function TeacherRegisterPage() {
   const { TextArea } = Input;
@@ -32,6 +32,7 @@ export default function TeacherRegisterPage() {
           <Input
             placeholder="Tên hiển thị"
             label={<Text>Tên hiển thị</Text>}
+            value={teacher.name}
             onChange={e => setTeacher({...teacher, name: e.target.value})}
             helperText={<Text className="text-left">Nếu để trống, tên hiển thị là tên Zalo của thầy/cô.</Text>}
           />

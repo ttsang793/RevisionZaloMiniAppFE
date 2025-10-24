@@ -1,4 +1,4 @@
-import { AdminLogin, vertifyAdmin } from "@/models/teacher";
+import { AdminLogin, vertifyAdmin } from "@/models/user";
 import { useState, FormEvent } from "react";
 import { useNavigate } from "zmp-ui";
 

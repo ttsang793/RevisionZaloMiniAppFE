@@ -11,6 +11,7 @@ export default function TakePDFExamPage({practice}: {practice: boolean}) {
   const { id } = useParams();
   const navTo = useNavigate();
   const [allowEarlySubmit, setAllowEarlySubmit] = useState(false);
+  const [allowShowScore, setAllowShowScore] = useState(false);
   const [earlySubmitVisible, setEarlySubmitVisible] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -26,8 +27,10 @@ export default function TakePDFExamPage({practice}: {practice: boolean}) {
           setExamParts([]);
           const examInfoResponse = await getExamById(Number(id));
           setExamInfo(examInfoResponse.data);
+
           getExamCodeByExamId(Number(id)).then(response => {
             const newExamAnswer: ExamCodeGet = response.data;
+            setAllowShowScore(newExamAnswer.allowShowScore);
             newExamAnswer.questions.forEach(q => {
               if (q.type === "true-false-thpt" || q.type === "short-answer") q.studentAnswers = ["", "", "", ""];
               else q.studentAnswer = "";
@@ -60,9 +63,10 @@ export default function TakePDFExamPage({practice}: {practice: boolean}) {
       {/* Tiêu đề và các phần */}
       <Text.Title className="text-center uppercase mb-1">{examInfo.title}</Text.Title>
       <Text.Title className="text-center mb-1">
-        Môn: {examInfo.subjectName} &minus; Thời gian: {examInfo.timeLimit / 60} phút
+        Môn: {examInfo.subjectName} <i>(Mã đề: {examAnswer?.code})</i> &minus; Thời gian: {examInfo.timeLimit / 60} phút
       </Text.Title>
-      <Text.Title className="text-center italic">Mã đề: {examAnswer?.code}</Text.Title>
+
+      <hr />
 
       <Box className="my-2 text-center">
         <button
@@ -97,6 +101,7 @@ export default function TakePDFExamPage({practice}: {practice: boolean}) {
             partIndex={e} key={`Part_${e}`}
             question={examAnswer!.questions.filter(q => q.partIndex === e)}
             updateExamAnswer={updateExamAnswer}
+            allowShowScore={allowShowScore}
           />
         )
       }

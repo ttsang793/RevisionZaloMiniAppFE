@@ -14,4 +14,12 @@ function fisherYatesShuffle(array: any[]): any[] {
   return array;
 }
 
-export { backToTop, fisherYatesShuffle }
+function floatTwoDigits(float: number) {
+  return float.toFixed(2).replace('.', ',')
+}
+
+function sumThenParseFloat(question: any) {
+  return floatTwoDigits(parseFloat(question.reduce((sum, item) => sum + item.point, 0)));
+}
+
+export { backToTop, fisherYatesShuffle, floatTwoDigits, sumThenParseFloat }

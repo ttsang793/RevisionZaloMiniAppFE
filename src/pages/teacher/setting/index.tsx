@@ -1,57 +1,62 @@
 import { CameraFill, ChevronRight } from "react-bootstrap-icons";
-import { Switch, Input, Text, Page, Select } from "zmp-ui";
+import { Box, Switch, Input, Text, Page, Select, useNavigate } from "zmp-ui";
 import AppHeader from "@/components/header";
 import { useState, useEffect } from "react";
 import { getSubjects, Subject } from "@/models/subject";
+import { getUserInfo } from "zmp-sdk";
 import "./setting.css";
 
-import { Teacher, updateTeacher } from "@/models/teacher";
+import { deleteTeacher, getTeacherById, Teacher, updateTeacher } from "@/models/user";
 
 export default function TeacherSettingPage() {
   const { TextArea } = Input;
+  const navTo = useNavigate();
   const [teacher, setTeacher] = useState<Teacher>(new Teacher());
   const [level, setLevel] = useState("-1");
+  const [loading, setLoading] = useState(true);
 
   const [allSubject, setAllSubject] = useState([]);
   const [subjectList, setSubjectList] = useState([]);
+  const [subjectError, setSubjectError] = useState("");
 
   useEffect(() => {
-    getSubjects().then(subject => setAllSubject(subject))
+    fetchData();
   }, [])
 
-  return (
+  return loading ? <></> : (
     <Page className="page-x-0">
       <AppHeader title="Cài đặt" />
-      <div className="section-container">
-        <div className="grid grid-cols-[1fr_30px] gap-x-2 mb-3 items-center">
+      <Box className="section-container">
+        <Box className="grid grid-cols-[1fr_30px] gap-x-2 mb-3 items-center">
           <Text>Thông báo</Text>
           <Switch />
-        </div>
+        </Box>
         <hr />
-        <div className="grid grid-cols-[1fr_30px] gap-x-2 my-3 items-center">
+        <Box className="grid grid-cols-[1fr_30px] gap-x-2 my-3 items-center">
           <Text>Bình luận của học sinh</Text>
           <Switch />
-        </div>
+        </Box>
         <hr />
-        <div className="grid grid-cols-[1fr_30px] gap-x-2 my-3 items-center">
+        <Box className="grid grid-cols-[1fr_30px] gap-x-2 my-3 items-center">
           <Text>Có bài tự luận cần chấm</Text>
           <Switch />
-        </div>
-      </div>
+        </Box>
+      </Box>
 
-      <div className="section-container">
-        <div className="grid grid-cols-[80px_1fr] w-full gap-x-4">
-          <div className="relative mb-2">
+      <Box className="section-container">
+        <Box className="grid grid-cols-[80px_1fr] w-full gap-x-4">
+          <Box className="relative mb-2">
             <img src="/avatar/default.jpg" alt="Avatar" className="h-25 rounded-full border-1 border-zinc-300" />
             <button className="absolute top-14 -right-2 border border-gray-200 rounded-full size-10 bg-zinc-300">
               <CameraFill size={24} className="inline" />
             </button>
-          </div>
+          </Box>
 
           <form onSubmit={e => e.preventDefault()}>
             <Input
               placeholder="Tên hiển thị"
               label={<Text>Tên hiển thị</Text>}
+              value={teacher.name}
               onChange={e => setTeacher({...teacher, name: e.target.value})}
               helperText={<Text className="text-left">Nếu để trống, tên hiển thị là tên Zalo của thầy/cô.</Text>}
             />
@@ -67,7 +72,9 @@ export default function TeacherSettingPage() {
             <Select
               className={subjectList.length === 0 ? "hidden" : ""}
               label={<Text className="mt-2">Môn học <span className="required">*</span></Text>}
-              closeOnSelect value={teacher.subjectId} onChange={(e: string) => setTeacher({...teacher, subjectId: e})}
+              closeOnSelect value={teacher.subjectId}
+              errorText={subjectError} status={subjectError.length === 0 ? "" : "error"}
+              onChange={(e: string) => { setSubjectError(""); setTeacher({...teacher, subjectId: e})} }
             >
               <Select.Option value="-1" title="Chọn môn học" disabled />
               {
@@ -85,19 +92,19 @@ export default function TeacherSettingPage() {
               *: Các trường bắt buộc
             </Text>
 
-            <div className="flex gap-x-2 justify-center mt-4">
+            <Box className="flex gap-x-2 justify-center mt-4">
               <input type="submit" value="Lưu" className="zaui-bg-blue-80 text-white rounded-full py-2 px-8" onClick={() => handleSubmit()} />
-              <input type="reset" value="Hủy" className="zaui-bg-blue-20 zaui-text-blue-80 rounded-full py-2 px-8" onClick={() => handleReset()} />
-            </div>
+              <input type="reset" value="Hủy" className="zaui-bg-blue-20 zaui-text-blue-80 rounded-full py-2 px-8" onClick={() => fetchData()} />
+            </Box>
           </form>
-        </div>
+        </Box>
 
         <hr className="my-3" />
-        <div className="grid grid-cols-[1fr_16px]">
-          <Text>Xóa tài khoản của tôi</Text>
+        <Box className="grid grid-cols-[1fr_16px]">
+          <Box onClick={() => handleDelete()}>Xóa tài khoản của tôi</Box>
           <ChevronRight />
-        </div>
-      </div>
+        </Box>
+      </Box>
     </Page>
   )
 
@@ -113,12 +120,49 @@ export default function TeacherSettingPage() {
     setSubjectList(newSubjectList);
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
+    let error = "";
+    if (teacher.subjectId === "-1") error = "Vui lòng chọn môn học!"
+
+    setSubjectError(error);
+    if (error.length !== 0) return;
+
+    if (!teacher.name) {
+      const userResponse = await getUserInfo({ autoRequestPermission: false });
+      teacher.name = userResponse.userInfo.name;
+    }
+
     teacher.grades = (level === "THCS") ? [6,7,8,9] : [10,11,12];
     updateTeacher(teacher);
   }
   
-  function handleReset() {
-    setTeacher(new Teacher());
+  async function fetchData() {
+    try {
+      const teacherResponse = await getTeacherById();
+      const data: Teacher = teacherResponse.data;
+      const l = data.grades[0] === 6 ? "THCS" : "THPT";
+      setLevel(l);
+      setTeacher(data);
+
+      const allSubjectResponse = await getSubjects();
+      setAllSubject(allSubjectResponse);
+      
+      let newSubjectList = [];
+
+      if (l === "THCS")
+        newSubjectList = allSubjectResponse.filter((x: Subject) => x.grades.includes(6) || x.grades.includes(7) || x.grades.includes(8) || x.grades.includes(9));
+      else newSubjectList = allSubjectResponse.filter((x: Subject) => x.grades.includes(10) || x.grades.includes(11) || x.grades.includes(12));
+      setSubjectList(newSubjectList);
+    }
+    finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleDelete() {
+    const status = await deleteTeacher(7);
+    if (status === 201) {
+      navTo("/");
+    }
   }
 }

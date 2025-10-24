@@ -1,11 +1,13 @@
 import { Box, Text } from "zmp-ui";
 import { useState } from "react";
 import { ExamCodeQuestionGet } from "@/models/pdf-exam-code";
+import { floatTwoDigits } from "@/script/util";
 
 class PDFQuestionProps {
   question: ExamCodeQuestionGet;
   partIndex: number;
   updateAnswer: (prop: string, value: any) => void;
+  allowShowScore?: boolean;
 
   constructor(question: ExamCodeQuestionGet, partIndex: number, updateAnswer) {
     this.question = question;
@@ -135,7 +137,7 @@ const TraLoiNgan = ({prop}: {prop: PDFQuestionProps}) => {
   )
 }
 
-const TuLuan = ({prop}: {prop: PDFQuestionProps}) => {
+const DienVaoChoTrong = ({prop}: {prop: PDFQuestionProps}) => {
   const { question, updateAnswer } = prop;
 
   return (
@@ -144,7 +146,24 @@ const TuLuan = ({prop}: {prop: PDFQuestionProps}) => {
 
       <Box className="flex gap-x-1 gap-y-1.5 flex-wrap">
         <input
-          className="h-7 rounded-md border zaui-border-blue-80 w-full px-2 placeholder:text-blue-900/70"
+          className="h-7 rounded-md border zaui-border-blue-80 w-full py-4 px-2"
+          onChange={e => updateAnswer("studentAnswer", e.target.value)}
+        />
+      </Box>
+    </Box>
+  );
+}
+
+const TuLuan = ({prop}: {prop: PDFQuestionProps}) => {
+  const { question, updateAnswer } = prop;
+
+  return (
+    <Box className="grid grid-cols-[24px_1fr] items-center zaui-text-blue-80 my-2 flex-1">
+      <Text bold>{question.questionIndex}</Text>
+
+      <Box className="flex gap-x-1 gap-y-1.5 flex-wrap">
+        <textarea
+          className="h-7 rounded-md border zaui-border-blue-80 w-full p-2 h-20"
           onChange={e => updateAnswer("studentAnswer", e.target.value)}
         />
       </Box>
@@ -156,17 +175,18 @@ const components: Record<string, (prop: PDFQuestionProps) => JSX.Element> = {
   "multiple-choice": prop => <TracNghiem prop={prop} />,
   "true-false": prop => <DungSai prop={prop} />,
   "short-answer": prop => <TraLoiNgan prop={prop} />,
-  "fill-in-the-blank": prop => <TuLuan prop={prop} />,
+  "fill-in-the-blank": prop => <DienVaoChoTrong prop={prop} />,
   "constructed-response": prop => <TuLuan prop={prop} />,
   "true-false-thpt": prop => <DungSaiTHPT prop={prop} />,
 };
 
-const PDFAnswer = ({question, partIndex, updateAnswer}: PDFQuestionProps) => {
+const PDFAnswer = ({question, partIndex, updateAnswer, allowShowScore}: PDFQuestionProps) => {
   const renderComponent = components[question.type];
 
   return (
     <Box className="flex gap-x-2 items-center">
       {renderComponent(new PDFQuestionProps(question, partIndex, updateAnswer))}
+      { allowShowScore ? <Text className="zaui-text-blue-70">({floatTwoDigits(question.point)} đ)</Text> : <></> }
     </Box>
   )
 }

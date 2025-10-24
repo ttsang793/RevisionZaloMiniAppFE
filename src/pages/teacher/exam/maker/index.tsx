@@ -3,6 +3,14 @@ import { Box, Checkbox, Input, Page, Select, Text, useNavigate, useParams } from
 import { useEffect, useState } from "react";
 import { Exam, getExamById, insertExam, updateExam } from "@/models/exam";
 
+type ExamMakerError = {
+  grade: string,
+  examType: string,
+  title: string,
+  timeLimit: string,
+  earlyTurnIn: string
+}
+
 export default function ExamMaker() {
   const navTo = useNavigate();
   const { type, id } = useParams();
@@ -11,6 +19,7 @@ export default function ExamMaker() {
   const [timeLimit, setTimeLimit] = useState("");
   const [earlyTurnIn, setEarlyTurnIn] = useState("");
   const [loading, setLoading] = useState(true);
+  const [examError, setExamError] = useState<ExamMakerError>({ grade: "", examType: "", title: "", timeLimit: "", earlyTurnIn: "" });
 
   useEffect(() => {
     setLoading(true);
@@ -34,7 +43,11 @@ export default function ExamMaker() {
           <Select
             label={<Text>Lớp <span className="required">*</span></Text>}
             defaultValue={-1} closeOnSelect value={examInfo.grade}
-            onChange={(e: number) => setExamInfo({...examInfo, grade: e})}
+            errorText={examError.grade} status={examError.grade.length === 0 ? "" : "error"}
+            onChange={(e: number) => {
+              setExamError({...examError, grade: ""});
+              setExamInfo({...examInfo, grade: e})
+            }}
           >
             <Select.Option value={-1} title="Lớp" disabled />
             <Select.Option value={6} title="Lớp 6" />
@@ -49,7 +62,11 @@ export default function ExamMaker() {
           <Select
             label={<Text className="mt-2">Loại bài kiểm tra <span className="required">*</span></Text>}
             closeOnSelect defaultValue={examInfo.examType}
-            onChange={(e: 'default' | 'regular' | 'midterm' | 'final' | 'other') => setExamInfo({...examInfo, examType: e})}
+            errorText={examError.examType} status={examError.examType.length === 0 ? "" : "error"}
+            onChange={(e: 'default' | 'regular' | 'midterm' | 'final' | 'other') => {
+              setExamError({...examError, examType: ""})
+              setExamInfo({...examInfo, examType: e});
+            }}
           >
             <Select.Option value="default" title="Loại bài kiểm tra" disabled />
             <Select.Option value="regular" title="Kiểm tra thường xuyên" />
@@ -57,24 +74,36 @@ export default function ExamMaker() {
             <Select.Option value="final" title="Kiểm tra học kì" />
             <Select.Option value="other" title="Khác" />
           </Select>
-
-          {
-            examInfo.examType === "other" ? (
-              <Input
-                label={<Text className="mt-2">Tên bài kiểm tra <span className="required">*</span></Text>}
-                placeholder="Tên bài kiểm tra" required value={examInfo.title}
-                onChange={e => setExamInfo({...examInfo, title: e.target.value})}
-              />
-            ) : <></>
-          }
+          
+          <Input
+            label={<Text className="mt-2">Tên bài kiểm tra</Text>}
+            placeholder="Tên bài kiểm tra" value={examInfo.title}
+            errorText={examError.title} status={examError.title.length === 0 ? "" : "error"}
+            onChange={e => {
+              setExamError({...examError, title: ""})
+              setExamInfo({...examInfo, title: e.target.value})
+            }}
+          />
 
           <Input
+            type="number" min={0}
             label={<Text className="mt-2">Thời gian làm bài (phút) <span className="required">*</span></Text>}
-            placeholder="Thời gian làm bài" required value={timeLimit} onChange={e => setTimeLimit(e.target.value)}
+            errorText={examError.timeLimit} status={examError.timeLimit.length === 0 ? "" : "error"}
+            placeholder="Thời gian làm bài" required value={timeLimit}
+            onChange={e => {
+              setExamError({...examError, timeLimit: ""})
+              setTimeLimit(e.target.value)
+            }}
           />
           <Input
+            type="number" min={0}
             label={<Text className="mt-2">Thời gian nộp bài tối thiểu (phút)</Text>}
-            placeholder="Thời gian nộp bài tối thiểu" value={earlyTurnIn} onChange={e => setEarlyTurnIn(e.target.value)}
+            errorText={examError.earlyTurnIn} status={examError.earlyTurnIn.length === 0 ? "" : "error"}
+            placeholder="Thời gian nộp bài tối thiểu" value={earlyTurnIn}
+            onChange={e => {
+              setExamError({...examError, earlyTurnIn: ""})
+              setEarlyTurnIn(e.target.value)
+            }}
           />
           
           <Checkbox
@@ -121,12 +150,27 @@ export default function ExamMaker() {
   )
 
   function handleSubmit() {
-    switch (examInfo.examType) {
-      case "regular": examInfo.title = "Kiểm tra thường xuyên"; break;
-      case "midterm": examInfo.title = "Kiểm tra giữa kì"; break;
-      case "final": examInfo.title = "Kiểm tra học kì"; break;
-      default: break;
-    }
+    let errorFlag = false;
+    const newError = { grade: "", examType: "", title: "", timeLimit: "", earlyTurnIn: "" };
+    if (examInfo.grade === -1) { errorFlag = true; newError.grade = "Vui lòng nhập lớp!" }
+    if (examInfo.examType === 'default') { errorFlag = true; newError.examType = "Vui lòng chọn loại bài kiểm tra!" }
+    if (examInfo.examType === 'other' && !examInfo.title) { errorFlag = true; newError.title = "Vui lòng nhập tiêu đề!" }
+    if (!timeLimit) { errorFlag = true; newError.timeLimit = "Vui lòng nhập thời gian làm bài!" }
+    else if (Number(timeLimit) < 5) { errorFlag = true; newError.timeLimit = "Thời gian làm bài phải tối thiểu 5 phút!" }
+    if (!earlyTurnIn) { errorFlag = true; newError.earlyTurnIn = "Vui lòng nhập thời gian nộp bài tối thiểu!" }
+    else if (Number(earlyTurnIn) > Number(timeLimit)) { errorFlag = true; newError.earlyTurnIn = "Thời gian nộp bài tối thiểu không được lớn hơn thời gian làm bài!" }
+
+    setExamError(newError);
+
+    if (errorFlag) return;    
+
+    if (examInfo.title === "")
+      switch (examInfo.examType) {
+        case "regular": examInfo.title = "Kiểm tra thường xuyên"; break;
+        case "midterm": examInfo.title = "Kiểm tra giữa kì"; break;
+        case "final": examInfo.title = "Kiểm tra học kì"; break;
+        default: break;
+      }
 
     examInfo.displayType = type?.toLowerCase() === "pdf" ? "pdf" : "normal";
     examInfo.timeLimit = Number(timeLimit);

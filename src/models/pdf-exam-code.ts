@@ -51,6 +51,7 @@ class ExamCodeGet {
   taskPDF: string = "";
   answerPDF: string = "";
   numPart: number = -1;
+  allowShowScore: boolean = true;
   questions: ExamCodeQuestionGet[] = []
 }
 
@@ -64,8 +65,9 @@ class ExamCodeQuestionGet {
   point: number = 0;
 }
 
-function getExamCodeByExamId(examId: number) {
-  return axios.get(`/api/pdf-exam-code/${examId}`);
+function getExamCodeByExamId(examId: number, id?: number) {
+  if (id === undefined) return axios.get(`/api/pdf-exam-code/${examId}`);
+  return axios.get(`/api/pdf-exam-code/${examId}?pdfExamCodeId=${id}`);
 }
 
 function insertCode(examCodes: ExamCode[]) {
