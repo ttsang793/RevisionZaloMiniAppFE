@@ -40,6 +40,11 @@ import SubjectManagement from "@/pages/admin/subject";
 import TopicManagement from "@/pages/admin/topic";
 import { AdminFooter, AdminHeader } from "./admin/head-foot";
 
+// Error
+import Error403 from "@/pages/errors/403";
+import Error404 from "@/pages/errors/404";
+import Error500 from "@/pages/errors/500";
+
 // Inline layout wrappers
 const TeacherLayout = () => (
   <>
@@ -115,7 +120,7 @@ const Layout = () => {
               <Route path="teacher/:id" element={<TeacherDetailPage />} />
             </Route>
 
-            {/* Test routes */}
+            {/* Exam routes */}
             <Route path="/student/exam" element={<NoFooter />}>
               <Route path="preview/:id" element={<ExamPreviewPage />} />
               <Route path="take/:id" element={<TakeExamPage practice={false} />} />
@@ -125,6 +130,11 @@ const Layout = () => {
               <Route path="pdf/practice/:id" element={<TakePDFExamPage practice />} />
               <Route path="pdf/result/:id" element={<PDFExamResultPage />} />
             </Route>
+
+            {/* Error routes */}
+            <Route path="/403" element={<Error403 />} />
+            <Route path="/404" element={<Error404 />} />
+            <Route path="/500" element={<Error500 />} />
           </Routes>
         </ZMPRouter>
       </SnackbarProvider>

@@ -27,7 +27,7 @@ const QuestionMakerShortAnswer = ({id}) => {
       setNumber(number.split(""));
       setQuestion(response.data);
     });
-    axios.get("/api/topic").then(response => setTopicList(response.data));
+    axios.get("/api/topic/active").then(response => setTopicList(response.data));
   }, [])
 
   return (

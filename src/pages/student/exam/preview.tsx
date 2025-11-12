@@ -5,7 +5,7 @@ import { Avatar, Text, Page, Modal } from "zmp-ui";
 import { useState, useEffect } from "react";
 import AppHeader from "@/components/header";
 import { Exam, getExamById } from "@/models/exam";
-import { handleFavorite } from "@/models/student";
+import { handleFavorite, handleFollowing, handleHistory } from "@/models/student";
 
 export default function TestPreviewPage() {
   const { id } = useParams();
@@ -18,6 +18,7 @@ export default function TestPreviewPage() {
   useEffect(() => {
     setLoading(true);
     if (id !== undefined) {
+      handleHistory(Number(id));
       getExamById(Number(id)).then(response => {
         setExamInfo(response.data);
         setLoading(false);
@@ -38,7 +39,10 @@ export default function TestPreviewPage() {
                 <Avatar src="/avatar/default.jpg" size={24} className="me-1" />
                 {examInfo.teacherName}
               </div>
-              <button className="zaui-bg-blue-80 text-white rounded-full py-1 px-2 text-sm">
+              <button
+                className="zaui-bg-blue-80 text-white rounded-full py-1 px-2 text-sm"
+                onClick={() => handleFollowing(examInfo.teacherId)}
+              >
                 Theo dõi
               </button>
             </div>

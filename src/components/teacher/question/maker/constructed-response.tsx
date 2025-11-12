@@ -30,7 +30,7 @@ const QuestionMakerConstructedResponse = ({id}) => {
 
   useEffect(() => {
     if (id !== undefined) getConstructedResponseQuestionById(id).then(response => setQuestion(response.data));
-    axios.get("/api/topic").then(response => setTopicList(response.data));
+    axios.get("/api/topic/active").then(response => setTopicList(response.data));
   }, [])
 
   return (

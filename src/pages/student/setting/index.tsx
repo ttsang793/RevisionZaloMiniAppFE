@@ -10,10 +10,37 @@ import { getUserInfo } from "zmp-sdk";
 export default function StudentSettingPage() {
   const navTo = useNavigate();
   const [student, setStudent] = useState<Student>(new Student());
+  const [emailError, setEmailError] = useState("");
+  
+  const [noti, setNoti] = useState({
+    all: sessionStorage.getItem("noti-all") === "true",
+    following: sessionStorage.getItem("noti-following") === "true",
+    manual: sessionStorage.getItem("noti-manual") === "true",
+    reply: sessionStorage.getItem("noti-reply") === "true",
+  });
 
   useEffect(() => {
     fetchData();
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    Object.entries(noti).forEach(([key, value]) => {
+      sessionStorage.setItem(`noti-${key}`, String(value));
+    });
+  }, [noti]);
+
+  const handleChange = (key: keyof typeof noti) => {
+    if (key === "all") {
+      const newValue = !noti.all;
+      setNoti({
+        all: newValue,
+        following: newValue,
+        manual: newValue,
+        reply: newValue,
+      });
+    }
+    else setNoti(prev => ({...prev, [key]: !prev[key]}))
+  };
 
   return (
     <Page className="page-x-0">
@@ -21,22 +48,22 @@ export default function StudentSettingPage() {
       <Box className="section-container">
         <Box className="grid grid-cols-[1fr_30px] gap-x-2 mb-3 items-center">
           <Text>Thông báo</Text>
-          <Switch />
+          <Switch checked={noti.all} onChange={() => handleChange("all")} />
         </Box>
         <hr />
         <Box className="grid grid-cols-[1fr_30px] gap-x-2 my-3 items-center">
           <Text>Đề thi mới của giáo viên đang theo dõi</Text>
-          <Switch />
+          <Switch checked={noti.following} onChange={() => handleChange("following")} />
         </Box>
         <hr />
         <Box className="grid grid-cols-[1fr_30px] gap-x-2 my-3 items-center">
           <Text>Bài tự luận đã có điểm</Text>
-          <Switch />
+          <Switch checked={noti.manual} onChange={() => handleChange("manual")} />
         </Box>
         <hr />
         <Box className="grid grid-cols-[1fr_30px] gap-x-2 mt-3 items-center">
           <Text>Phản hồi của bình luận</Text>
-          <Switch />
+          <Switch checked={noti.reply} onChange={() => handleChange("reply")} />
         </Box>
       </Box>
 
@@ -71,6 +98,14 @@ export default function StudentSettingPage() {
               onChange={e => setStudent({...student, name: e.target.value})}
               helperText={<Text className="text-left">Nếu để trống, tên hiển thị là tên Zalo của bạn.</Text>}
             />
+            
+            <Input
+              placeholder="Email"
+              label={<Text className="mt-2">Email <span className="required">*</span></Text>}
+              value={student.email}
+              onChange={e => { setEmailError(""); setStudent({...student, email: e.target.value}) }} 
+              errorText={emailError} status={!emailError ? "" : "error"}
+            />
 
             <Box className="flex gap-x-2 justify-center mt-4">
               <input type="submit" value="Lưu" className="zaui-bg-blue-80 text-white rounded-full py-2 px-8" onClick={() => handleSubmit()} />
@@ -89,6 +124,13 @@ export default function StudentSettingPage() {
   )
 
   async function handleSubmit() {
+    let newEmailError = ""
+    if (!student.email) newEmailError = "Vui lòng nhập email!";
+    else if (/^\w+@\w+(\.\w+)+$/.test(student.email) === false) newEmailError = "Vui lòng nhập email đúng định dạng!";
+
+    setEmailError(newEmailError);
+    if (newEmailError.length > 0) return;
+
     if (!student.name) {
       const userResponse = await getUserInfo({ autoRequestPermission: false });
       student.name = userResponse.userInfo.name;

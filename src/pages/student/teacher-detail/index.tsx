@@ -4,6 +4,7 @@ import { Text, Page, Box } from "zmp-ui";
 import { useState, useEffect } from 'react';
 import { Teacher, getTeacherById } from "@/models/user";
 import { Exam, getExamsByTeacher } from "@/models/exam";
+import { handleFollowing } from "@/models/student";
 
 export default function TeacherDetailPage() {
   const [examList, setExamList] = useState([]);
@@ -31,7 +32,10 @@ export default function TeacherDetailPage() {
           <hr />
           <Box className="flex items-center gap-x-2">
             <Text>1,000 học sinh theo dõi</Text>
-            <button className="zaui-bg-blue-80 text-white rounded-full py-1 px-2 text-sm">
+            <button
+              className="zaui-bg-blue-80 text-white rounded-full py-1 px-2 text-sm"
+              onClick={() => handleFollowing(teacher.id!)}
+            >
               Theo dõi
             </button>
           </Box>

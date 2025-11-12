@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { Exam } from "@/models/exam";
 import { getFavorite } from "@/models/student";
 
-function FavoritePage() {
+export default function FavoritePage() {
   const [examList, setExamList] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -28,11 +28,9 @@ function FavoritePage() {
       <StudentHeader title="Đề thi yêu thích" />
       <Box className="flex gap-5 flex-wrap justify-center">
       {
-        loading ? <>Cho 1 chut</> : examList.map((exam: Exam) => <ExamHolder exam={exam} latest="21/10/2025" key={`exam-${exam.id}`} />)
+        loading ? <>Đang tải đề, chờ chút nhé!</> : examList.map((exam: Exam) => <ExamHolder exam={exam} latest="21/10/2025" key={`exam-${exam.id}`} />)
       }
       </Box>
     </Page>
   );
 }
-
-export default FavoritePage;

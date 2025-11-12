@@ -15,6 +15,11 @@ const getTopics = async () => {
   return list.data;
 }
 
+const getActiveTopics = async () => {
+  const response = await axios.get("/api/topic/active");
+  return response.data;
+}
+
 const getTopicById = async (id: string) => {
   const response = await axios.get(`/api/topic/${id}`);
   return (response.status === 200) ? response.data : null;
@@ -85,4 +90,4 @@ const deleteTopic = (id: string, isVisible: boolean) => {
   }
 }
 
-export { Topic, getTopics, getTopicById, getTopicByName, insertTopic, updateTopic, deleteTopic }
+export { Topic, getTopics, getActiveTopics, getTopicById, getTopicByName, insertTopic, updateTopic, deleteTopic }

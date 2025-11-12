@@ -28,36 +28,18 @@ export default function QuestionManagement() {
 
       <Box className="section-container mt-4 zaui-text-blue-90">
         <Text.Title className="mb-2">Thêm câu hỏi</Text.Title>
-        <Box className="grid grid-cols-4 gap-x-1 place-items-start">
+        <Box className="grid grid-cols-3 gap-x-1 place-items-start">
           <button className="flex flex-col items-center w-full" onClick={() => setOpenChoose(true)}>
             <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
-            Thủ công
+            Chọn loại câu
           </button>
-          <button className="flex flex-col items-center w-full" onClick={() => navTo("maker/group")}>
+          <button className="flex flex-col items-center w-full">
             <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
-            Thêm nhóm câu hỏi
-          </button>
-          <button className="flex flex-col items-center w-full" onClick={() => navTo("maker/true-false-thpt")}>
-            <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
-            TN Đúng &minus; Sai (THPTQG)
+            Tải file Word mẫu
           </button>
           <button className="flex flex-col items-center w-full" onClick={() => navTo("word")}>
             <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
             Nhập từ file Word
-          </button>
-        </Box>
-
-        <hr />
-        
-        <Text.Title className="mb-2">File mẫu và câu hỏi mẫu</Text.Title>
-        <Box className="grid grid-cols-2 gap-x-1 place-items-start">
-          <button className="flex flex-col items-center w-full">
-            <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
-            Danh sách câu hỏi mẫu
-          </button>
-          <button className="flex flex-col items-center w-full">
-            <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
-            File Word mẫu
           </button>
         </Box>
       </Box>

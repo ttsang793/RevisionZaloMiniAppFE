@@ -7,7 +7,7 @@ import { Topic } from "@/models/topic";
 import { FillInTheBlankQuestion } from "@/models/question";
 import { FillInTheBlankError, getFillInTheBlankQuestionById, insertFillInTheBlankQuestion, updateFillInTheBlankQuestion } from "@/models/fill-in-the-blank-question";
 
-const QuestionMakerFillInTheBlank = ({id}) => {
+const QuestionMakerGapFill = ({id}) => {
   const { TextArea } = Input;
   const [topicList, setTopicList] = useState([]);
   const [question, setQuestion] = useState<FillInTheBlankQuestion>(new FillInTheBlankQuestion());
@@ -30,7 +30,7 @@ const QuestionMakerFillInTheBlank = ({id}) => {
 
   useEffect(() => {
     if (id !== undefined) getFillInTheBlankQuestionById(id).then(response => setQuestion(response.data));
-    axios.get("/api/topic").then(response => setTopicList(response.data));
+    axios.get("/api/topic/active").then(response => setTopicList(response.data));
   }, [])
 
   return (
@@ -166,4 +166,4 @@ const QuestionMakerFillInTheBlank = ({id}) => {
   }
 }
 
-export { QuestionMakerFillInTheBlank }
+export { QuestionMakerGapFill }

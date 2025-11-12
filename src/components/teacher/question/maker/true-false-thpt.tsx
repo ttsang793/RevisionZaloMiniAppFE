@@ -28,7 +28,7 @@ const QuestionMakerTrueFalseTHPT = ({id}) => {
 
   useEffect(() => {
     if (id !== undefined) getTrueFalseTHPTQuestionById(Number(id)).then(response => setQuestion(response.data));
-    axios.get("/api/topic").then(response => setTopicList(response.data));
+    axios.get("/api/topic/active").then(response => setTopicList(response.data));
   }, []);
 
   return (

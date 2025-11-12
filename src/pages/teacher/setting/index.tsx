@@ -2,7 +2,7 @@ import { CameraFill, ChevronRight } from "react-bootstrap-icons";
 import { Box, Switch, Input, Text, Page, Select, useNavigate } from "zmp-ui";
 import AppHeader from "@/components/header";
 import { useState, useEffect } from "react";
-import { getSubjects, Subject } from "@/models/subject";
+import { getActiveSubjects, Subject } from "@/models/subject";
 import { getUserInfo } from "zmp-sdk";
 import "./setting.css";
 
@@ -17,11 +17,35 @@ export default function TeacherSettingPage() {
 
   const [allSubject, setAllSubject] = useState([]);
   const [subjectList, setSubjectList] = useState([]);
-  const [subjectError, setSubjectError] = useState("");
+  const [errors, setErrors] = useState<{email?: string, subject?: string}>({});
+
+  const [noti, setNoti] = useState({
+    all: sessionStorage.getItem("tnoti-all") === "true",
+    reply: sessionStorage.getItem("tnoti-reply") === "true",
+    manual: sessionStorage.getItem("tnoti-manual") === "true",
+  });
 
   useEffect(() => {
     fetchData();
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    Object.entries(noti).forEach(([key, value]) => {
+      sessionStorage.setItem(`tnoti-${key}`, String(value));
+    });
+  }, [noti]);
+
+  const handleChange = (key: keyof typeof noti) => {
+    if (key === "all") {
+      const newValue = !noti.all;
+      setNoti({
+        all: newValue,
+        reply: newValue,
+        manual: newValue,
+      });
+    }
+    else setNoti(prev => ({...prev, [key]: !prev[key]}));
+  };
 
   return loading ? <></> : (
     <Page className="page-x-0">
@@ -29,17 +53,17 @@ export default function TeacherSettingPage() {
       <Box className="section-container">
         <Box className="grid grid-cols-[1fr_30px] gap-x-2 mb-3 items-center">
           <Text>Thông báo</Text>
-          <Switch />
+          <Switch checked={noti.all} onChange={() => handleChange("all")} />
         </Box>
         <hr />
         <Box className="grid grid-cols-[1fr_30px] gap-x-2 my-3 items-center">
           <Text>Bình luận của học sinh</Text>
-          <Switch />
+          <Switch checked={noti.reply} onChange={() => handleChange("reply")} />
         </Box>
         <hr />
         <Box className="grid grid-cols-[1fr_30px] gap-x-2 my-3 items-center">
           <Text>Có bài tự luận cần chấm</Text>
-          <Switch />
+          <Switch checked={noti.manual} onChange={() => handleChange("manual")} />
         </Box>
       </Box>
 
@@ -60,6 +84,15 @@ export default function TeacherSettingPage() {
               onChange={e => setTeacher({...teacher, name: e.target.value})}
               helperText={<Text className="text-left">Nếu để trống, tên hiển thị là tên Zalo của thầy/cô.</Text>}
             />
+
+            <Input
+              placeholder="Email"
+              label={<Text className="mt-2">Email <span className="required">*</span></Text>}
+              value={teacher.email}
+              onChange={e => { setErrors({...errors, email: ""}); setTeacher({...teacher, email: e.target.value}) }}
+              errorText={errors.email} status={!errors.email ? "" : "error"}
+            />
+
             <Select
               label={<Text className="mt-2">Khối <span className="required">*</span></Text>}
               closeOnSelect value={level} onChange={(e: string) => fetchSubject(e)}
@@ -73,8 +106,8 @@ export default function TeacherSettingPage() {
               className={subjectList.length === 0 ? "hidden" : ""}
               label={<Text className="mt-2">Môn học <span className="required">*</span></Text>}
               closeOnSelect value={teacher.subjectId}
-              errorText={subjectError} status={subjectError.length === 0 ? "" : "error"}
-              onChange={(e: string) => { setSubjectError(""); setTeacher({...teacher, subjectId: e})} }
+              errorText={errors.subject} status={!errors.subject ? "" : "error"}
+              onChange={(e: string) => { setErrors({...errors, subject: ""}); setTeacher({...teacher, subjectId: e}) }}
             >
               <Select.Option value="-1" title="Chọn môn học" disabled />
               {
@@ -121,11 +154,14 @@ export default function TeacherSettingPage() {
   }
 
   async function handleSubmit() {
-    let error = "";
-    if (teacher.subjectId === "-1") error = "Vui lòng chọn môn học!"
+    const newError: {email?: string, subject?: string} = {};
+    if (!teacher.email) newError.email = "Vui lòng nhập email!";
+    else if (/^\w+@\w+(\.\w+)+$/.test(teacher.email) === false) newError.email = "Vui lòng nhập email đúng định dạng!";
 
-    setSubjectError(error);
-    if (error.length !== 0) return;
+    if (teacher.subjectId === "-1") newError.subject = "Vui lòng chọn môn học!";
+
+    setErrors(prev => prev = newError);
+    if (Object.keys(newError).length !== 0) return;
 
     if (!teacher.name) {
       const userResponse = await getUserInfo({ autoRequestPermission: false });
@@ -144,7 +180,7 @@ export default function TeacherSettingPage() {
       setLevel(l);
       setTeacher(data);
 
-      const allSubjectResponse = await getSubjects();
+      const allSubjectResponse = await getActiveSubjects();
       setAllSubject(allSubjectResponse);
       
       let newSubjectList = [];
@@ -160,7 +196,7 @@ export default function TeacherSettingPage() {
   }
 
   async function handleDelete() {
-    const status = await deleteTeacher(7);
+    const status = await deleteTeacher();
     if (status === 201) {
       navTo("/");
     }

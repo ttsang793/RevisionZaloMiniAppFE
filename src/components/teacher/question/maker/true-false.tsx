@@ -17,7 +17,7 @@ const QuestionMakerTrueFalse = ({id}) => {
 
   useEffect(() => {
     if (id !== undefined) getTrueFalseQuestionById(id).then(response => setQuestion(response.data));
-    axios.get("/api/topic").then(response => setTopicList(response.data));
+    axios.get("/api/topic/active").then(response => setTopicList(response.data));
   }, [])
 
   return (

@@ -9,7 +9,7 @@ import { Teacher, addTeacher } from "@/models/user";
 export default function TeacherRegisterPage() {
   const { TextArea } = Input;
   const [teacher, setTeacher] = useState<Teacher>(new Teacher());
-  const [errors, setErrors] = useState<{grade?: string, subject?: string}>({});
+  const [errors, setErrors] = useState<{email?: string, grade?: string, subject?: string}>({});
   const [level, setLevel] = useState("-1");
   const navTo = useNavigate();
 
@@ -36,10 +36,20 @@ export default function TeacherRegisterPage() {
             onChange={e => setTeacher({...teacher, name: e.target.value})}
             helperText={<Text className="text-left">Nếu để trống, tên hiển thị là tên Zalo của thầy/cô.</Text>}
           />
+
+          <Input
+            placeholder="Email"
+            label={<Text className="mt-2">Email <span className="required">*</span></Text>}
+            value={teacher.email}
+            onChange={e => { setErrors({...errors, email: ""}); setTeacher({...teacher, email: e.target.value})} }
+            errorText={errors.email}
+            status={!errors.email ? "" : "error"}
+          />
+
           <Select
             label={<Text className="mt-2">Khối <span className="required">*</span></Text>}
             closeOnSelect value={level} errorText={errors.grade} status={!errors.grade ? "" : "error"}
-            onChange={(e: string) => { setErrors({}); fetchSubject(e); }}
+            onChange={(e: string) => { setErrors({...errors, grade: ""}); fetchSubject(e); }}
           >
             <Select.Option value="-1" title="Chọn khối" disabled />
             <Select.Option value="THCS" title="THCS" />
@@ -51,7 +61,7 @@ export default function TeacherRegisterPage() {
             label={<Text className="mt-2">Môn học <span className="required">*</span></Text>}
             closeOnSelect value={teacher.subjectId}
             errorText={errors.subject} status={!errors.subject ? "" : "error"}
-            onChange={(e: string) => { setErrors({}); setTeacher({...teacher, subjectId: e})} }
+            onChange={(e: string) => { setErrors({...errors, subject: ""}); setTeacher({...teacher, subjectId: e})} }
           >
             <Select.Option value="-1" title="Chọn môn học" disabled />
             {
@@ -90,9 +100,12 @@ export default function TeacherRegisterPage() {
   }
 
   async function handleSubmit() {
-    const newError: {grade?: string, subject?: string} = {};
+    const newError: {email?: string, grade?: string, subject?: string} = {};
+    if (!teacher.email) newError.email = "Vui lòng nhập email!";
+    else if (/^\w+@\w+(\.\w+)+$/.test(teacher.email) === false) newError.email = "Vui lòng nhập email đúng định dạng!";
+
     if (level === "-1") newError.grade = "Vui lòng chọn khối giảng dạy!";
-    else if (teacher.subjectId === "-1") newError.subject = "Vui lòng chọn môn học!"
+    else if (teacher.subjectId === "-1") newError.subject = "Vui lòng chọn môn học!";
 
     setErrors(prev => prev = newError);
     if (Object.keys(newError).length !== 0) return;

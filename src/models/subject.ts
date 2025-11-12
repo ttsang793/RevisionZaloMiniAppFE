@@ -18,6 +18,11 @@ const getSubjects = async () => {
   return response.data;
 }
 
+const getActiveSubjects = async () => {
+  const response = await axios.get("/api/subject/active");
+  return response.data;
+}
+
 const getSubjectById = async (id: string) => {
   const response = await axios.get(`/api/subject/${id}`);
   return (response.status === 200) ? response.data : null;
@@ -83,4 +88,4 @@ const deleteSubject = (id: string, isVisible: boolean) => {
   }
 }
 
-export { Subject, getSubjects, getSubjectById, insertSubject, updateSubject, deleteSubject };
+export { Subject, getSubjects, getActiveSubjects, getSubjectById, insertSubject, updateSubject, deleteSubject };

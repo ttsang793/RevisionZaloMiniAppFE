@@ -37,7 +37,7 @@ const QuestionMakerSorting = ({id}) => {
     if (id !== undefined) getSortingQuestionById(id).then(response => {
       setQuestion(response.data);
     });
-    axios.get("/api/topic").then(response => setTopicList(response.data));
+    axios.get("/api/topic/active").then(response => setTopicList(response.data));
   }, [])
 
   return (

@@ -1,10 +1,13 @@
 import axios from "axios";
 
+const id = Number(sessionStorage.getItem("id"));
+
 class User {
   id?: number;
   zaloId?: string;
   name: string = "";
   avatar: string = "/avatar/default.jpg";
+  email: string = "";
 }
 
 class Student extends User {
@@ -26,15 +29,20 @@ class AdminLogin {
   password: string = ""  
 }
 
-function getStudentById(id: number = 1) {
+function getUserByZaloId(zaloId: string) {
+  return axios.get(`/api/user/${zaloId}`);
+}
+
+function getStudentById() {
   return axios.get(`/api/student/${id}`);
 }
 
-async function addStudent(userInfo): Promise<number> {
+async function addStudent(userInfo, email): Promise<number> {
   const student = new Student()
   student.zaloId = userInfo.id;
   student.name = userInfo.name;
   student.avatar = userInfo.avatar;
+  student.email = email;
 
   try {
     const response = await axios.post("/api/student", student, {
@@ -58,7 +66,7 @@ function updateStudent(student: Student) {
   })
 }
 
-async function deleteStudent(id: number) : Promise<number> {
+async function deleteStudent() : Promise<number> {
   try {
     const response = await axios.delete(`/api/student/${id}`);
     return response.data;
@@ -69,7 +77,7 @@ async function deleteStudent(id: number) : Promise<number> {
   }
 }
 
-function getTeacherById(id: number = 2) {
+function getTeacherById() {
   return axios.get(`/api/teacher/${id}`);
 }
 
@@ -96,7 +104,7 @@ function updateTeacher(teacher: Teacher) {
   })
 }
 
-async function deleteTeacher(id: number): Promise<number> {
+async function deleteTeacher(): Promise<number> {
   try {
     const response = await axios.delete(`/api/teacher/${id}`);
     return response.data;
@@ -119,6 +127,7 @@ async function vertifyAdmin(admin: AdminLogin): Promise<any> {
   }
 }
 
-export { Student, getStudentById, addStudent, updateStudent, deleteStudent,
+export { getUserByZaloId,
+          Student, getStudentById, addStudent, updateStudent, deleteStudent,
           Teacher, getTeacherById, addTeacher, updateTeacher, deleteTeacher,
           Admin, AdminLogin, vertifyAdmin }

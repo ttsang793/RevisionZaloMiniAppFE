@@ -20,13 +20,21 @@ const ChooseQuestionType = ({visible, setVisible}) => {
           <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
           Trắc nghiệm Đúng &minus; Sai
         </button>
+        <button className="flex flex-col items-center w-full" onClick={() => navTo("maker/true-false-thpt")}>
+          <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
+          Trắc nghiệm Đúng &minus; Sai (THPT)
+        </button>
         <button className="flex flex-col items-center w-full" onClick={() => navTo("maker/short-answer")}>
           <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
           Trắc nghiệm Trả lời ngắn
         </button>
         <button className="flex flex-col items-center w-full" onClick={() => navTo("maker/fill-in-the-blank")}>
           <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
-          Điền vào chỗ trống
+          Điền vào chỗ trống (1 câu)
+        </button>
+        <button className="flex flex-col items-center w-full" onClick={() => navTo("maker/sorting-multiple")}>
+          <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
+          Điền vào chỗ trống (nhiều câu)
         </button>
         <button className="flex flex-col items-center w-full" onClick={() => navTo("maker/constructed-response")}>
           <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
