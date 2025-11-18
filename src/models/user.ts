@@ -17,6 +17,11 @@ class Teacher extends User {
   subjectId: string = "-1";
   grades: number[] = [];
   introduction?: string;
+
+  constructor(name: string) {
+    super();
+    this.name = name;
+  }
 }
 
 class Admin extends User {

@@ -1,13 +1,11 @@
 import axios from "axios";
 import { MultipleChoiceQuestion } from "./question";
 
-type MultipleChoiceError = {
-  correctAnswer?: string,
-  wrongAnswer1?: string,
-  wrongAnswer2?: string,
-  wrongAnswer3?: string,
-  grade?: string,
-  difficulty?: string,
+class MultipleChoiceError {
+  correctAnswer?: string;
+  wrongAnswer: string[] = [];
+  grade?: string;
+  difficulty?: string;
   topic?: string
 }
 

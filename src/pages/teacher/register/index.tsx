@@ -1,14 +1,15 @@
 import { Box, Button, Input, Page, Select, Text } from "zmp-ui";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { getSubjects, Subject } from "@/models/subject";
+import { useNavigate, useLocation } from "react-router-dom";
+import { getActiveSubjects, Subject } from "@/models/subject";
 import { getUserInfo } from "zmp-sdk";
 
 import { Teacher, addTeacher } from "@/models/user";
 
 export default function TeacherRegisterPage() {
+  const { teacherInfo } = useLocation().state || {};
   const { TextArea } = Input;
-  const [teacher, setTeacher] = useState<Teacher>(new Teacher());
+  const [teacher, setTeacher] = useState<Teacher>(new Teacher(teacherInfo.name));
   const [errors, setErrors] = useState<{email?: string, grade?: string, subject?: string}>({});
   const [level, setLevel] = useState("-1");
   const navTo = useNavigate();
@@ -17,7 +18,7 @@ export default function TeacherRegisterPage() {
   const [subjectList, setSubjectList] = useState([]);
 
   useEffect(() => {
-    getSubjects().then(allSubject => setAllSubject(allSubject));
+    getActiveSubjects().then(allSubject => setAllSubject(allSubject));
   }, [])
 
   return (

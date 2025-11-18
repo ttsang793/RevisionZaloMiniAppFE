@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { TracNghiemResult } from "../question/multiple-choice";
 import { DungSaiResult } from "../question/true-false";
 import { TraLoiNganResult } from "../question/short-answer";
-import { DienVaoChoTrongResult } from "../question/fill-in-the-blank";
+import { DienVaoChoTrongResult } from "../question/gap-fill";
 import { TuLuanResult } from "../question/constructed-response";
 import { SapXep } from "../question/sorting";
 import { DungSaiTHPTResult } from "../question/true-false-thpt";

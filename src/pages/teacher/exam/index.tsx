@@ -1,11 +1,10 @@
 import { Box, Page, Text, useNavigate } from "zmp-ui";
-import axios from "axios";
 import { useState, useEffect } from "react";
 import AppHeader from "@/components/header";
 import ExamList from "@/components/teacher/exam/exam-list";
 import { Exam, getExamsByTeacher } from "@/models/exam";
 
-export default function QuestionManagement() {
+export default function ExamManagement() {
   const [examList, setExamList] = useState([]);
   const [loading, setLoading] = useState(true);
   const navTo = useNavigate();

@@ -1,6 +1,6 @@
 import CommentFirst from "./comment-first";
 import CommentReply from "./comment-reply";
-import { Text, Input, List } from "zmp-ui"
+import { Text, Input, Box } from "zmp-ui"
 import { useState, useEffect, FormEvent } from "react";
 import { Comment, getCommentsByExamId, insertComment, deleteComment } from "@/models/comment";
 import { Send } from "react-bootstrap-icons";
@@ -15,7 +15,7 @@ const CommentBlock = ({id}) => {
   }, [])
 
   return (
-    <div className="section-container">
+    <Box className="section-container">
       <Text bold size="large">Bình luận</Text>
 
       <form className="flex gap-x-2" onSubmit={handleSubmit}>
@@ -32,11 +32,11 @@ const CommentBlock = ({id}) => {
         commentList.map((c: Comment) => 
           <>
             <CommentFirst comment={c} handleDelete={handleDelete} key={`comment-${c.id}`} loadData={loadData} />
-            {c.replies.map((r: Comment) => <CommentReply comment={r} handleDelete={handleDelete} key={`comment-${r.id}`} loadData={loadData} />)}
+            {c.replies!.map((r: Comment) => <CommentReply comment={r} handleDelete={handleDelete} key={`comment-${r.id}`} loadData={loadData} />)}
           </>
         )
       }
-    </div>
+    </Box>
   )
 
   async function loadData() {

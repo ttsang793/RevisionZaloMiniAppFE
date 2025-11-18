@@ -1,5 +1,7 @@
 import axios from "axios";
 
+const studentId = Number(sessionStorage.getItem("id"));
+
 class ExamAttemptGet {
   score?: number;
   examParts: any[] = [];
@@ -7,8 +9,8 @@ class ExamAttemptGet {
 
 class ExamAttempt {
   id?: number;
-  examId: number = -1;
-  studentId: number = 1;
+  examId: number;
+  studentId: number;
   score?: number;
   startedAt?: Date;
   partOrder: number[] = [];
@@ -16,6 +18,7 @@ class ExamAttempt {
   examAttemptAnswers: ExamAttemptAnswer[] = [];
 
   constructor(examId: number, isPractice: boolean) {
+    this.studentId = Number(sessionStorage.getItem("id"));
     this.examId = examId;
     this.isPractice = isPractice;
   }
@@ -62,8 +65,8 @@ function checkTrueFalseTHPT(question, answer): {numCorrect: number, point: numbe
   }
 }
 
-function getLatestAttempt(id: number) {
-  return axios.get(`/api/exam-attempt?studentId=1&examId=${id}`);
+function getLatestAttempt(examId: number) {
+  return axios.get(`/api/exam-attempt/${studentId}/${examId}`);
 }
 
 async function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], answerList: any[][]): Promise<number> {

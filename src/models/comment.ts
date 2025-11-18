@@ -8,7 +8,7 @@ class Comment {
   userAvatar?: string;
   replyTo?: number;
   content: string = "";
-  replies: Comment[] = []
+  replies?: Comment[];
 }
 
 function getCommentsByExamId(examId: number) {

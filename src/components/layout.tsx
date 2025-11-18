@@ -44,6 +44,8 @@ import { AdminFooter, AdminHeader } from "./admin/head-foot";
 import Error403 from "@/pages/errors/403";
 import Error404 from "@/pages/errors/404";
 import Error500 from "@/pages/errors/500";
+import StudentRegisterPage from "@/pages/student/register";
+import ExamDetail from "@/pages/teacher/exam/detail";
 
 // Inline layout wrappers
 const TeacherLayout = () => (
@@ -79,6 +81,7 @@ const Layout = () => {
             {/* Default route */}
             <Route path="/" element={<ChooseRolePage />} />
             <Route path="/register/teacher" element={<TeacherRegisterPage />} />
+            <Route path="/register/student" element={<StudentRegisterPage />} />
 
             {/* Admin routes */}
             <Route path="/admin" element={<AdminLayout />}>
@@ -105,6 +108,7 @@ const Layout = () => {
                 <Route path="maker/:type/:id" element={<ExamMaker />} />
                 <Route path="question/:id" element={<ExamQuestions />} />
                 <Route path="question/pdf/:id" element={<PDFExamQuestions />} />
+                <Route path="detail/:id/:type" element={<ExamDetail />} />
               </Route>
               <Route path="grade" element={<GradeManagement />} />
               <Route path="setting" element={<TeacherSettingPage />} />

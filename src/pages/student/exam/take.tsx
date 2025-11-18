@@ -48,7 +48,7 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
           shuffleQuestion.forEach(sq => {
             if (!questionIndex.includes(sq.orderIndex)) {
               if (sq.question.type === "multiple-choice")
-                sq.question.answerKeys = fisherYatesShuffle([sq.question.correctAnswer, sq.question.wrongAnswer1, sq.question.wrongAnswer2, sq.question.wrongAnswer3]);
+                sq.question.answerKeys = fisherYatesShuffle([sq.question.correctAnswer, sq.question.wrongAnswer[0], sq.question.wrongAnswer[1], sq.question.wrongAnswer[2]]);
               questionTypes.push({question: sq});
               questionAnswer.push("");
               questionIndex.push(sq.orderIndex);

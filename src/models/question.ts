@@ -1,5 +1,7 @@
 import axios from "axios";
 
+const teacherId = Number(sessionStorage.getItem("id"));
+
 class Question {
   id?: number;
   title: string = "";
@@ -7,15 +9,13 @@ class Question {
   type: string = "";
   difficulty?: number = -1;
   topicId?: string = "-1";
-  subjectId: string = "TOAN";
+  teacherId: number = teacherId;
   explanation?: string;
 }
 
 class MultipleChoiceQuestion extends Question {
   correctAnswer: string = "";
-  wrongAnswer1: string = "";
-  wrongAnswer2: string = "";
-  wrongAnswer3: string = "";
+  wrongAnswer: string[] = [];
 }
 
 class TrueFalseQuestion extends Question {
@@ -54,7 +54,7 @@ const questionType = [
  { title: "Trắc nghiệm 4 đáp án", type: "multiple-choice" },
  { title: "Trắc nghiệm Đúng – Sai", type: "true-false" },
  { title: "Trắc nghiệm trả lời ngắn", type: "short-answer" },
- { title: "Điền vào chỗ trống", type: "fill-in-the-blank" },
+ { title: "Điền vào chỗ trống", type: "gap-fill" },
  { title: "Tự luận", type: "constructed-response" },
  { title: "Sắp xếp", type: "sorting" },
  { title: "Trắc nghiệm Đúng – Sai THPT", type: "true-false-thpt" },
@@ -62,12 +62,12 @@ const questionType = [
 ];
 
 function getQuestionsByTeacher() {
-  return axios.get(`/api/question`);
+  return axios.get(`/api/question/${teacherId}`);
 }
 
 function getQuestionsFilterByTeacher(title?: string, type: string = "default") {
-  if (!title) return axios.get(`/api/question/filter?type=${type}`);
-  return axios.get(`/api/question/filter?type=${type}&title=${title}`);
+  if (!title) return axios.get(`/api/question/filter/${teacherId}?type=${type}`);
+  return axios.get(`/api/question/filter/${teacherId}?type=${type}&title=${title}`);
 }
 
 function deleteQuestion(id: number) {

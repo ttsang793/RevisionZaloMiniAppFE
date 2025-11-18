@@ -12,8 +12,20 @@ const QuestionMakerMutipleChoice = ({id}) => {
   const { TextArea } = Input;
   const [topicList, setTopicList] = useState([]);
   const [question, setQuestion] = useState<MultipleChoiceQuestion>(new MultipleChoiceQuestion());
-  const [error, setError] = useState<MultipleChoiceError>({});
+  const [error, setError] = useState<MultipleChoiceError>(new MultipleChoiceError());
   const navTo = useNavigate();
+
+  const handleWrongAnswerChange = (val: string, index: number) => {
+    const newWrongAnswer = [...question.wrongAnswer];
+    newWrongAnswer[index] = val;
+    setQuestion({...question, wrongAnswer: newWrongAnswer})
+  }
+
+  const handleWrongAnswerErrorChange = (index: number) => {
+    const newError = [...error.wrongAnswer];
+    newError[index] = "";
+    setQuestion({...question, wrongAnswer: newError})
+  }
 
   useEffect(() => {
     if (id !== undefined) getMultipleChoiceQuestionById(id).then(response => setQuestion(response.data));
@@ -33,7 +45,7 @@ const QuestionMakerMutipleChoice = ({id}) => {
           <Input
             placeholder="Nhập đáp án đúng*" required value={question?.correctAnswer}
             onChange={e => setQuestion({...question, correctAnswer: e.target.value})}
-            onBlur={e => setError({...error, correctAnswer: ""})}
+            onBlur={() => setError({...error, correctAnswer: ""})}
             errorText={error.correctAnswer}
             status={!error.correctAnswer ? "" : "error"}
           />
@@ -42,33 +54,22 @@ const QuestionMakerMutipleChoice = ({id}) => {
 
       <Box>
         <Text className="my-2">Ba đáp án sai <span className="required">*</span></Text>
-        <Box className="border zaui-border-gray-40 zaui-bg-steelblue-20 p-2 items-center gap-x-2">
-          <Input
-            placeholder="Nhập đáp án sai 1*" required value={question?.wrongAnswer1}
-            onChange={e => setQuestion({...question, wrongAnswer1: e.target.value})}
-            onBlur={e => setError({...error, wrongAnswer1: ""})}
-            errorText={error.wrongAnswer1}
-            status={!error.wrongAnswer1 ? "" : "error"}
-          />
-        </Box>
-        <Box className="border border-t-0 zaui-border-gray-40 zaui-bg-steelblue-20 p-2 items-center gap-x-2">
-          <Input
-            placeholder="Nhập đáp án sai 2*" required value={question?.wrongAnswer2}
-            onChange={e => setQuestion({...question, wrongAnswer2: e.target.value})}
-            onBlur={e => setError({...error, wrongAnswer2: ""})}
-            errorText={error.wrongAnswer2}
-            status={!error.wrongAnswer2 ? "" : "error"}
-          />
-        </Box>
-        <Box className="border border-t-0 zaui-border-gray-40 zaui-bg-steelblue-20 p-2 items-center gap-x-2">
-          <Input
-            placeholder="Nhập đáp án sai 3*" required value={question?.wrongAnswer3}
-            onChange={e => setQuestion({...question, wrongAnswer3: e.target.value})}
-            onBlur={e => setError({...error, wrongAnswer3: ""})}
-            errorText={error.wrongAnswer3}
-            status={!error.wrongAnswer3 ? "" : "error"}
-          />
-        </Box>
+        {
+          [0,1,2].map(i => 
+            <Box
+              key={`wrong-${i}`}
+              className={`border zaui-border-gray-40 zaui-bg-steelblue-20 p-2 items-center gap-x-2 ${i > 0 ? "border-t-0" : ""}`}
+            >
+              <Input
+                placeholder="Nhập đáp án sai 1*" required value={question?.wrongAnswer[i]}
+                onChange={e => handleWrongAnswerChange(e.target.value, i)}
+                onBlur={() => handleWrongAnswerErrorChange(i)}
+                errorText={error.wrongAnswer[i]}
+                status={!error.wrongAnswer[i] ? "" : "error"}
+              />
+            </Box>
+          )
+        }
       </Box>
 
       <Select
@@ -143,18 +144,18 @@ const QuestionMakerMutipleChoice = ({id}) => {
   )
 
   function handleSubmit(): void {
-    const newError: MultipleChoiceError = {};
-    if (question.correctAnswer === "") newError.correctAnswer = "Vui lòng nhập đáp án!";
-    if (question.wrongAnswer1 === "") newError.wrongAnswer1 = "Vui lòng nhập câu trả lời sai!";
-    if (question.wrongAnswer2 === "") newError.wrongAnswer2 = "Vui lòng nhập câu trả lời sai!";
-    if (question.wrongAnswer3 === "") newError.wrongAnswer3 = "Vui lòng nhập câu trả lời sai!";
-    if (question.grade === -1) newError.grade = "Vui lòng chọn lớp!";
-    if (question.difficulty === -1) newError.difficulty = "Vui lòng chọn độ khó!";
-    if (question.topicId === "-1") newError.topic = "Vui lòng chọn chủ đề!";
+    let errorFlag = false;
+    const newError: MultipleChoiceError = new MultipleChoiceError();
+    if (question.correctAnswer === "") { newError.correctAnswer = "Vui lòng nhập đáp án!"; errorFlag = true; }
+    for (let i = 0; i < 2; i++)
+      if (question.wrongAnswer[i] === "") { newError.wrongAnswer[i] = "Vui lòng nhập câu trả lời sai!"; errorFlag = true; }
+    if (question.grade === -1) { newError.grade = "Vui lòng chọn lớp!"; errorFlag = true; }
+    if (question.difficulty === -1) { newError.difficulty = "Vui lòng chọn độ khó!"; errorFlag = true; }
+    if (question.topicId === "-1") { newError.topic = "Vui lòng chọn chủ đề!"; errorFlag = true; }
 
     setError(newError);
 
-    if (Object.keys(newError).length === 0) {
+    if (!errorFlag) {
       question.type = 'multiple-choice';    
       id === undefined ? insertMultipleChoiceQuestion(question) : updateMultipleChoiceQuestion(question, id);
     }

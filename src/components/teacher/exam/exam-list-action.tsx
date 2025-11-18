@@ -1,4 +1,4 @@
-import { Exam, deleteExam, unpublishExam } from "@/models/exam";
+import { Exam, deleteExam, publishExam } from "@/models/exam";
 import { useNavigate, Sheet } from "zmp-ui";
 
 const ExamListAction = ({exam, visible, setVisible}: {exam: Exam, visible: boolean, setVisible: any}) => {
@@ -15,15 +15,14 @@ const ExamListAction = ({exam, visible, setVisible}: {exam: Exam, visible: boole
         { exam.state === 1 ? (
           <>
             <li className="p-4" onClick={() => navTo(`question/${exam.displayType === "pdf" ? "pdf/" : ""}${exam.id}`)}>Chỉnh sửa danh sách câu hỏi</li>
-            <li className="p-4" onClick={() => navTo("")}>Làm đề thi thử</li>
-            <li className="p-4" onClick={() => {}}>Xuất bản đề thi</li>
+            <li className="p-4" onClick={() => publishExam(exam.id!)}>Xuất bản đề thi</li>
             <li className="p-4" onClick={() => navTo(`maker/${exam.displayType === "pdf" ? "pdf/" : ""}${exam.id}`)}>Cập nhật đề thi</li>
             <li className="p-4" onClick={() => deleteExam(exam.id!)}>Xóa đề thi</li>
           </>
         ) : (
           <>
-            <li className="p-4" onClick={() => navTo("")}>Làm đề thi thử</li>
-            <li className="p-4" onClick={() => unpublishExam(exam.id!)}>Gỡ bỏ đề thi</li>
+            <li className="p-4" onClick={() => navTo(`detail/${exam.id}/comment`)}>Xem bình luận</li>
+            <li className="p-4" onClick={() => navTo(`detail/${exam.id}/marking`)}>Chấm điểm</li>
           </>
         )}
       </ul>
