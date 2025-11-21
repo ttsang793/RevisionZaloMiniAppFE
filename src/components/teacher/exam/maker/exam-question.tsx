@@ -33,8 +33,7 @@ const ExamGroupQuestion = ({
     const exists = data.id.includes(q.id!);
     const newIds = exists ?
       data.id.filter(id => id !== q.id) :
-      (((data.type === "group" || data.type === "true-false-thpt") && data.id.length === 1) ?
-        data.id : [...data.id, q.id]);
+      ((data.type === "true-false-thpt" && data.id.length === 1) ? data.id : [...data.id, q.id]);
 
     updateQuestion({ ...data, id: newIds });
   }

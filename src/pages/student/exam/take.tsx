@@ -31,6 +31,7 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
     if (loading) {
       getExamById(Number(id)).then(response => setExamInfo(response.data));
       getExamQuestionWithQuestions(Number(id)).then(response => {
+        console.log(response.data);
         const shufflePart = fisherYatesShuffle(response.data);
         
         const partIds: number[] = [];

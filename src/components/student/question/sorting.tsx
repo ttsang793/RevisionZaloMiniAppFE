@@ -24,12 +24,13 @@ const SapXep = ({i, question, answer, practice, updateAnswer}) => {
       </Text>
 
       {
-        [0,1,2,3].map(j => (
-          <Select closeOnSelect value={cell[j]} key={j} onChange={(e) => handleCell(j, e)}>
-            <Select.Option value="1" title="1" />
-            <Select.Option value="2" title="2" />
-            <Select.Option value="3" title="3" />
-            <Select.Option value="4" title="4" />
+        question.correctOrder.map((_, i) => (
+          <Select closeOnSelect value={cell[i]} key={i} onChange={(e) => handleCell(i, e)}>
+            {
+              question.correctOrder.map((stm, j) =>
+                <Select.Option value={j} title={stm} />
+              )
+            }
           </Select>
         )
       )}

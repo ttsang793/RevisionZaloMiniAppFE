@@ -16,10 +16,11 @@ async function handleFavorite(examId: number) {
 }
 
 async function getHistory() {
-  return axios.get(`/api/student/history/1`);
+  return axios.get(`/api/student/history/${studentId}`);
 }
 
 async function handleHistory(examId: number) {
+  console.log("I am history");
   axios.put(`/api/student/history/${studentId}/${examId}`)
   .then(response => {
     console.log(response);

@@ -1,11 +1,12 @@
 import { Calendar3, PersonFill, ClockFill, TrophyFill, ChatTextFill, Heart } from "react-bootstrap-icons"
 import CommentBlock from "@/components/student/exam/comment";
 import { useNavigate, useParams } from "react-router-dom";
-import { Avatar, Text, Page, Modal } from "zmp-ui";
+import { Avatar, Box, Text, Page, Modal } from "zmp-ui";
 import { useState, useEffect } from "react";
 import AppHeader from "@/components/header";
 import { Exam, getExamById } from "@/models/exam";
 import { handleFavorite, handleFollowing, handleHistory } from "@/models/student";
+import { stringToDate } from "@/script/util";
 
 export default function TestPreviewPage() {
   const { id } = useParams();
@@ -30,42 +31,45 @@ export default function TestPreviewPage() {
   return loading ? <></> : (
     <Page className="page page-wo-footer">
       <AppHeader title="Thông tin bài kiểm tra" showBackIcon />
-      <div className="section-container">        
-        <div className="flex gap-x-2">
-          <div className="flex-1">             
+      <Box className="section-container">        
+        <Box className="flex gap-x-2">
+          <Box className="flex-1">             
             <Text.Title size="large">{examInfo.title} &minus; {examInfo.subjectName} {examInfo.grade}</Text.Title>
-            <div>
-              <div onClick={() => navTo("/student/teacher/1")} className="me-2 inline-block">
-                <Avatar src="/avatar/default.jpg" size={24} className="me-1" />
+            <Box>
+              <Box
+                onClick={() => navTo(`/student/teacher/${examInfo.teacherId}`)}
+                className="me-2 inline-block"
+              >
+                <Avatar src={examInfo.teacherAvatar} size={24} className="me-1" />
                 {examInfo.teacherName}
-              </div>
+              </Box>
               <button
                 className="zaui-bg-blue-80 text-white rounded-full py-1 px-2 text-sm"
                 onClick={() => handleFollowing(examInfo.teacherId)}
               >
                 Theo dõi
               </button>
-            </div>
-          </div>
+            </Box>
+          </Box>
 
           <Heart className="zaui-text-blue-80" size={32} onClick={() => handleFavorite(Number(id))} />
-        </div>
+        </Box>
 
         <hr />
 
-        <div className="text-center">
+        <Box className="text-center">
           <button onClick={() => setTakeVisible(true)} className="zaui-bg-orange-60 text-white rounded-full py-1 px-4 text-sm me-1">
             Làm bài
           </button>
           <button onClick={() => navTo(`/student/exam/practice/${id}`)} className="zaui-bg-green-70 text-white rounded-full py-1 px-4 text-sm">
             Luyện tập
           </button>
-        </div>
-      </div>
+        </Box>
+      </Box>
 
       <ul className="section-container">
         <li className="grid grid-cols-[16px_1fr] gap-x-2 text-justify py-0.5">
-          <Calendar3 /><span><b>Ngày xuất bản: 01/08/2025</b></span>
+          <Calendar3 /><span><b>Ngày xuất bản: {stringToDate(examInfo.publishedAt)}</b></span>
         </li>
         <li className="grid grid-cols-[16px_1fr] gap-x-2 text-justify py-0.5">
           <PersonFill /><span><b>Lượt làm bài:</b> 100 thí sinh</span>

@@ -6,14 +6,12 @@ import { questionType } from "@/models/question";
 const QuestionList = ({question}: {question: Question}) => {
   const navTo = useNavigate();
 
-  console.log();
-
   return (
     <>
       <Box className={`flex place-items-start`}>
         <Box className="inline-block flex-1">
           <Text bold>{question.title}</Text>
-          <Text size="small">{questionType.find(q => q.type === question.type)?.title} <i>({question.subjectId} {question.grade})</i></Text>
+          <Text size="small">{questionType.find(q => q.type === question.type)?.title} <i>({question.subjectName} {question.grade})</i></Text>
         </Box>
         
         <Box className="inline-block">

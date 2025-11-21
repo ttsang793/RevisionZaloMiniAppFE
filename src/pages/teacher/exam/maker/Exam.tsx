@@ -44,6 +44,7 @@ export default function ExamQuestions() {
     if (loading) {
       getExamQuestion(Number(id)).then(response => {
         const partTitles: any[] = [];
+        console.log(response.data);
         response.data.forEach((d, i) => {
           const questionTypes: any[] = [];
           partTitles.push(d.partTitle);

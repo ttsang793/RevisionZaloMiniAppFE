@@ -1,9 +1,11 @@
 import axios from "axios"
 
+const userId = Number(sessionStorage.getItem("id"));
+
 class Comment {
   id?: number;
   examId?: number;
-  userId: number = 1;
+  userId: number = userId;
   userName?: string;
   userAvatar?: string;
   replyTo?: number;

@@ -2,7 +2,7 @@ import { Book, Mortarboard } from "react-bootstrap-icons";
 import { Text, Page } from "zmp-ui";
 import { useNavigate } from "react-router-dom";
 import { getUserInfo } from "zmp-sdk";
-import { getUserByZaloId } from "@/models/user";
+import { getTeacherSubjectById, getUserByZaloId } from "@/models/user";
 import { useState, useEffect } from "react";
 
 export default function ChooseRolePage() {
@@ -54,9 +54,12 @@ export default function ChooseRolePage() {
       const curUserData = curUser.data;
       
       sessionStorage.setItem("id", curUserData.id);
-      sessionStorage.setItem("avatar", curUserData.avatar);
+      sessionStorage.setItem("avatar", curUserData.avatar);      
 
-      if (curUserData.role === "GV") navTo("/teacher");
+      if (curUserData.role === "GV") {
+        sessionStorage.setItem("subject", await getTeacherSubjectById(curUserData.id));
+        navTo("/teacher");
+      }
       else if (curUserData.role === "HS") navTo("/student");
       else throw new Error();
     }

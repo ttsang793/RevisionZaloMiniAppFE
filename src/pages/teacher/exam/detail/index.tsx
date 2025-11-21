@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import AppHeader from "@/components/header";
 import { Exam, getExamById } from "@/models/exam";
 import ExamMarking from "./marking";
+import { stringToDate } from "@/script/util";
 
 export default function ExamDetail() {
   const { id, type } = useParams();
@@ -32,7 +33,7 @@ export default function ExamDetail() {
 
       <ul className="section-container">
         <li className="grid grid-cols-[16px_1fr] gap-x-2 text-justify py-0.5">
-          <Calendar3 /><span><b>Ngày xuất bản: 01/08/2025</b></span>
+          <Calendar3 /><span><b>Ngày xuất bản: {stringToDate(examInfo.publishedAt)}</b></span>
         </li>
         <li className="grid grid-cols-[16px_1fr] gap-x-2 text-justify py-0.5">
           <PersonFill /><span><b>Lượt làm bài:</b> 100 thí sinh</span>

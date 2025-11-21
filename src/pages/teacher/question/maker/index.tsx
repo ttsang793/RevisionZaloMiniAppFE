@@ -4,7 +4,6 @@ import { QuestionMakerMutipleChoice as MultipleChoice } from "@/components/teach
 import { QuestionMakerTrueFalse as TrueFalse } from "@/components/teacher/question/maker/true-false";
 import { QuestionMakerShortAnswer as ShortAnswer } from "@/components/teacher/question/maker/short-answer";
 import { QuestionMakerGapFill as GapFill } from "@/components/teacher/question/maker/gap-fill";
-import { QuestionMakerGapFillMultiple as GapFillMultiple } from "@/components/teacher/question/maker/gap-fill-multiple";
 import { QuestionMakerConstructedResponse as ConstructedResponse } from "@/components/teacher/question/maker/constructed-response";
 import { QuestionMakerSorting as Sorting } from "@/components/teacher/question/maker/sorting";
 import { QuestionMakerTrueFalseTHPT as TrueFalseTHPT } from "@/components/teacher/question/maker/true-false-thpt";
@@ -20,7 +19,6 @@ function renderQuestionMaker(type, id) {
     case questionType[4].type: return <ConstructedResponse id={id} />;
     case questionType[5].type: return <Sorting id={id} />;
     case questionType[6].type: return <TrueFalseTHPT id={id} />;
-    case questionType[7].type: return <GapFillMultiple id={id} />;
     default: return;
   }
 }

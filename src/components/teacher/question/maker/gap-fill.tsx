@@ -4,14 +4,14 @@ import { useState, useEffect } from "react";
 import { XLg } from "react-bootstrap-icons";
 import { Topic } from "@/models/topic";
 
-import { FillInTheBlankQuestion } from "@/models/question";
-import { FillInTheBlankError, getFillInTheBlankQuestionById, insertFillInTheBlankQuestion, updateFillInTheBlankQuestion } from "@/models/fill-in-the-blank-question";
+import { GapFillQuestion } from "@/models/question";
+import { GapFillError, getGapFillQuestionById, insertGapFillQuestion, updateGapFillQuestion } from "@/models/gap-fill-question";
 
 const QuestionMakerGapFill = ({id}) => {
   const { TextArea } = Input;
   const [topicList, setTopicList] = useState([]);
-  const [question, setQuestion] = useState<FillInTheBlankQuestion>(new FillInTheBlankQuestion());
-  const [error, setError] = useState<FillInTheBlankError>({});
+  const [question, setQuestion] = useState<GapFillQuestion>(new GapFillQuestion());
+  const [error, setError] = useState<GapFillError>({});
   const navTo = useNavigate();
 
   const addAnswerKey = () => setQuestion({...question, answerKeys: [...question.answerKeys, ""]});
@@ -29,7 +29,7 @@ const QuestionMakerGapFill = ({id}) => {
   }
 
   useEffect(() => {
-    if (id !== undefined) getFillInTheBlankQuestionById(id).then(response => setQuestion(response.data));
+    if (id !== undefined) getGapFillQuestionById(id).then(response => setQuestion(response.data));
     axios.get("/api/topic/active").then(response => setTopicList(response.data));
   }, [])
 
@@ -145,7 +145,7 @@ const QuestionMakerGapFill = ({id}) => {
   )
 
   function handleSubmit(): void {
-    const newError: FillInTheBlankError = {};
+    const newError: GapFillError = {};
 
     for (let i: number = 0; i < question.answerKeys.length; i++) {
       if (!question.answerKeys[i]) {
@@ -160,8 +160,8 @@ const QuestionMakerGapFill = ({id}) => {
     setError(newError);
 
     if (Object.keys(newError).length === 0) {
-      question.type = 'fill-in-the-blank';
-      (id === undefined) ? insertFillInTheBlankQuestion(question) : updateFillInTheBlankQuestion(question, id);
+      question.type = 'gap-fill';
+      (id === undefined) ? insertGapFillQuestion(question) : updateGapFillQuestion(question, id);
     }
   }
 }

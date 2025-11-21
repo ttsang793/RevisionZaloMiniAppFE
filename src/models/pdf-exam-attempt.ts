@@ -53,7 +53,7 @@ async function insertPdfExamAttempt(examAnswer: ExamCodeQuestionGet[], pdfExamAt
         if (ea.answerKey === ea.studentAnswers.join("")) { scoreBoard.push(ea.point); score += ea.point }
         else scoreBoard.push(0);
         break;
-      case "fill-in-the-blank": case "constructed-response":
+      case "gap-fill": case "constructed-response":
         pdfExamAttempt.studentAnswer.push(ea.studentAnswer || "");
         scoreBoard.push(-1);
         break;

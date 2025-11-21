@@ -8,20 +8,22 @@ type Achievement = {
   id: number,
   name: string,
   description: string,
-  image: string
+  image: string,
+  status: boolean
 }
 
 export default function StatisticPage() {
   const [title, setTitle] = useState("Danh hiệu");
   const [achievementList, setAchievementList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const studentId = Number(sessionStorage.getItem("id"));
 
   useEffect(() => {
-    axios.get("/api/achievement").then(response => setAchievementList(response.data));
+    axios.get(`/api/achievement/${studentId}`).then(response => setAchievementList(response.data));
     setLoading(false);
   }, []);
 
-  return loading ? <>Hello Achievement!</> : (
+  return loading ? <>Chờ chút!</> : (
     <Page className="page-x-0">
       <AppHeader title={title} />
       <Tabs onTabClick={e => setTitle(e === "analyze" ? "Thông số" : "Danh hiệu")}>
@@ -29,12 +31,12 @@ export default function StatisticPage() {
           <Box className="bg-white" p={4}>
             {
               achievementList.map((achievement: Achievement) => 
-                <AchievementRow achievement={achievement} achieved={true} key={"achive_" + achievement.id} />
+                <AchievementRow achievement={achievement} key={"achive_" + achievement.id} />
               )
             }
           </Box>
         </Tabs.Tab>
-        <Tabs.Tab label="Thông số" key="analyze">
+        <Tabs.Tab label="Thông số" key="statistic">
           <Box>
             <Text>Bonjour World</Text>
           </Box>

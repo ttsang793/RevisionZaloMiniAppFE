@@ -9,6 +9,7 @@ class Question {
   type: string = "";
   difficulty?: number = -1;
   topicId?: string = "-1";
+  subjectName?: string;
   teacherId: number = teacherId;
   explanation?: string;
 }
@@ -26,7 +27,7 @@ class ShortAnswerQuestion extends Question {
   answerKey: string = "";
 }
 
-class FillInTheBlankQuestion extends Question {
+class GapFillQuestion extends Question {
   answerKeys: string[] = [""];
   markAsWrong: boolean = false;
 }
@@ -58,16 +59,15 @@ const questionType = [
  { title: "Tự luận", type: "constructed-response" },
  { title: "Sắp xếp", type: "sorting" },
  { title: "Trắc nghiệm Đúng – Sai THPT", type: "true-false-thpt" },
- { title: "Điền vào chỗ trống (nhiều câu)", type: "short-answer-multiple" },
 ];
 
 function getQuestionsByTeacher() {
-  return axios.get(`/api/question/${teacherId}`);
+  return axios.get(`/api/question/teacher/${teacherId}`);
 }
 
-function getQuestionsFilterByTeacher(title?: string, type: string = "default") {
-  if (!title) return axios.get(`/api/question/filter/${teacherId}?type=${type}`);
-  return axios.get(`/api/question/filter/${teacherId}?type=${type}&title=${title}`);
+function getQuestionsFilterByTeacher(title?: string, type?: string) {
+  if (!title) return axios.get(`/api/question/teacher/filter/${teacherId}?type=${type}`);
+  return axios.get(`/api/question/teacher/filter/${teacherId}?type=${type}&title=${title}`);
 }
 
 function deleteQuestion(id: number) {
@@ -80,5 +80,5 @@ function deleteQuestion(id: number) {
     })
 }
 
-export { questionType, Question, MultipleChoiceQuestion, TrueFalseQuestion, ShortAnswerQuestion, FillInTheBlankQuestion, ConstructedResponseQuestion, SortingQuestion, TrueFalseTHPTQuestion,
+export { questionType, Question, MultipleChoiceQuestion, TrueFalseQuestion, ShortAnswerQuestion, GapFillQuestion, ConstructedResponseQuestion, SortingQuestion, TrueFalseTHPTQuestion,
   getQuestionsByTeacher, getQuestionsFilterByTeacher, deleteQuestion }

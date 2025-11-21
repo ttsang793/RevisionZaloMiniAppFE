@@ -2,7 +2,7 @@ import { Heart } from "react-bootstrap-icons";
 import { Box, useNavigate } from "zmp-ui";
 import { Exam } from "@/models/exam";
 
-const ExamHolder = ({ exam, latest = "" }: { exam: Exam, latest: string }) => {
+const ExamHolder = ({ exam, latest = "" }: { exam: Exam, latest?: string }) => {
   const navTo = useNavigate();
   
   return (

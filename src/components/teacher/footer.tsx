@@ -27,12 +27,6 @@ export default function TeacherFooter() {
         linkTo="/teacher/exam"
       />
       <BottomNavigation.Item
-        icon={<CardChecklist />}
-        key="grade"
-        label="Nhận xét"
-        linkTo="/teacher/grade"
-      />
-      <BottomNavigation.Item
         icon={<Gear />}
         activeIcon={<GearFill />}
         key="setting"

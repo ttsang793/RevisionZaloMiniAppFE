@@ -2,14 +2,14 @@ import StudentHeader from "@/components/header";
 import { Box, Page, Text } from "zmp-ui";
 import ExamHolder from "@/components/student/exam/exam-holder";
 import { useState, useEffect } from "react";
-import { Exam, getAllExams } from "@/models/exam";
+import { Exam, getPublishExams } from "@/models/exam";
 
 function HomePage() {
   const [examList, setExamList] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getAllExams().then(response => {
+    getPublishExams().then(response => {
       setExamList(response.data);
       setLoading(false);
     }).catch(err => {
@@ -27,7 +27,7 @@ function HomePage() {
       <StudentHeader />
       <Box className="flex gap-5 flex-wrap justify-center">
       {
-        loading ? <>Cho 1 chut</> : examList.map((exam: Exam) => <ExamHolder exam={exam} latest="21/10/2025" key={`exam-${exam.id}`} />)
+        examList.map((exam: Exam) => <ExamHolder exam={exam} key={`exam-${exam.id}`} />)
       }
       </Box>
     </Page>

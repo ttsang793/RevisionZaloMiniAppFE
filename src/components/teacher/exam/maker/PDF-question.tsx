@@ -175,7 +175,7 @@ const TuLuan = ({prop}: {prop: PDFQuestionProps}) => {
 
       <Box className="flex gap-x-1 gap-y-1.5 flex-wrap">
         <input
-          type="text" placeholder={`${question.type === "fill-in-the-blank" ? "Điền vào chỗ trống" : "Tự luận"}`}
+          type="text" placeholder={`${question.type === "gap-fill" ? "Điền vào chỗ trống" : "Tự luận"}`}
           readOnly className="h-7 rounded-md border zaui-border-blue-80 w-full px-2 placeholder:text-blue-900/70"
         />
       </Box>
@@ -187,7 +187,7 @@ const components: Record<string, (prop: PDFQuestionProps) => JSX.Element> = {
   "multiple-choice": prop => <TracNghiem prop={prop} />,
   "true-false": prop => <DungSai prop={prop} />,
   "short-answer": prop => <TraLoiNgan prop={prop} />,
-  "fill-in-the-blank": prop => <TuLuan prop={prop} />,
+  "gap-fill": prop => <TuLuan prop={prop} />,
   "constructed-response": prop => <TuLuan prop={prop} />,
   "true-false-thpt": prop => <DungSaiTHPT prop={prop} />,
 };

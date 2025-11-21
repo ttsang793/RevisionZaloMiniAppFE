@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Text } from "zmp-ui";
 import ExamListAction from "./exam-list-action";
 import { Exam } from "@/models/exam";
+import { stringToDate } from "@/script/util";
 
 const ExamList = ({exam}: {exam: Exam}) => {
   const showAction = () => {
@@ -18,11 +19,11 @@ const ExamList = ({exam}: {exam: Exam}) => {
       <div className="flex place-items-start">
         <div className="inline-block flex-1">
           <Text bold>
-            {exam.title} &minus; {exam.subjectName} {exam.grade} { exam.state == 1 ? <span className="zaui-text-red-50 italic">(Chưa xuất bản)</span> : "" }
+            {exam.title} &minus; {exam.subjectName} {exam.grade} { (exam.status === 0 || exam.status === 1) ? <span className="zaui-text-red-50 italic">(Chưa xuất bản)</span> : "" }
           </Text>
           <Text size="small">
             {
-              exam.state < 3 ? `Cập nhật lần cuối: 10:00 ngày 01/09/2025` : `Ngày xuất bản: 01/10/2025`
+              exam.status < 3 ? `Cập nhật lần cuối: ${stringToDate(exam.updatedAt)}` : `Ngày xuất bản: ${stringToDate(exam.publishedAt)}`
             }
           </Text>
           <Text size="small">
@@ -33,7 +34,7 @@ const ExamList = ({exam}: {exam: Exam}) => {
           </Text>
           <Text size="small">
           {
-            exam.state === 3 ? `Số lượt làm bài: 100` : ""
+            exam.status === 3 ? `Số lượt làm bài: 100` : ""
           }
           </Text>
         </div>

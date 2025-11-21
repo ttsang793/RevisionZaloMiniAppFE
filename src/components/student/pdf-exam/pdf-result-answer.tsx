@@ -234,7 +234,7 @@ const components: Record<string, (prop: PDFQuestionProps) => JSX.Element> = {
   "multiple-choice": prop => <TracNghiem prop={prop} />,
   "true-false": prop => <DungSai prop={prop} />,
   "short-answer": prop => <TraLoiNgan prop={prop} />,
-  "fill-in-the-blank": prop => <DienVaoChoTrong prop={prop} />,
+  "gap-fill": prop => <DienVaoChoTrong prop={prop} />,
   "constructed-response": prop => <TuLuan prop={prop} />,
   "true-false-thpt": prop => <DungSaiTHPT prop={prop} />,
 };

@@ -30,7 +30,6 @@ import ExamMaker from "@/pages/teacher/exam/maker";
 import ExamQuestions from "@/pages/teacher/exam/maker/Exam";
 import PDFExamQuestions from "@/pages/teacher/exam/maker/PDF-exam";
 import ExamManagement from "@/pages/teacher/exam";
-import GradeManagement from "@/pages/teacher/grade";
 import TeacherSettingPage from "@/pages/teacher/setting";
 import TeacherRegisterPage from "@/pages/teacher/register";
 
@@ -110,7 +109,6 @@ const Layout = () => {
                 <Route path="question/pdf/:id" element={<PDFExamQuestions />} />
                 <Route path="detail/:id/:type" element={<ExamDetail />} />
               </Route>
-              <Route path="grade" element={<GradeManagement />} />
               <Route path="setting" element={<TeacherSettingPage />} />
             </Route>
 

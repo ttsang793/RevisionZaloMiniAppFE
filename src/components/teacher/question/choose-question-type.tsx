@@ -28,13 +28,9 @@ const ChooseQuestionType = ({visible, setVisible}) => {
           <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
           Trắc nghiệm Trả lời ngắn
         </button>
-        <button className="flex flex-col items-center w-full" onClick={() => navTo("maker/fill-in-the-blank")}>
+        <button className="flex flex-col items-center w-full" onClick={() => navTo("maker/gap-fill")}>
           <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
-          Điền vào chỗ trống (1 câu)
-        </button>
-        <button className="flex flex-col items-center w-full" onClick={() => navTo("maker/sorting-multiple")}>
-          <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
-          Điền vào chỗ trống (nhiều câu)
+          Điền vào chỗ trống
         </button>
         <button className="flex flex-col items-center w-full" onClick={() => navTo("maker/constructed-response")}>
           <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />

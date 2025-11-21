@@ -1,5 +1,8 @@
 import axios from "axios";
 
+const teacherId = Number(sessionStorage.getItem("id"));
+const teacherSubject = sessionStorage.getItem("subject")!;
+
 class Exam {
   id?: number;
   examType?: 'default' | 'regular' | 'midterm' | 'final' | 'other' = 'default';
@@ -12,23 +15,29 @@ class Exam {
   allowPartSwap: boolean = false;
   allowQuestionSwap: boolean = false;
   allowAnswerSwap: boolean = false;
-  teacherId: number = 2;
+  teacherId: number = teacherId;
   teacherName?: string;
-  subjectId: string = "ANH";
+  teacherAvatar?: string;
+  subjectId: string = teacherSubject;
   subjectName?: string;
-  approvedBy?: number;
-  state: number = 1;
+  updatedAt: Date = new Date();
+  publishedAt: Date = new Date();
+  status: number = 0;
 }
 
 function getAllExams() {
   return axios.get("/api/exam");
 }
 
+function getPublishExams() {
+  return axios.get("/api/exam/publish");
+}
+
 function getExamById(id: number) {
   return axios.get(`/api/exam/${id}`);
 }
 
-function getExamsByTeacher(teacherId = 2) {
+function getExamsByTeacher() {
   return axios.get(`/api/exam/teacher/${teacherId}`);
 }
 
@@ -70,14 +79,4 @@ function publishExam(id: number) {
     })
 }
 
-function unpublishExam(id: number) {
-  axios.delete(`/api/exam/unpublish/${id}`)
-    .then(response => {
-      console.log(response.status);
-    }).catch(err => {
-      console.error(err);
-    })
-}
-
-export { Exam, getAllExams, getExamById, getExamsByTeacher,
-  insertExam, updateExam, deleteExam, publishExam, unpublishExam }
+export { Exam, getAllExams, getPublishExams, getExamById, getExamsByTeacher, insertExam, updateExam, deleteExam, publishExam }

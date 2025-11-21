@@ -1,18 +1,18 @@
 import axios from "axios";
-import { FillInTheBlankQuestion } from "./question";
+import { GapFillQuestion } from "./question";
 
-type FillInTheBlankError = {
+type GapFillError = {
   answer?: string,
   grade?: string,
   difficulty?: string,
   topic?: string
 }
 
-function getFillInTheBlankQuestionById(id: number) {
+function getGapFillQuestionById(id: number) {
   return axios.get(`/api/question/${id}`);
 }
 
-function insertFillInTheBlankQuestion(fitbq: FillInTheBlankQuestion) {
+function insertGapFillQuestion(fitbq: GapFillQuestion) {
   axios.post("/api/question/manual-response", fitbq, {
     headers: { "Content-Type": "application/json" }
   }).then(response => {
@@ -22,7 +22,7 @@ function insertFillInTheBlankQuestion(fitbq: FillInTheBlankQuestion) {
   })
 }
 
-function updateFillInTheBlankQuestion(fitbq: FillInTheBlankQuestion, id: number) {
+function updateGapFillQuestion(fitbq: GapFillQuestion, id: number) {
   axios.put(`/api/question/manual-response/${id}`, fitbq, {
     headers: { "Content-Type": "application/json" }
   }).then(response => {
@@ -32,4 +32,4 @@ function updateFillInTheBlankQuestion(fitbq: FillInTheBlankQuestion, id: number)
   })
 }
 
-export { FillInTheBlankError, getFillInTheBlankQuestionById, insertFillInTheBlankQuestion, updateFillInTheBlankQuestion }
+export { GapFillError, getGapFillQuestionById, insertGapFillQuestion, updateGapFillQuestion }

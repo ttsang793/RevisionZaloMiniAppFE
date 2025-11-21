@@ -1,7 +1,7 @@
 import CommentFirst from "./comment-first";
 import CommentReply from "./comment-reply";
 import { Text, Input, Box } from "zmp-ui"
-import { useState, useEffect, FormEvent } from "react";
+import { useState, useEffect, FormEvent, Fragment } from "react";
 import { Comment, getCommentsByExamId, insertComment, deleteComment } from "@/models/comment";
 import { Send } from "react-bootstrap-icons";
 
@@ -9,6 +9,8 @@ const CommentBlock = ({id}) => {
   const { TextArea } = Input;
   const [commentList, setCommentList] = useState([]);
   const [commentContent, setCommentContent] = useState("");
+  const userId = Number(sessionStorage.getItem("id"));
+  const avatar = sessionStorage.getItem("avatar");
 
   useEffect(() => {
     loadData();
@@ -19,7 +21,7 @@ const CommentBlock = ({id}) => {
       <Text bold size="large">Bình luận</Text>
 
       <form className="flex gap-x-2" onSubmit={handleSubmit}>
-        <img src="/avatar/default.jpg" className="size-[48px] rounded-full" />
+        <img src={avatar} className="size-[48px] rounded-full" />
         <TextArea
           placeholder="Nhập bình luận tại đây"
           suffix={<button><Send size={24}/></button>}
@@ -30,10 +32,10 @@ const CommentBlock = ({id}) => {
 
       {
         commentList.map((c: Comment) => 
-          <>
-            <CommentFirst comment={c} handleDelete={handleDelete} key={`comment-${c.id}`} loadData={loadData} />
-            {c.replies!.map((r: Comment) => <CommentReply comment={r} handleDelete={handleDelete} key={`comment-${r.id}`} loadData={loadData} />)}
-          </>
+          <Fragment key={`comment-${c.id}`}>
+            <CommentFirst comment={c} examId={id} userId={userId} handleDelete={handleDelete} loadData={loadData} />
+            {c.replies!.map((r: Comment) => <CommentReply comment={r} examId={id} userId={userId} handleDelete={handleDelete} key={`comment-${r.id}`} loadData={loadData} />)}
+          </Fragment>
         )
       }
     </Box>
@@ -47,7 +49,7 @@ const CommentBlock = ({id}) => {
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     
-    const comment: Comment = { examId: id, userId: 1, content: commentContent }    
+    const comment: Comment = { examId: id, userId, content: commentContent }    
     const insertStatus = await insertComment(comment);    
     if (insertStatus == 201) loadData();
   }

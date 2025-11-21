@@ -22,4 +22,8 @@ function sumThenParseFloat(question: any) {
   return floatTwoDigits(parseFloat(question.reduce((sum, item) => sum + item.point, 0)));
 }
 
-export { backToTop, fisherYatesShuffle, floatTwoDigits, sumThenParseFloat }
+function stringToDate(dateString: string) {
+  return new Date(dateString).toLocaleDateString("en-GB");
+}
+
+export { backToTop, fisherYatesShuffle, floatTwoDigits, sumThenParseFloat, stringToDate }

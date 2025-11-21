@@ -4,6 +4,33 @@ import { useNavigate, Sheet } from "zmp-ui";
 const ExamListAction = ({exam, visible, setVisible}: {exam: Exam, visible: boolean, setVisible: any}) => {
   const navTo = useNavigate();
 
+  const showMenu = (status: number) => {
+    switch (status) {
+      case 0: return (
+        <>
+          <li className="p-4" onClick={() => navTo(`question/${exam.displayType === "pdf" ? "pdf/" : ""}${exam.id}`)}>Chỉnh sửa danh sách câu hỏi</li>
+          <li className="p-4" onClick={() => navTo(`maker/${exam.displayType === "pdf" ? "pdf/" : ""}${exam.id}`)}>Cập nhật đề thi</li>
+          <li className="p-4" onClick={() => deleteExam(exam.id!)}>Xóa đề thi</li>
+        </>
+      )
+      case 1: return (
+        <>
+          <li className="p-4" onClick={() => navTo(`question/${exam.displayType === "pdf" ? "pdf/" : ""}${exam.id}`)}>Chỉnh sửa danh sách câu hỏi</li>
+          <li className="p-4" onClick={() => publishExam(exam.id!)}>Xuất bản đề thi</li>
+          <li className="p-4" onClick={() => navTo(`maker/${exam.displayType === "pdf" ? "pdf/" : ""}${exam.id}`)}>Cập nhật đề thi</li>
+          <li className="p-4" onClick={() => deleteExam(exam.id!)}>Xóa đề thi</li>
+        </>
+      )
+      case 3: return (
+        <>
+          <li className="p-4" onClick={() => navTo(`detail/${exam.id}/comment`)}>Xem bình luận</li>
+          <li className="p-4" onClick={() => navTo(`detail/${exam.id}/marking`)}>Chấm điểm</li>
+        </>
+      )
+      default: return null;
+    }
+  }
+
   return (
     <Sheet
       title="Chọn dạng câu hỏi"
@@ -12,19 +39,7 @@ const ExamListAction = ({exam, visible, setVisible}: {exam: Exam, visible: boole
       className="zaui-text-blue-90"
     >
       <ul className="divide-y divide-zinc-300 text-black cursor-pointer">
-        { exam.state === 1 ? (
-          <>
-            <li className="p-4" onClick={() => navTo(`question/${exam.displayType === "pdf" ? "pdf/" : ""}${exam.id}`)}>Chỉnh sửa danh sách câu hỏi</li>
-            <li className="p-4" onClick={() => publishExam(exam.id!)}>Xuất bản đề thi</li>
-            <li className="p-4" onClick={() => navTo(`maker/${exam.displayType === "pdf" ? "pdf/" : ""}${exam.id}`)}>Cập nhật đề thi</li>
-            <li className="p-4" onClick={() => deleteExam(exam.id!)}>Xóa đề thi</li>
-          </>
-        ) : (
-          <>
-            <li className="p-4" onClick={() => navTo(`detail/${exam.id}/comment`)}>Xem bình luận</li>
-            <li className="p-4" onClick={() => navTo(`detail/${exam.id}/marking`)}>Chấm điểm</li>
-          </>
-        )}
+        { showMenu(exam.status) }
       </ul>
     </Sheet>
   )

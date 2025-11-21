@@ -28,7 +28,6 @@ class ExamAttemptAnswer {
   examQuestionId: number = -1;
   answerOrder?: string[];
   studentAnswer: string = "";
-  answerType: "string" | "array" = "string";
   isCorrect: string = "";
 }
 
@@ -70,7 +69,6 @@ function getLatestAttempt(examId: number) {
 }
 
 async function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], answerList: any[][]): Promise<number> {
-  //console.log(questionList);
   const examAttemptAnswers: ExamAttemptAnswer[] = [];
   let score = 0;
 
@@ -81,7 +79,6 @@ async function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], an
       
       answer.examQuestionId = currentQuestion.id;
       answer.studentAnswer = answerList[i][j];
-      answer.answerType = (currentQuestion.question.type === "sorting" || currentQuestion.question.type === "true-false-thpt") ? "array" : "string";
 
       switch (currentQuestion.question.type) {
         case "multiple-choice": {
@@ -110,7 +107,7 @@ async function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], an
           }
           break;
         }
-        case "fill-in-the-blank": {
+        case "gap-fill": {
           answer.isCorrect = "";
           break;
         }
@@ -134,13 +131,13 @@ async function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], an
 
   examAttempt.score = score;
   examAttempt.examAttemptAnswers = examAttemptAnswers;
-  //console.log(examAttempt);
   return await postAttempt(examAttempt);
 }
 
 async function postAttempt(examAttempt: ExamAttempt): Promise<number> {
   try {
-    const response = await axios.post("/api/exam-attempt", examAttempt, { headers: { "Content-Type": "application/json" } });
+    const response = await axios.post(`/api/exam-attempt`, examAttempt,
+                            { headers: { "Content-Type": "application/json" } });
     return response.status;
   }
   catch (err) {

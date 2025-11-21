@@ -86,6 +86,11 @@ function getTeacherById() {
   return axios.get(`/api/teacher/${id}`);
 }
 
+async function getTeacherSubjectById(id) {
+  const response = await axios.get(`/api/teacher/${id}/subject`);
+  return response.data;
+}
+
 async function addTeacher(teacher: Teacher): Promise<number> {
   try {
     const response = await axios.post("/api/teacher", teacher, {
@@ -134,5 +139,5 @@ async function vertifyAdmin(admin: AdminLogin): Promise<any> {
 
 export { getUserByZaloId,
           Student, getStudentById, addStudent, updateStudent, deleteStudent,
-          Teacher, getTeacherById, addTeacher, updateTeacher, deleteTeacher,
+          Teacher, getTeacherById, getTeacherSubjectById, addTeacher, updateTeacher, deleteTeacher,
           Admin, AdminLogin, vertifyAdmin }
