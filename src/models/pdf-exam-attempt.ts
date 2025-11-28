@@ -1,10 +1,12 @@
 import axios from "axios";
 import { ExamCodeQuestionGet } from "./pdf-exam-code";
 
+const studentId = Number(sessionStorage.getItem("id"));
+
 class PdfExamAttempt {
   examId: number;
-  studentId: number = 1;
-  score: number = 0;
+  studentId: number = studentId;
+  totalPoint: number = 0;
   startedAt: Date = new Date();
   codeId: number = -1;
   studentAnswer: string[] = [];
@@ -38,7 +40,7 @@ function handleTrueFalseTHPTQuestion(q: ExamCodeQuestionGet): number {
 }
 
 async function insertPdfExamAttempt(examAnswer: ExamCodeQuestionGet[], pdfExamAttempt: PdfExamAttempt): Promise<number> {
-  let score = 0;
+  let totalPoint = 0;
   const scoreBoard: number[] = [];
   pdfExamAttempt.studentAnswer = [];
   examAnswer.forEach(ea => {
@@ -61,12 +63,12 @@ async function insertPdfExamAttempt(examAnswer: ExamCodeQuestionGet[], pdfExamAt
         pdfExamAttempt.studentAnswer.push(ea.studentAnswers.join("") || "");
         const point = handleTrueFalseTHPTQuestion(ea);
         scoreBoard.push(point);
-        score += point;
+        totalPoint += point;
         break;
     }
   })
 
-  pdfExamAttempt.score = Math.round(score * 100) / 100;
+  pdfExamAttempt.totalPoint = Math.round(totalPoint * 100) / 100;
   pdfExamAttempt.scoreBoard = scoreBoard;
 
   try {
@@ -79,4 +81,8 @@ async function insertPdfExamAttempt(examAnswer: ExamCodeQuestionGet[], pdfExamAt
   }
 }
 
-export { PdfExamAttempt, getPdfExamAttempt, insertPdfExamAttempt }
+async function checkAchievement() {
+  axios.post(`/api/exam-attempt/achievement/${studentId}`);
+}
+
+export { PdfExamAttempt, getPdfExamAttempt, insertPdfExamAttempt, checkAchievement }

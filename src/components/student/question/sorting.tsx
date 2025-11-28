@@ -9,7 +9,7 @@ const showCorrect = (isCorrect: boolean | undefined) => {
 }
 
 const SapXep = ({i, question, answer, practice, updateAnswer}) => {
-  const [cell, setCell] = useState(answer || ["", "", "", ""]);
+  const [cell, setCell] = useState(answer);
   const handleCell = (j, value) => {
     const newCell = [...cell];
     newCell[j] = value;

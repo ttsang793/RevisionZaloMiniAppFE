@@ -1,7 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Text } from 'zmp-ui';
 
-const Countdown = ({timeLimit}: {timeLimit: number}) => {
+interface CountdownProps {
+  timeLimit: number;
+  earlyTurnIn?: number;
+  setAllowEarlySubmit: (allowEarlySubmit: boolean) => void
+}
+
+const Countdown = ({timeLimit, earlyTurnIn, setAllowEarlySubmit}: CountdownProps) => {
   const [timeLeft, setTimeLeft] = useState(timeLimit);
 
   useEffect(() => {
@@ -11,6 +17,8 @@ const Countdown = ({timeLimit}: {timeLimit: number}) => {
           clearInterval(interval);
           return 0;
         }
+        if (timeLimit - (prevTime - 1) === earlyTurnIn)
+          setAllowEarlySubmit(true);
         return prevTime - 1;
       });
     }, 1000);

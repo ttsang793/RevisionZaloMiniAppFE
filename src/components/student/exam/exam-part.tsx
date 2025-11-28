@@ -1,5 +1,5 @@
 import { Box } from "zmp-ui";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { TracNghiem } from "../question/multiple-choice";
 import { DungSai } from "../question/true-false";
 import { TraLoiNgan } from "../question/short-answer";
@@ -9,15 +9,25 @@ import { SapXep } from "../question/sorting";
 import { DungSaiTHPT } from "../question/true-false-thpt";
 
 function displayQuestion(question, partIndex, questionIndex, answer, practice, updateAnswer) {
-  switch (question.type) {
-    case "multiple-choice": return <TracNghiem i={questionIndex} part={partIndex} question={question} answer={answer} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
-    case "true-false": return <DungSai i={questionIndex} question={question} answer={answer}practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
-    case "short-answer": return <TraLoiNgan i={questionIndex} question={question} answer={answer} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
-    case "gap-fill": return <DienVaoChoTrong i={questionIndex} question={question} answer={answer} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
-    case "constructed-response": return <TuLuan i={questionIndex} question={question} answer={answer} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
-    case "sorting": return <SapXep i={questionIndex} question={question} answer={answer} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
-    case "true-false-thpt": return <DungSaiTHPT i={questionIndex} question={question} answer={answer} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
-    default: return null;
+  if (!question) {
+    console.error(`Cannot read question ${partIndex}-${questionIndex}`);
+    return;
+  }
+  try {
+    switch (question.type) {
+      case "multiple-choice": return <TracNghiem i={questionIndex} part={partIndex} question={question} answer={answer} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
+      case "true-false": return <DungSai i={questionIndex} question={question} answer={answer}practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
+      case "short-answer": return <TraLoiNgan i={questionIndex} question={question} answer={answer} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
+      case "gap-fill": return <DienVaoChoTrong i={questionIndex} question={question} answer={answer} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
+      case "constructed-response": return <TuLuan i={questionIndex} question={question} answer={answer} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
+      case "sorting": return <SapXep i={questionIndex} question={question} answer={answer} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
+      case "true-false-thpt": return <DungSaiTHPT i={questionIndex} question={question} answer={answer} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
+      default: return null;
+    }
+  }
+  catch {
+    console.error(`Cannot read question ${partIndex}-${questionIndex}`);
+    return null;
   }
 }
 
@@ -40,8 +50,10 @@ const ExamPart = ({i, practice, partTitle, partQuestions, answerList, updateAnsw
   }
 
   useEffect(() => {
-    setCurrentQuestion(0);
-  }, [partTitle]);
+    if (currentQuestion >= partQuestions.length) {
+      setCurrentQuestion(0);
+    }
+  }, [partQuestions]);
 
   return (
     <>
@@ -63,7 +75,16 @@ const ExamPart = ({i, practice, partTitle, partQuestions, answerList, updateAnsw
       </Box>
 
       <Box>
-        {displayQuestion(partQuestions[currentQuestion].question.question, i, currentQuestion, answerList[currentQuestion], practice, updateAnswer)}
+        {
+          displayQuestion(
+            partQuestions[currentQuestion].question.question,
+            i,
+            currentQuestion,
+            answerList[currentQuestion],
+            practice,
+            updateAnswer
+          )
+        }
       </Box>
     </>
   )

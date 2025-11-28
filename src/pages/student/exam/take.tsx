@@ -3,14 +3,14 @@ import { useState, useEffect } from "react";
 import { ExamQuestion, getExamQuestionWithQuestions } from "@/models/exam-question";
 import { ExamPart } from "@/components/student/exam/exam-part";
 import { Exam, getExamById } from "@/models/exam";
-import { ExamAttempt, insertAttempt } from "@/models/exam-attempt";
+import { ExamAttempt, insertAttempt, checkAchievement } from "@/models/exam-attempt";
 import { fisherYatesShuffle } from "@/script/util";
 import { Countdown } from "@/components/student/exam/countdown";
 
 export default function TakeExamPage({practice}: {practice: boolean}) {
   const { id } = useParams();
   const navTo = useNavigate();
-  const [allowEarlySubmit, setAllowEarlySubmit] = useState(false);
+  const [allowEarlySubmit, setAllowEarlySubmit] = useState(true);
   const [earlySubmitVisible, setEarlySubmitVisible] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -31,7 +31,7 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
     if (loading) {
       getExamById(Number(id)).then(response => setExamInfo(response.data));
       getExamQuestionWithQuestions(Number(id)).then(response => {
-        console.log(response.data);
+        //console.log(response.data);
         const shufflePart = fisherYatesShuffle(response.data);
         
         const partIds: number[] = [];
@@ -92,7 +92,11 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
           }
         </Box>
 
-        <Countdown timeLimit={examInfo.timeLimit} />
+        <Countdown
+          timeLimit={examInfo.timeLimit}
+          earlyTurnIn={examInfo.earlyTurnIn}
+          setAllowEarlySubmit={setAllowEarlySubmit}
+        />
       </Box>
 
       {/* Danh sách câu hỏi của phần */}
@@ -106,7 +110,9 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
         />
       }
 
-      <footer className="fixed bottom-0 right-0 left-0 text-center bg-white">
+      <footer
+        className={allowEarlySubmit ? "fixed bottom-0 right-0 left-0 text-center bg-white" : "hidden"}
+      >
         <button
           className="rounded-full zaui-bg-blue-70 zaui-text-blue-10 py-2 px-8"
           onClick={() => setEarlySubmitVisible(true)}
@@ -140,6 +146,7 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
   async function turnIn() {
     setEarlySubmitVisible(false);
     const submitStatus = await insertAttempt(examAttempt, examQuestionList, examAnswerList);
-    if (submitStatus === 201) navTo(`/student/exam/result/${id}`);
+    /*if (submitStatus === 201)
+      await checkAchievement().then(() => navTo(`/student/exam/result/${id}`));*/
   }
 }
