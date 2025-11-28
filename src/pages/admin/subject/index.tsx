@@ -1,26 +1,28 @@
 import { useState, useEffect } from "react";
 import { Eye, EyeSlash, Pencil, PlusCircleFill } from "react-bootstrap-icons";
-import { Box, Page, Text } from "zmp-ui";
+import { Box, Page, Text, useNavigate, useSnackbar } from "zmp-ui";
 
 import { Subject, getSubjects, deleteSubject } from "@/models/subject";
 import InfoSubjectModal from "./info-modal";
 
 export default function SubjectManagement() {
+  const navTo = useNavigate();
+  const { openSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(true);
   const [subjectList, setSubjectList] = useState([]);
+  const role = sessionStorage.getItem("role");
   let [visible, setVisible] = useState(false);
   let [editId, setEditId] = useState("");
 
   useEffect(() => {
-    getSubjects().then(subject => setSubjectList(subject))
-      .catch(err => {
-        console.error(err);
-        setSubjectList([]);
-      });
-      setLoading(false);
+    if (role !== "AD") {
+      navTo("/admin", { replace: true });
+      return; 
+    }
+    fetchData();
   }, [])
 
-  return (
+  return (role !== "AD") ? <></> : (
     <Page className="page-admin">
       <Text.Title
         className="text-center uppercase text-3xl mb-3 font-bold"
@@ -43,7 +45,7 @@ export default function SubjectManagement() {
             <th className="border border-zinc-700" rowSpan={2}>ID</th>
             <th className="border border-zinc-700" rowSpan={2}>Tên môn học</th>
             <th className="border border-zinc-700" rowSpan={2}>Lớp</th>
-            <th className="border border-zinc-700 py-1" colSpan={6}>Dạng câu hỏi</th>
+            <th className="border border-zinc-700 py-1" colSpan={5}>Dạng câu hỏi</th>
             <th className="border border-zinc-700" rowSpan={2}>Hành động</th>
           </tr>
           <tr className="bg-blue-100">
@@ -60,9 +62,6 @@ export default function SubjectManagement() {
               <abbr title="Điền vào chỗ trống">ĐVCT</abbr>
             </th>
             <th className="border border-zinc-700">
-              <abbr title="Tự luận">TL</abbr>
-            </th>
-            <th className="border border-zinc-700">
               <abbr title="Sắp xếp thử tự">SX</abbr>
             </th>
           </tr>
@@ -71,7 +70,7 @@ export default function SubjectManagement() {
         {
           loading ? (
             <tr>
-              <th colSpan={10} className="bg-white border border-zinc-500 font-medium italic py-1">
+              <th colSpan={9} className="bg-white border border-zinc-500 font-medium italic py-1">
                 Đang tải dữ liệu...
               </th>
             </tr>
@@ -91,12 +90,11 @@ export default function SubjectManagement() {
                   subject.grades.map((c: number, i: number) => (i === 0) ? c : `, ${c}`)
                 }
                 </td>
-                <td className="border border-zinc-500 text-center">{subject.questionTN ? <>&#x2714;</> : ""}</td>
-                <td className="border border-zinc-500 text-center">{subject.questionDS ? <>&#x2714;</> : ""}</td>
-                <td className="border border-zinc-500 text-center">{subject.questionTLN ? <>&#x2714;</> : ""}</td>
-                <td className="border border-zinc-500 text-center">{subject.questionDVCT ? <>&#x2714;</> : ""}</td>
-                <td className="border border-zinc-500 text-center">{subject.questionTL ? <>&#x2714;</> : ""}</td>
-                <td className="border border-zinc-500 text-center">{subject.questionSX ? <>&#x2714;</> : ""}</td>
+                <td className="border border-zinc-500 text-center">{subject.questionMC ? <>&#x2714;</> : ""}</td>
+                <td className="border border-zinc-500 text-center">{subject.questionTF ? <>&#x2714;</> : ""}</td>
+                <td className="border border-zinc-500 text-center">{subject.questionSA ? <>&#x2714;</> : ""}</td>
+                <td className="border border-zinc-500 text-center">{subject.questionGF ? <>&#x2714;</> : ""}</td>
+                <td className="border border-zinc-500 text-center">{subject.questionST ? <>&#x2714;</> : ""}</td>
 
                 <td className="border border-zinc-500 text-center">
                 {
@@ -107,12 +105,12 @@ export default function SubjectManagement() {
                       </abbr>
 
                       <abbr title="Ẩn môn học">
-                        <Eye size={20} className="inline" onClick={() => deleteSubject(subject.id, subject.isVisible!)} />
+                        <EyeSlash size={20} className="inline" onClick={() => handleDeleteSubject(subject)} />
                       </abbr>
                     </>
                   ) : (
-                    <abbr title="Hiển môn học">
-                      <EyeSlash size={20} className="inline" onClick={() => deleteSubject(subject.id, subject.isVisible!)} />
+                    <abbr title="Hiện môn học">
+                      <Eye size={20} className="inline" onClick={() => handleDeleteSubject(subject)} />
                     </abbr>
                   )
                 }
@@ -124,7 +122,54 @@ export default function SubjectManagement() {
         </tbody>
       </table>
 
-      <InfoSubjectModal visible={visible} setVisible={setVisible} editId={editId} setEditId={setEditId} />
+      <InfoSubjectModal
+        visible={visible} setVisible={setVisible}
+        editId={editId} setEditId={setEditId}
+        fetchData={fetchData}
+      />
     </Page>
-  )
+  );
+
+  function fetchData() {
+    setLoading(true);
+    getSubjects().then(subject => setSubjectList(subject))
+      .catch(err => {
+        console.error(err);
+        setSubjectList([]);
+      });
+    setLoading(false);
+  }
+
+  function handleDeleteSubject(subject: Subject) {
+    openSnackbar({
+      text: `Bạn có muốn ${subject.isVisible ? "ẩn" : "hiện"} môn học này?`,
+      action: {
+        text: "Có",
+        close: true,
+        onClick: async () => {
+          const response = await deleteSubject(subject.id);
+
+          if (response.status === 200) {
+            openSnackbar({
+              text: "Thay đối trạng thái thành công!",
+              type: "success",
+              duration: 1500
+            })
+            fetchData();
+          }
+          else {
+            openSnackbar({
+              text: "Thay đối trạng thái thất bại!",
+              type: "error"
+            });
+            console.error(response);
+          }
+        }
+      },
+      type: `${subject.isVisible ? "warning" : "default"}`,
+      verticalAction: true,
+      icon: true,
+      duration: 5000
+    });
+  }
 }

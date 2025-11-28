@@ -54,6 +54,7 @@ export default function ChooseRolePage() {
       const curUserData = curUser.data;
       
       sessionStorage.setItem("id", curUserData.id);
+      sessionStorage.setItem("role", curUserData.role);
       sessionStorage.setItem("avatar", curUserData.avatar);      
 
       if (curUserData.role === "GV") {

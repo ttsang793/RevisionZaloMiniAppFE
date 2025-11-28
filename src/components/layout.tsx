@@ -37,6 +37,7 @@ import TeacherRegisterPage from "@/pages/teacher/register";
 import AdminLoginPage from "@/pages/admin/login";
 import SubjectManagement from "@/pages/admin/subject";
 import TopicManagement from "@/pages/admin/topic";
+import AdminResetPasswordPage from "@/pages/admin/reset-password";
 import { AdminFooter, AdminHeader } from "./admin/head-foot";
 
 // Error
@@ -46,20 +47,28 @@ import Error500 from "@/pages/errors/500";
 import StudentRegisterPage from "@/pages/student/register";
 import ExamDetail from "@/pages/teacher/exam/detail";
 
-// Inline layout wrappers
-const TeacherLayout = () => (
-  <>
-    <Outlet />
-    <TeacherFooter />
-  </>
-);
+const role = sessionStorage.getItem("role") || null;
 
-const StudentLayout = () => (
-  <>
-    <Outlet />
-    <StudentFooter />
-  </>
-);
+// Inline layout wrappers
+const TeacherLayout = () => {
+  if (role === "AD") return <Navigate to="/admin" replace />
+  return (
+    <>
+      <Outlet />
+      <TeacherFooter />
+    </>
+  );
+}
+
+const StudentLayout = () => {
+  if (role === "AD") return <Navigate to="/admin" replace />
+  return (
+    <>
+      <Outlet />
+      <StudentFooter />
+    </>
+  );
+}
 
 const AdminLayout = () => (
   <>
@@ -67,7 +76,7 @@ const AdminLayout = () => (
     <Outlet />
     <AdminFooter />
   </>
-);
+)
 
 const NoFooter = () => <Outlet />
 
@@ -84,10 +93,11 @@ const Layout = () => {
 
             {/* Admin routes */}
             <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<Navigate to="/admin/subject" replace />} />
+              <Route index element={<AdminLoginPage />} />
               <Route path="subject" element={<SubjectManagement />} />
               <Route path="topic" element={<TopicManagement />} />
-              <Route path="login" element={<AdminLoginPage />} />
+              <Route path="reset-password" element={<AdminResetPasswordPage />} />
+              <Route path="*" element={<Navigate to="/admin" />} />
             </Route>
 
             {/* Teacher routes */}
@@ -110,6 +120,7 @@ const Layout = () => {
                 <Route path="detail/:id/:type" element={<ExamDetail />} />
               </Route>
               <Route path="setting" element={<TeacherSettingPage />} />
+              <Route path="*" element={<Navigate to="/teacher" />} />
             </Route>
 
             {/* Student routes */}
@@ -120,6 +131,7 @@ const Layout = () => {
               <Route path="statistic" element={<StatisticPage />} />
               <Route path="setting" element={<StudentSettingPage />} />
               <Route path="teacher/:id" element={<TeacherDetailPage />} />
+              <Route path="*" element={<Navigate to="/student" />} />
             </Route>
 
             {/* Exam routes */}
@@ -131,6 +143,7 @@ const Layout = () => {
               <Route path="pdf/take/:id" element={<TakePDFExamPage practice={false} />} />
               <Route path="pdf/practice/:id" element={<TakePDFExamPage practice />} />
               <Route path="pdf/result/:id" element={<PDFExamResultPage />} />
+              <Route path="*" element={<Navigate to="/student" />} />
             </Route>
 
             {/* Error routes */}

@@ -20,7 +20,6 @@ async function getHistory() {
 }
 
 async function handleHistory(examId: number) {
-  console.log("I am history");
   axios.put(`/api/student/history/${studentId}/${examId}`)
   .then(response => {
     console.log(response);

@@ -4,7 +4,7 @@ import { Subject } from "./subject";
 type Topic = {
   id?: string,
   name: string,
-  classes: Array<number>,
+  grades: Array<number>,
   subjectId?: string,
   subject?: Subject
   isVisible?: boolean
@@ -20,6 +20,11 @@ const getActiveTopics = async () => {
   return response.data;
 }
 
+const getTopicsBySubject = async (subjectId: number) => {
+  const response = await axios.get(`/api/topic/subject/${subjectId}`);
+  return response.data;
+}
+
 const getTopicById = async (id: string) => {
   const response = await axios.get(`/api/topic/${id}`);
   return (response.status === 200) ? response.data : null;
@@ -30,64 +35,34 @@ const getTopicByName = async (name: string) => {
   return list.data;
 }
 
-const insertTopic = (topic: Topic) => {
-  if (confirm("Bạn có muốn thêm chủ đề cho môn học này?")) {
-    axios.post(`/api/topic`, topic)
-    .then(response => {
-      if (response.status === 201) {
-        alert("Thêm thành công!");
-        location.reload();
-      }
-      else {
-        alert("Thêm thất bại!")
-        console.error(response);
-      }
-    })
-    .catch(exception => {
-      alert("Thêm thất bại!");
-      console.error(exception);
-    })
+const insertTopic = async (topic: Topic): Promise<any> => {
+  try {
+    const response = await axios.post("/api/topic/", topic);
+    return response;
+  }
+  catch (err) {
+    return err;
   }
 }
 
-const updateTopic = (topic: Topic) => {
-  if (confirm("Bạn có muốn cập nhật chủ đề này?")) {
-    axios.put(`/api/topic/${topic.id}`, topic)
-    .then(response => {
-      if (response.status === 200) {
-        alert("Cập nhật thành công!");
-        location.reload();
-      }
-      else {
-        alert("Cập nhật thất bại!")
-        console.error(response);
-      }
-    })
-    .catch(exception => {
-      alert("Cập nhật thất bại!");
-      console.error(exception);
-    })
+const updateTopic = async (topic: Topic): Promise<any> => {
+  try {
+    const response = axios.put(`/api/topic/${topic.id}`, topic)
+    return response;
+  }
+  catch (err) {
+    return err;
   }
 }
 
-const deleteTopic = (id: string, isVisible: boolean) => {
-  if (confirm(`Bạn có muốn ${isVisible ? "ẩn" : "hiện"} chủ đề này?`)) {
-    axios.delete(`/api/topic/visible/${id}`)
-    .then(response => {
-      if (response.status === 200) {
-        alert("Thay đối trạng thái thành công!");
-        location.reload();
-      }
-      else {
-        alert("Thay đổi trạng thái thất bại!")
-        console.error(response);
-      }
-    })
-    .catch(exception => {
-      alert("Thay đổi trạng thái thất bại!");
-      console.error(exception);
-    })
+const deleteTopic = async (id: string): Promise<any> => {
+  try {
+    const response = await axios.delete(`/api/topic/${id}`);
+    return response;
+  }
+  catch (err) {
+    return err;
   }
 }
 
-export { Topic, getTopics, getActiveTopics, getTopicById, getTopicByName, insertTopic, updateTopic, deleteTopic }
+export { Topic, getTopics, getActiveTopics, getTopicsBySubject, getTopicById, getTopicByName, insertTopic, updateTopic, deleteTopic }

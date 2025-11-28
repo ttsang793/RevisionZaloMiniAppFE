@@ -1,15 +1,16 @@
 import { Topic, getTopicById, insertTopic, updateTopic } from "@/models/topic";
-import { getSubjects, Subject } from "@/models/subject";
-import { Text, Input, Button, Checkbox, Select } from "zmp-ui";
+import { getActiveSubjects, Subject } from "@/models/subject";
+import { Text, Input, Button, Checkbox, Select, useSnackbar } from "zmp-ui";
 import { useState, useEffect } from "react";
 
-export default function InfoTopicModal({visible = false, setVisible, editId = "", setEditId}) {
+export default function InfoTopicModal({visible = false, setVisible, editId = "", setEditId, fetchData}) {
+  const { openSnackbar } = useSnackbar();
   const [subjectList, setSubjectList] = useState([]);
-  const [topic, setTopic] = useState<Topic>({ id: "", name: "", classes: [], subjectId: "" });
+  const [topic, setTopic] = useState<Topic>({ id: "", name: "", grades: [], subjectId: "" });
 
   useEffect(() => {
     if (editId !== "") getTopicById(editId).then(topic => setTopic(topic));
-    getSubjects().then(subject => setSubjectList(subject))
+    getActiveSubjects().then(subject => setSubjectList(subject))
   }, [editId])
 
   return (
@@ -39,13 +40,13 @@ export default function InfoTopicModal({visible = false, setVisible, editId = ""
 
         <div className="mb-4">
           <Text size="small" className="mt-4 mb-2">Lớp:</Text>
-          <Checkbox className="me-2" checked={topic.classes.includes(6)} label="6" value={6} onChange={() => handleGrade(6)} />
-          <Checkbox className="me-2" checked={topic.classes.includes(7)} label="7" value={7} onChange={() => handleGrade(7)} />
-          <Checkbox className="me-2" checked={topic.classes.includes(8)} label="8" value={8} onChange={() => handleGrade(8)} />
-          <Checkbox className="me-2" checked={topic.classes.includes(9)} label="9" value={9} onChange={() => handleGrade(9)} />
-          <Checkbox className="me-2" checked={topic.classes.includes(10)} label="10" value={10} onChange={() => handleGrade(10)} />
-          <Checkbox className="me-2" checked={topic.classes.includes(11)} label="11" value={11} onChange={() => handleGrade(11)} />
-          <Checkbox checked={topic.classes.includes(12)} label="12" value={12} onChange={() => handleGrade(12)} />
+          <Checkbox className="me-2" checked={topic.grades.includes(6)} label="6" value={6} onChange={() => handleGrade(6)} />
+          <Checkbox className="me-2" checked={topic.grades.includes(7)} label="7" value={7} onChange={() => handleGrade(7)} />
+          <Checkbox className="me-2" checked={topic.grades.includes(8)} label="8" value={8} onChange={() => handleGrade(8)} />
+          <Checkbox className="me-2" checked={topic.grades.includes(9)} label="9" value={9} onChange={() => handleGrade(9)} />
+          <Checkbox className="me-2" checked={topic.grades.includes(10)} label="10" value={10} onChange={() => handleGrade(10)} />
+          <Checkbox className="me-2" checked={topic.grades.includes(11)} label="11" value={11} onChange={() => handleGrade(11)} />
+          <Checkbox checked={topic.grades.includes(12)} label="12" value={12} onChange={() => handleGrade(12)} />
         </div>
 
         <Select
@@ -74,30 +75,56 @@ export default function InfoTopicModal({visible = false, setVisible, editId = ""
   function closeModal() {
     setVisible(false);
     setEditId("");
-    setTopic({ name: "", classes: [], subjectId: "" });
+    setTopic({ name: "", grades: [], subjectId: "" });
   }
 
   function handleGrade(grade) {
-    const classes = topic.classes;
-    const index = classes.findIndex(c => c === grade);
-    index === -1 ? classes.push(grade) : classes.splice(index, 1);
-    setTopic({...topic, classes});
+    const grades = topic.grades;
+    const index = grades.findIndex(c => c === grade);
+    index === -1 ? grades.push(grade) : grades.splice(index, 1);
+    setTopic({...topic, grades});
   }
 
   function validation(edit) {
     const isError: boolean = false;
     
     if (!isError) {
-      const orderClasses = topic.classes.sort((a, b) => a - b);
+      const orderClasses = topic.grades.sort((a, b) => a - b);
       
-      if (edit) {
-        setTopic({...topic, classes: orderClasses, id: edit});
-        updateTopic(topic);
-      }
-      else {
-        setTopic({...topic, classes: orderClasses});
-        insertTopic(topic);
-      }
+      if (edit) setTopic({...topic, grades: orderClasses, id: edit});
+      else setTopic({...topic, grades: orderClasses});
+
+      openSnackbar({
+        text: `Bạn có muốn ${edit ? "cập nhật thông tin" : "thêm"} chủ đề này?`,
+        action: {
+          text: "Có",
+          close: true,
+          onClick: async () => {
+            const response = edit ? await updateTopic(topic) : await insertTopic(topic);
+
+            if (edit ? response.status === 200 : response.status === 201) {
+              openSnackbar({
+                text: `${edit ? "Cập nhật" : "Thêm"} chủ đề thành công!`,
+                type: "success",
+                duration: 1500
+              })
+              setVisible(false);
+              fetchData();
+            }
+            else {
+              openSnackbar({
+                text: `${edit ? "Cập nhật" : "Thêm"} chủ đề thất bại!`,
+                type: "error"
+              });
+              console.error(response);
+            }
+          }
+        },
+        type: `${topic.isVisible ? "warning" : "default"}`,
+        verticalAction: true,
+        icon: true,
+        duration: 5000
+      });
     }
   }
 }

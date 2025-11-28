@@ -34,6 +34,13 @@ class AdminLogin {
   password: string = ""  
 }
 
+class AdminResetPassword {
+  id?: number;
+  oldPassword: string = "";
+  newPassword: string = "";
+  confirmPassword?: string;
+}
+
 function getUserByZaloId(zaloId: string) {
   return axios.get(`/api/user/${zaloId}`);
 }
@@ -137,7 +144,19 @@ async function vertifyAdmin(admin: AdminLogin): Promise<any> {
   }
 }
 
+async function resetPassword(admin: AdminResetPassword): Promise<any> {
+  try {
+    const response = await axios.post("/api/admin/reset-password", admin, {
+      headers: { "Content-Type": "application/json" }
+    });
+    return response;
+  }
+  catch (err) {
+    return err;
+  }
+}
+
 export { getUserByZaloId,
           Student, getStudentById, addStudent, updateStudent, deleteStudent,
           Teacher, getTeacherById, getTeacherSubjectById, addTeacher, updateTeacher, deleteTeacher,
-          Admin, AdminLogin, vertifyAdmin }
+          Admin, AdminLogin, AdminResetPassword, vertifyAdmin, resetPassword }

@@ -1,18 +1,19 @@
 import { Subject, getSubjectById, insertSubject, updateSubject } from "@/models/subject";
-import { Text, Input, Button, Checkbox } from "zmp-ui";
+import { Text, Input, Button, Checkbox, useSnackbar } from "zmp-ui";
 import { useState, useEffect } from "react";
 
-export default function InfoSubjectModal({visible = false, setVisible, editId = "", setEditId}) {
+export default function InfoSubjectModal({visible = false, setVisible, editId = "", setEditId, fetchData}) {
+  const { openSnackbar } = useSnackbar();
   const [subject, setSubject] = useState<Subject>(
     {
-      id: "", name: "", classes: [], isVisible: true,
-      questionTN: false, questionDS: false, questionTLN: false,
-      questionDVCT: false, questionTL: true, questionSX: false,
+      id: "", name: "", grades: [], isVisible: true,
+      questionMC: false, questionTF: false, questionSA: false,
+      questionGF: false, questionST: false,
     }
   );
 
   useEffect(() => {
-    if (editId != "") fillStudent();
+    if (editId != "") fillSubject();
   }, [editId])
 
   return (
@@ -29,7 +30,7 @@ export default function InfoSubjectModal({visible = false, setVisible, editId = 
             label="Nhập mã môn học:"
             maxLength={4}
             onChange={e => !editId && setSubject({...subject, id: e.target.value})}
-            disabled={editId === ""}
+            disabled={editId !== ""}
           />
 
           <Input
@@ -43,24 +44,24 @@ export default function InfoSubjectModal({visible = false, setVisible, editId = 
 
         <div>
           <Text size="small" className="mt-4 mb-2">Lớp:</Text>
-          <Checkbox className="me-2" checked={subject.classes.includes(6)} label="6" value={6} onChange={() => handleGrade(6)} />
-          <Checkbox className="me-2" checked={subject.classes.includes(7)} label="7" value={7} onChange={() => handleGrade(7)} />
-          <Checkbox className="me-2" checked={subject.classes.includes(8)} label="8" value={8} onChange={() => handleGrade(8)} />
-          <Checkbox className="me-2" checked={subject.classes.includes(9)} label="9" value={9} onChange={() => handleGrade(9)} />
-          <Checkbox className="me-2" checked={subject.classes.includes(10)} label="10" value={10} onChange={() => handleGrade(10)} />
-          <Checkbox className="me-2" checked={subject.classes.includes(11)} label="11" value={11} onChange={() => handleGrade(11)} />
-          <Checkbox checked={subject.classes.includes(12)} label="12" value={12} onChange={() => handleGrade(12)} />
+          <Checkbox className="me-2" checked={subject.grades.includes(6)} label="6" value={6} onChange={() => handleGrade(6)} />
+          <Checkbox className="me-2" checked={subject.grades.includes(7)} label="7" value={7} onChange={() => handleGrade(7)} />
+          <Checkbox className="me-2" checked={subject.grades.includes(8)} label="8" value={8} onChange={() => handleGrade(8)} />
+          <Checkbox className="me-2" checked={subject.grades.includes(9)} label="9" value={9} onChange={() => handleGrade(9)} />
+          <Checkbox className="me-2" checked={subject.grades.includes(10)} label="10" value={10} onChange={() => handleGrade(10)} />
+          <Checkbox className="me-2" checked={subject.grades.includes(11)} label="11" value={11} onChange={() => handleGrade(11)} />
+          <Checkbox checked={subject.grades.includes(12)} label="12" value={12} onChange={() => handleGrade(12)} />
         </div>
 
         <div>
           <Text size="small" className="mt-4 mb-2">Loại câu hỏi:</Text>
           <div className="grid grid-cols-3 gap-y-2 mb-8">
-            <Checkbox className="me-2" checked={subject.questionTN} label="Trắc nghiệm A, B, C, D" value="Trắc nghiệm A, B, C, D" onChange={() => setSubject({...subject, questionTN: !subject.questionTN})} />
-            <Checkbox className="me-2" checked={subject.questionDS} label="Trắc nghiệm Đúng – Sai" value="Trắc nghiệm đúng sai" onChange={() => setSubject({...subject, questionDS: !subject.questionDS})} />
-            <Checkbox className="me-2" checked={subject.questionTLN} label="Trả lời ngắn" value="Trả lời ngắn" onChange={() => setSubject({...subject, questionTLN: !subject.questionTLN})} />
-            <Checkbox className="me-2" checked={subject.questionDVCT} label="Điền vào chỗ trống" value="Điền vào chỗ trống" onChange={() => setSubject({...subject, questionDVCT: !subject.questionDVCT})} />
+            <Checkbox className="me-2" checked={subject.questionMC} label="Trắc nghiệm A, B, C, D" value="Trắc nghiệm A, B, C, D" onChange={() => setSubject({...subject, questionMC: !subject.questionMC})} />
+            <Checkbox className="me-2" checked={subject.questionTF} label="Trắc nghiệm Đúng – Sai" value="Trắc nghiệm đúng sai" onChange={() => setSubject({...subject, questionTF: !subject.questionTF})} />
+            <Checkbox className="me-2" checked={subject.questionSA} label="Trả lời ngắn" value="Trả lời ngắn" onChange={() => setSubject({...subject, questionSA: !subject.questionSA})} />
+            <Checkbox className="me-2" checked={subject.questionGF} label="Điền vào chỗ trống" value="Điền vào chỗ trống" onChange={() => setSubject({...subject, questionGF: !subject.questionGF})} />
             <Checkbox className="me-2" checked label="Tự luận" value="Tự luận" disabled />
-            <Checkbox checked={subject.questionSX} label="Sắp xếp" value="Sắp xếp" onChange={() => setSubject({...subject, questionSX: !subject.questionSX})} />
+            <Checkbox checked={subject.questionST} label="Sắp xếp" value="Sắp xếp" onChange={() => setSubject({...subject, questionST: !subject.questionST})} />
           </div>
         </div>
 
@@ -74,7 +75,7 @@ export default function InfoSubjectModal({visible = false, setVisible, editId = 
     </div>
   )
 
-  async function fillStudent() {
+  async function fillSubject() {
     const data = await getSubjectById(editId);
     setSubject(data);
   }
@@ -84,27 +85,58 @@ export default function InfoSubjectModal({visible = false, setVisible, editId = 
     setEditId("");
     setSubject(
       {
-        id: "", name: "", classes: [], isVisible: true,
-        questionTN: false, questionDS: false, questionTLN: false,
-        questionDVCT: false, questionTL: true, questionSX: false,
+        id: "", name: "", grades: [], isVisible: true,
+        questionMC: false, questionTF: false, questionSA: false,
+        questionGF: false, questionST: false,
       }
     )
   }
 
   function handleGrade(grade) {
-    const classes = subject.classes;
-    const index = classes.findIndex(c => c === grade);
-    index === -1 ? classes.push(grade) : classes.splice(index, 1);
-    setSubject({...subject, classes});
+    const grades = subject.grades;
+    const index = grades.findIndex(c => c === grade);
+    index === -1 ? grades.push(grade) : grades.splice(index, 1);
+    setSubject({...subject, grades});
   }
 
   function validation(edit) {
     const isError: boolean = false;
 
     if (!isError) {
-      const orderClasses = subject.classes.sort((a, b) => a - b);
-      setSubject({...subject, classes: orderClasses});
-      edit ? updateSubject(subject) : insertSubject(subject);
+      const orderClasses = subject.grades.sort((a, b) => a - b);
+      setSubject({...subject, grades: orderClasses});
+
+      openSnackbar({
+        text: `Bạn có muốn ${edit ? "cập nhật thông tin" : "thêm"} môn học này?`,
+        action: {
+          text: "Có",
+          close: true,
+          onClick: async () => {
+            const response = edit ? await updateSubject(subject) : await insertSubject(subject);
+
+            if (edit ? response.status === 200 : response.status === 201) {
+              openSnackbar({
+                text: `${edit ? "Cập nhật" : "Thêm"} môn học thành công!`,
+                type: "success",
+                duration: 1500
+              })
+              fetchData();
+              setVisible(false);
+            }
+            else {
+              openSnackbar({
+                text: `${edit ? "Cập nhật" : "Thêm"} môn học thất bại!`,
+                type: "error"
+              });
+              console.error(response);
+            }
+          }
+        },
+        type: `${subject.isVisible ? "warning" : "default"}`,
+        verticalAction: true,
+        icon: true,
+        duration: 5000
+      });
     }
   }
 }

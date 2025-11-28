@@ -1,28 +1,30 @@
 import { useState, useEffect } from "react";
 import { Eye, EyeSlash, Pencil, PlusCircleFill } from "react-bootstrap-icons";
-import { Box, Input, Page, Text } from "zmp-ui";
+import { Box, Input, Page, Text, useNavigate, useSnackbar } from "zmp-ui";
 import InfoTopicModal from "./info-modal";
 import { Topic, getTopics, getTopicByName, deleteTopic } from "@/models/topic";
 
 export default function TopicManagement() {
+  const navTo = useNavigate();
+  const { openSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(true);
   const [searchParam, setSearchParam] = useState("");
   let [topicList, setTopicList] = useState([]);
+  const role = sessionStorage.getItem("role");
   let [visible, setVisible] = useState(false);
   let [editId, setEditId] = useState("");
 
   const { Search } = Input;
   
   useEffect(() => {
-    getTopics().then(topic => setTopicList(topic))
-      .catch(err => {
-        console.error(err);
-        setTopicList([]);
-      });
-    setLoading(false);
+    if (role !== "AD") {
+      navTo("/admin", { replace: true });
+      return; 
+    }
+    fetchData();
   }, []);
 
-  return (
+  return (role !== "AD") ? <></> : (
     <Page className="page-admin">
       <Text.Title
         className="text-center uppercase text-3xl mb-3 font-bold"
@@ -89,12 +91,12 @@ export default function TopicManagement() {
                         <Pencil size={20} className="inline me-1" onClick={() => { setVisible(true); setEditId(topic.id!) }} />
                       </abbr>
                       <abbr title="Ẩn chủ đề">
-                        <Eye size={20} className="inline" onClick={() => deleteTopic(topic.id!, topic.isVisible!)} />
+                        <EyeSlash size={20} className="inline" onClick={() => handleDeleteTopic(topic)} />
                       </abbr>
                     </>
                   ) : (
                     <abbr title="Hiện chủ đề">
-                      <EyeSlash size={20} className="inline" onClick={() => deleteTopic(topic.id!, topic.isVisible!)} />
+                      <Eye size={20} className="inline" onClick={() => handleDeleteTopic(topic)} />
                     </abbr>
                   )
                 }
@@ -106,9 +108,23 @@ export default function TopicManagement() {
         </tbody>
       </table>
 
-      <InfoTopicModal visible={visible} setVisible={setVisible} editId={editId} setEditId={setEditId} />
+      <InfoTopicModal
+        visible={visible} setVisible={setVisible}
+        editId={editId} setEditId={setEditId}
+        fetchData={fetchData}
+      />
     </Page>
   )
+
+  async function fetchData() {
+    setLoading(true);
+    getTopics().then(topic => setTopicList(topic))
+      .catch(err => {
+        console.error(err);
+        setTopicList([]);
+      });
+    setLoading(false);
+  }
 
   async function searchTopic() {
     setLoading(true);
@@ -121,5 +137,44 @@ export default function TopicManagement() {
     } finally {
       setLoading(false);
     }
+  }
+
+  function handleDeleteTopic(topic: Topic) {
+    openSnackbar({
+      text: `Bạn có muốn ${topic.isVisible ? "ẩn" : "hiện"} chủ đề này?`,
+      action: {
+        text: "Có",
+        close: true,
+        onClick: async () => {
+          const response = await deleteTopic(topic.id!);
+
+          if (response.status === 200) {
+            openSnackbar({
+              text: "Thay đối trạng thái thành công!",
+              type: "success",
+              duration: 1500
+            })
+            fetchData();
+          }
+          else if (response.status === 202) {
+            openSnackbar({
+              text: "Cần thay đổi trạng thái môn học của chủ đề!",
+              type: "error",
+            })
+          }
+          else {
+            openSnackbar({
+              text: "Thay đối trạng thái thất bại!",
+              type: "error"
+            });
+            console.error(response);
+          }
+        }
+      },
+      type: `${topic.isVisible ? "warning" : "default"}`,
+      verticalAction: true,
+      icon: true,
+      duration: 5000
+    });
   }
 }
