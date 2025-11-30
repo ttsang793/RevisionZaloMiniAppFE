@@ -1,5 +1,5 @@
 import { CameraFill, ChevronRight } from "react-bootstrap-icons";
-import { Box, Switch, Input, Text, Page, Select, useNavigate } from "zmp-ui";
+import { Box, Switch, Input, Text, Page, Select, useNavigate, useSnackbar } from "zmp-ui";
 import AppHeader from "@/components/header";
 import { useState, useEffect } from "react";
 import { getActiveSubjects, Subject } from "@/models/subject";
@@ -7,10 +7,12 @@ import { getUserInfo } from "zmp-sdk";
 import "./setting.css";
 
 import { deleteTeacher, getTeacherById, Teacher, updateTeacher } from "@/models/user";
+import { updateTeacherStatus } from "@/models/notification";
 
 export default function TeacherSettingPage() {
   const { TextArea } = Input;
   const navTo = useNavigate();
+  const { openSnackbar } = useSnackbar();
   const [teacher, setTeacher] = useState<Teacher>(new Teacher());
   const [level, setLevel] = useState("-1");
   const [loading, setLoading] = useState(true);
@@ -18,33 +20,30 @@ export default function TeacherSettingPage() {
   const [allSubject, setAllSubject] = useState([]);
   const [subjectList, setSubjectList] = useState([]);
   const [errors, setErrors] = useState<{email?: string, subject?: string}>({});
-
-  const [noti, setNoti] = useState({
-    all: sessionStorage.getItem("tnoti-all") === "true",
-    reply: sessionStorage.getItem("tnoti-reply") === "true",
-    manual: sessionStorage.getItem("tnoti-manual") === "true",
-  });
+  const [noti, setNoti] = useState([false, false, false]);
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    Object.entries(noti).forEach(([key, value]) => {
-      sessionStorage.setItem(`tnoti-${key}`, String(value));
-    });
-  }, [noti]);
-
-  const handleChange = (key: keyof typeof noti) => {
-    if (key === "all") {
-      const newValue = !noti.all;
-      setNoti({
-        all: newValue,
-        reply: newValue,
-        manual: newValue,
-      });
+  const handleChange = async (key: string, index: number) => {
+    const status = !teacher.notification![index]
+    const response = await updateTeacherStatus(teacher.id!, key, status);
+    if (response.status === 200) {
+      if (index === 0) teacher.notification = [status, status, status, status];
+      else {
+        teacher.notification![index] = status;
+        teacher.notification![0] = teacher.notification![1] && teacher.notification![2];
+      }
+      setNoti([...teacher.notification!]);
     }
-    else setNoti(prev => ({...prev, [key]: !prev[key]}));
+    else {
+      openSnackbar({
+        text: "Thay dổi thông báo thất bại",
+        type: "error"
+      })
+      console.error(response);
+    }
   };
 
   return loading ? <></> : (
@@ -53,17 +52,17 @@ export default function TeacherSettingPage() {
       <Box className="section-container">
         <Box className="grid grid-cols-[1fr_30px] gap-x-2 mb-3 items-center">
           <Text>Thông báo</Text>
-          <Switch checked={noti.all} onChange={() => handleChange("all")} />
-        </Box>
-        <hr />
-        <Box className="grid grid-cols-[1fr_30px] gap-x-2 my-3 items-center">
-          <Text>Bình luận của học sinh</Text>
-          <Switch checked={noti.reply} onChange={() => handleChange("reply")} />
+          <Switch checked={noti[0]} onChange={() => handleChange("all", 0)} />
         </Box>
         <hr />
         <Box className="grid grid-cols-[1fr_30px] gap-x-2 my-3 items-center">
           <Text>Có bài tự luận cần chấm</Text>
-          <Switch checked={noti.manual} onChange={() => handleChange("manual")} />
+          <Switch checked={noti[1]} onChange={() => handleChange("manual", 1)} />
+        </Box>
+        <hr />
+        <Box className="grid grid-cols-[1fr_30px] gap-x-2 my-3 items-center">
+          <Text>Bình luận của học sinh</Text>
+          <Switch checked={noti[2]} onChange={() => handleChange("reply", 2)} />
         </Box>
       </Box>
 
@@ -169,7 +168,21 @@ export default function TeacherSettingPage() {
     }
 
     teacher.grades = (level === "THCS") ? [6,7,8,9] : [10,11,12];
-    updateTeacher(teacher);
+    const response = await updateTeacher(teacher);
+    if (response.status === 200) {
+      openSnackbar({
+        text: "Cập nhật thông tin thành công!",
+        type: "success",
+        duration: 1500
+      })
+    }
+    else {
+      openSnackbar({
+        text: "Cập nhật thông tin thất bại!",
+        type: "error"
+      })
+      console.error(response);
+    }
   }
   
   async function fetchData() {
@@ -179,6 +192,7 @@ export default function TeacherSettingPage() {
       const l = data.grades[0] === 6 ? "THCS" : "THPT";
       setLevel(l);
       setTeacher(data);
+      setNoti(data.notification!);
 
       const allSubjectResponse = await getActiveSubjects();
       setAllSubject(allSubjectResponse);
@@ -197,8 +211,14 @@ export default function TeacherSettingPage() {
 
   async function handleDelete() {
     const status = await deleteTeacher();
-    if (status === 201) {
+    if (status === 200) {
+      openSnackbar({
+        text: "Xóa tài khoản thành công!",
+        duration: 1500
+      })
+      sessionStorage.clear();
       navTo("/");
     }
+    else openSnackbar({ text: "Lỗi hệ thống! Vui lòng thử lại sau!" })
   }
 }

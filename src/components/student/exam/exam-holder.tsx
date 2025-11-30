@@ -1,33 +1,53 @@
-import { Heart } from "react-bootstrap-icons";
-import { Box, useNavigate } from "zmp-ui";
+import { HeartFill, XLg } from "react-bootstrap-icons";
+import { Box, useNavigate, useSnackbar } from "zmp-ui";
 import { Exam } from "@/models/exam";
+import { FavoriteIcon } from "./favorite";
+import { handleFavorite } from "@/models/student";
+import { deleteHistory } from "@/models/student";
 
-const ExamHolder = ({ exam, latest = "" }: { exam: Exam, latest?: string }) => {
+interface ExamHolderProps {
+  exam: Exam,
+  latest?: string, // will delete soon
+  id?: number
+  page?: string,
+  fetchData: () => void
+}
+
+const ExamHolder = ({ exam, latest, id, page = "default", fetchData }: ExamHolderProps) => {
   const navTo = useNavigate();
+  const { openSnackbar } = useSnackbar();
   
   return (
     <Box className="bg-white rounded-md p-4 text-left inline-block w-full">
       <h1 className="font-bold">{exam.title}</h1>
       <Box className="grid grid-cols-[1fr_24px] gap-5 ">
-        <Box className="grid grid-cols-[24px_1fr] gap-x-2">
-          <img src="/avatar/default.jpg" alt="avatar" className="size-6 rounded-full" />
+        <Box className="grid grid-cols-[48px_1fr] gap-x-2">
+          <img src={exam.teacherAvatar} alt="avatar" className="size-12 rounded-full" />
 
           <ul className="text-xs">
             <li>Giáo viên: {exam.teacherName}</li>
             <li>Môn: {exam.subjectName} {exam.grade}</li>
             <li>Thời gian: {exam.timeLimit / 60} phút</li>
-            {
-              latest.length > 0 ? <li>Ngày làm bài gần nhất: {latest}</li> : <></>
-            }
+            { (!latest) ? <></> : <li>Ngày làm bài gần nhất: {latest}</li> }
           </ul>
         </Box>
-
-        <Heart size={24} />
+        
+        {
+          (page === "favorite") ? <HeartFill size={24} color="#00378A" onClick={() => actionDelete(page)} /> : (
+            (page === "history") ? <XLg size={24} color="#00378A" onClick={() => actionDelete(page)} /> : <FavoriteIcon examId={exam.id!} />
+          )
+        }
       </Box>
 
       <Box className="flex gap-x-1 mt-2 justify-center">
         {
-          latest.length > 0 ? (
+          (!latest) ? (
+            <button 
+              className="zaui-bg-blue-80 text-white rounded-full py-1 px-2 text-sm"
+              onClick={() => navTo(`/student/exam/preview/${exam.id}`)}
+            >
+              Làm bài</button>
+          ) : (
             <>
               <button 
                 className="zaui-bg-blue-80 text-white rounded-full py-1 px-2 text-sm"
@@ -40,17 +60,29 @@ const ExamHolder = ({ exam, latest = "" }: { exam: Exam, latest?: string }) => {
               >
                 Làm lại bài</button>
             </>
-          ) : (
-            <button 
-              className="zaui-bg-blue-80 text-white rounded-full py-1 px-2 text-sm"
-              onClick={() => navTo(`/student/exam/preview/${exam.id}`)}
-            >
-              Làm bài</button>
           )
         }
       </Box>
     </Box>
   )
+
+  async function actionDelete(page) {
+    const response = page === "favorite" ? await handleFavorite(id) : await deleteHistory(id);
+    if (response.status === 200) {
+      openSnackbar({
+        text: `${page === "favorite" ? "Bỏ yêu thích đề thi" : "Xóa đề thi ra khỏi lịch sử"} thành công!`,
+        type: "success",
+        duration: 1500
+      });
+      fetchData();
+    }
+    else {
+      openSnackbar({
+        text: `${page === "favorite" ? "Bỏ yêu thích đề thi" : "Xóa đề thi ra khỏi lịch sử"} thất bại!`,
+        type: "error"
+      });
+    }    
+  }
 }
 
 export default ExamHolder;

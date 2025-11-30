@@ -3,7 +3,7 @@ import axios from "axios";
 const studentId = Number(sessionStorage.getItem("id"));
 
 class ExamAttemptGet {
-  score?: number;
+  totalPoint?: number;
   examParts: any[] = [];
 }
 

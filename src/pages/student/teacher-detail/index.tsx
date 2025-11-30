@@ -1,19 +1,20 @@
 import AppHeader from "@/components/header";
 import ExamHolder from "@/components/student/exam/exam-holder"
-import { Text, Page, Box } from "zmp-ui";
+import { Text, Page, Box, useParams } from "zmp-ui";
 import { useState, useEffect } from 'react';
 import { Teacher, getTeacherById } from "@/models/user";
-import { Exam, getExamsByTeacher } from "@/models/exam";
-import { handleFollowing } from "@/models/student";
+import { Exam, getPublishExamsByTeacher } from "@/models/exam";
+import { FollowButton } from "@/components/student/follow/follow-button";
 
 export default function TeacherDetailPage() {
   const [examList, setExamList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [teacher, setTeacher] = useState<Teacher>(new Teacher());
+  const { id } = useParams();
 
   useEffect(() => {
-    getTeacherById().then(response => setTeacher(response.data));
-    getExamsByTeacher().then(response => {
+    getTeacherById(Number(id)).then(response => setTeacher(response.data));
+    getPublishExamsByTeacher(Number(id)).then(response => {
       setExamList(response.data);
       setLoading(false);
     }).catch(err => {
@@ -26,18 +27,13 @@ export default function TeacherDetailPage() {
     <Page className="page-x-0">
       <AppHeader title={teacher.name} showBackIcon />
       <Box className="flex gap-2 section-container">
-        <img src="/avatar/default.jpg" className="size-[64px] rounded-full" />
+        <img src={teacher.avatar} className="size-[64px] rounded-full" />
         <Box className="w-full">
           <Text className="italic text-justify">{teacher.introduction}</Text>
           <hr />
           <Box className="flex items-center gap-x-2">
             <Text>1,000 học sinh theo dõi</Text>
-            <button
-              className="zaui-bg-blue-80 text-white rounded-full py-1 px-2 text-sm"
-              onClick={() => handleFollowing(teacher.id!)}
-            >
-              Theo dõi
-            </button>
+            <FollowButton teacherId={teacher.id} />
           </Box>
         </Box>
       </Box>

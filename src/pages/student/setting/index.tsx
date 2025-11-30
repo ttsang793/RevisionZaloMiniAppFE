@@ -1,69 +1,67 @@
 import { CameraFill, ChevronRight } from "react-bootstrap-icons";
-import { Box, Switch, Input, Text, Page, useNavigate } from "zmp-ui";
+import { Box, Switch, Input, Select, Text, Page, useNavigate, useSnackbar } from "zmp-ui";
 import AppHeader from "@/components/header";
 import SettingAlarm from "@/components/setting/alarm";
 import "./setting.css";
 import { useState, useEffect } from 'react';
 import { Student, getStudentById, updateStudent, deleteStudent } from "@/models/user";
 import { getUserInfo } from "zmp-sdk";
+import { updateStudentStatus } from "@/models/notification";
 
 export default function StudentSettingPage() {
   const navTo = useNavigate();
+  const { openSnackbar } = useSnackbar();
   const [student, setStudent] = useState<Student>(new Student());
   const [emailError, setEmailError] = useState("");
-  
-  const [noti, setNoti] = useState({
-    all: sessionStorage.getItem("noti-all") === "true",
-    following: sessionStorage.getItem("noti-following") === "true",
-    manual: sessionStorage.getItem("noti-manual") === "true",
-    reply: sessionStorage.getItem("noti-reply") === "true",
-  });
+  const [loading, setLoading] = useState(true);
+  const [noti, setNoti] = useState([false, false, false, false]);
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    Object.entries(noti).forEach(([key, value]) => {
-      sessionStorage.setItem(`noti-${key}`, String(value));
-    });
-  }, [noti]);
-
-  const handleChange = (key: keyof typeof noti) => {
-    if (key === "all") {
-      const newValue = !noti.all;
-      setNoti({
-        all: newValue,
-        following: newValue,
-        manual: newValue,
-        reply: newValue,
-      });
+  const handleChange = async (key: string, index: number) => {
+    const status = !student.notification![index]
+    const response = await updateStudentStatus(student.id!, key, status);
+    if (response.status === 200) {
+      if (index === 0) student.notification = [status, status, status, status];
+      else {
+        student.notification![index] = status;
+        student.notification![0] = student.notification![1] && student.notification![2] && student.notification![3];
+      }
+      setNoti([...student.notification!]);
     }
-    else setNoti(prev => ({...prev, [key]: !prev[key]}))
+    else {
+      openSnackbar({
+        text: "Thay dổi thông báo thất bại",
+        type: "error"
+      })
+      console.error(response);
+    }
   };
 
-  return (
+  return loading ? <></> : (
     <Page className="page-x-0">
       <AppHeader title="Cài đặt" />
       <Box className="section-container">
         <Box className="grid grid-cols-[1fr_30px] gap-x-2 mb-3 items-center">
           <Text>Thông báo</Text>
-          <Switch checked={noti.all} onChange={() => handleChange("all")} />
+          <Switch checked={noti[0]} onChange={() => handleChange("all", 0)} />
         </Box>
         <hr />
         <Box className="grid grid-cols-[1fr_30px] gap-x-2 my-3 items-center">
           <Text>Đề thi mới của giáo viên đang theo dõi</Text>
-          <Switch checked={noti.following} onChange={() => handleChange("following")} />
+          <Switch checked={noti[1]} onChange={() => handleChange("following", 1)} />
         </Box>
         <hr />
         <Box className="grid grid-cols-[1fr_30px] gap-x-2 my-3 items-center">
           <Text>Bài tự luận đã có điểm</Text>
-          <Switch checked={noti.manual} onChange={() => handleChange("manual")} />
+          <Switch checked={noti[2]} onChange={() => handleChange("manual", 2)} />
         </Box>
         <hr />
         <Box className="grid grid-cols-[1fr_30px] gap-x-2 mt-3 items-center">
           <Text>Phản hồi của bình luận</Text>
-          <Switch checked={noti.reply} onChange={() => handleChange("reply")} />
+          <Switch checked={noti[3]} onChange={() => handleChange("reply", 3)} />
         </Box>
       </Box>
 
@@ -98,6 +96,16 @@ export default function StudentSettingPage() {
               onChange={e => setStudent({...student, name: e.target.value})}
               helperText={<Text className="text-left">Nếu để trống, tên hiển thị là tên Zalo của bạn.</Text>}
             />
+            
+            <Select
+              label={<Text className="mt-2">Lớp</Text>}
+              closeOnSelect value={student.grade}
+              onChange={(e: number) => setStudent({...student, grade: e})}
+            >
+            {
+              [6,7,8,9,10,11,12].map((g: number) => <Select.Option value={g} title={`${g}`} key={`grade_${g}`} />)
+            }
+            </Select>
             
             <Input
               placeholder="Email"
@@ -135,17 +143,42 @@ export default function StudentSettingPage() {
       const userResponse = await getUserInfo({ autoRequestPermission: false });
       student.name = userResponse.userInfo.name;
     }
-    updateStudent(student);
-  }
-
-  async function handleDelete() {
-    const status = await deleteStudent(6);
-    if (status === 201) {
-      navTo("/");
+    const response = await updateStudent(student);
+    if (response.status === 200) {
+      openSnackbar({
+        text: "Cập nhật thông tin thành công!",
+        type: "success",
+        duration: 1500
+      })
+    }
+    else {
+      openSnackbar({
+        text: "Cập nhật thông tin thất bại!",
+        type: "error"
+      })
+      console.error(response);
     }
   }
 
+  async function handleDelete() {
+    const status = await deleteStudent();
+    if (status === 200) {
+      openSnackbar({
+        text: "Xóa tài khoản thành công!",
+        duration: 1500
+      })
+      sessionStorage.clear();
+      navTo("/");
+    }
+    else openSnackbar({ text: "Lỗi hệ thống! Vui lòng thử lại sau!" })
+  }
+
   async function fetchData() {
-    getStudentById().then(student => setStudent(student.data));
+    setLoading(true);
+    getStudentById().then(student => {
+      setStudent(student.data);
+      setNoti(student.data.notification);
+      setLoading(false);
+    });
   }
 }

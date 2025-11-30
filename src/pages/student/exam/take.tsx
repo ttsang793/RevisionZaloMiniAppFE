@@ -19,7 +19,13 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
   const [examQuestions, setExamQuestions] = useState<ExamQuestion>(new ExamQuestion(Number(id)));
   const [examQuestionList, setExamQuestionList] = useState<any[][]>([]);
   const [examAnswerList, setExamAnswerList] = useState<any[][]>([]);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
   const [currentPart, setCurrentPart] = useState(0);
+
+  const handleChangePart = (part: number) => {
+    setCurrentPart(part);
+    setCurrentQuestion(0);
+  }
 
   function updateExamAnswerList(i: number, value: any[]) {
     const newList = [...examAnswerList];
@@ -84,7 +90,7 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
             examQuestions.partTitles.map((e, i) =>
               <button
                 className={`rounded-full size-6 ms-1 border ${currentPart === i ? "zaui-border-blue-70 zaui-bg-blue-70 zaui-text-blue-10" : "zaui-border-blue-70 zaui-bg-blue-10 zaui-text-blue-70"}`}
-                onClick={() => setCurrentPart(i)} key={e}
+                onClick={() => handleChangePart(i)} key={e}
               >
                 {i + 1}
               </button>
@@ -103,6 +109,7 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
       {
         <ExamPart
           i={currentPart} practice={practice}
+          currentQuestion={currentQuestion} setCurrentQuestion={setCurrentQuestion}
           partTitle={examQuestions.partTitles[currentPart]}
           partQuestions={examQuestionList[currentPart]}
           answerList={examAnswerList[currentPart]}

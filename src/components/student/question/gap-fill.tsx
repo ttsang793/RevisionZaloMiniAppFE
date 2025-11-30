@@ -77,7 +77,7 @@ const DienVaoChoTrongResult = ({i, answer}) => {
         </Text>
 
         <input
-          className={`h-8 w-full border border-gray-400 rounded-lg mt-1 px-2 ${(question.markAsWrong ? `font-bold zaui-text-${question.answerKeys.includes(answer.studentAnswer) ? "green" : "red"}-70` : "")}`}
+          className={`h-8 w-full border border-gray-400 rounded-lg mt-1 px-2 ${(question.markAsWrong ? `font-bold zaui-text-${answer.correct[0] ? "green" : "red"}-70` : "")}`}
           value={answer.studentAnswer}
           readOnly
         />

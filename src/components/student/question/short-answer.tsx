@@ -115,7 +115,6 @@ const TraLoiNgan = ({i, question, answer, practice, updateAnswer}) => {
 
 const TraLoiNganResult = ({i, answer}) => {
   const question = answer.question;
-  const studentAnswerArray = answer.studentAnswer.split("");
 
   return (
     <Box className="border border-gray-300 py-1 px-2">
@@ -125,15 +124,15 @@ const TraLoiNganResult = ({i, answer}) => {
       <Box className="mt-1">
         {[0, 1, 2, 3].map((j) => (
           <input
-            className={`size-8 text-center border border-gray-400 rounded-lg me-2 font-bold zaui-text-${question.answerKey === answer.studentAnswer ? "green" : "red"}-70`}
-            value={studentAnswerArray[j]}
+            className={`size-8 text-center border border-gray-400 rounded-lg me-2 font-bold zaui-text-${answer.correct ? "green" : "red"}-70`}
+            value={answer.studentAnswer[j]}
             maxLength={1} key={j} readOnly
           />
-        ))} { showCorrect(question.answerKey === answer.studentAnswer) }
+        ))} { showCorrect(answer.correct) }
       </Box>
 
       {
-        (question.answerKey !== answer.studentAnswer) ? (
+        (answer.correct) ? <></> : (
           <Box className="mt-2">
             <>
               {question.answerKey.split("").map((ak: string, i: number) => (
@@ -144,7 +143,7 @@ const TraLoiNganResult = ({i, answer}) => {
               ))} <CheckLg size={24} className="zaui-text-green-70 inline" />
             </>
           </Box>
-        ) : <></>
+        )
       }
     </Box>
   )

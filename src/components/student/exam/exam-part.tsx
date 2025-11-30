@@ -1,5 +1,4 @@
 import { Box } from "zmp-ui";
-import { useState, useEffect, useRef } from "react";
 import { TracNghiem } from "../question/multiple-choice";
 import { DungSai } from "../question/true-false";
 import { TraLoiNgan } from "../question/short-answer";
@@ -36,24 +35,18 @@ interface ExamPartProps {
   practice: boolean,
   partTitle: string,
   partQuestions: any[],
+  currentQuestion: number,
+  setCurrentQuestion: (q: number) => void,
   answerList: any[],
   updateAnswerList: (list: any[]) => void;
 }
 
-const ExamPart = ({i, practice, partTitle, partQuestions, answerList, updateAnswerList}: ExamPartProps) => {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-
+const ExamPart = ({i, practice, partTitle, partQuestions, currentQuestion, setCurrentQuestion, answerList, updateAnswerList}: ExamPartProps) => {
   const updateAnswer = (j: number, updated: any) => {
     const newList = [...answerList];
     newList[j] = updated;
     updateAnswerList(newList);
   }
-
-  useEffect(() => {
-    if (currentQuestion >= partQuestions.length) {
-      setCurrentQuestion(0);
-    }
-  }, [partQuestions]);
 
   return (
     <>

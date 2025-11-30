@@ -23,6 +23,14 @@ class Exam {
   updatedAt: Date = new Date();
   publishedAt: Date = new Date();
   status: number = 0;
+  latest?: Date;
+  historyId?: number;
+}
+
+class ExamAttemptsRecord {
+  maxTotalPoint?: number;
+  duration?: number;
+  count: number = 0;
 }
 
 function getAllExams() {
@@ -37,46 +45,67 @@ function getExamById(id: number) {
   return axios.get(`/api/exam/${id}`);
 }
 
-function getExamsByTeacher() {
-  return axios.get(`/api/exam/teacher/${teacherId}`);
+function getExamAttemptsRecordByExamId(id: number) {
+  return axios.get(`/api/exam-attempt/exam/${id}`);
 }
 
-function insertExam(exam: Exam) {
-  axios.post("/api/exam", exam, {
-    headers: { "Content-Type": "application/json" }
-  }).then(response => {
-    console.log(response.status);
-  }).catch(err => {
-    console.error(err);
-  })
+function getExamTopicsByExamId(id: number) {
+  return axios.get(`/api/exam/${id}/topic`);
 }
 
-function updateExam(exam: Exam, id: number) {
-  axios.put(`/api/exam/${id}`, exam, {
-    headers: { "Content-Type": "application/json" }
-  }).then(response => {
-    console.log(response.status);
-  }).catch(err => {
-    console.error(err);
-  })
+function getPublishExamsByTeacher(tId = teacherId) {
+  return axios.get(`/api/exam/publish/teacher/${tId}`);
 }
 
-function deleteExam(id: number) {
-  axios.delete(`/api/exam/${id}`)
-    .then(response => {
-      console.log(response.status);
-    }).catch(err => {
-      console.error(err);
+function getExamsByTeacher(tId = teacherId) {
+  return axios.get(`/api/exam/teacher/${tId}`);
+}
+
+async function insertExam(exam: Exam): Promise<any> {
+  try {
+    const response = await axios.prototype("/api/exam", exam, {
+      headers: { "Content-Type": "application/json" }
     })
+    return response;
+  }
+  catch (err) {
+    return err;
+  }
 }
 
-function publishExam(id: number) {
-  axios.put(`/api/exam/publish/${id}`)
-    .then(response => {
-      console.log(response.status);
-    }).catch(err => {
-      console.error(err);
+async function updateExam(exam: Exam, id: number): Promise<any> {  
+  try {
+    const response = await axios.put(`/api/exam/${id}`, exam, {
+      headers: { "Content-Type": "application/json" }
     })
+    return response;
+  }
+  catch (err) {
+    return err;
+  }
 }
 
-export { Exam, getAllExams, getPublishExams, getExamById, getExamsByTeacher, insertExam, updateExam, deleteExam, publishExam }
+async function deleteExam(id: number): Promise<any> {  
+  try {
+    const response = await axios.delete(`/api/exam/${id}`);
+    return response;
+  }
+  catch (err) {
+    return err;
+  }
+}
+
+async function publishExam(id: number): Promise<any> {  
+  try {
+    const response = await axios.put(`/api/exam/publish/${id}`)
+    return response;
+  }
+  catch (err) {
+    return err;
+  }
+}
+
+export { Exam, ExamAttemptsRecord, getAllExams, getPublishExams, getExamById,
+          getExamAttemptsRecordByExamId, getExamTopicsByExamId,
+          getPublishExamsByTeacher, getExamsByTeacher,
+          insertExam, updateExam, deleteExam, publishExam }

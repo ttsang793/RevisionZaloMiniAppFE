@@ -1,5 +1,4 @@
 import { Box } from "zmp-ui";
-import { useState, useEffect } from "react";
 import { TracNghiemResult } from "../question/multiple-choice";
 import { DungSaiResult } from "../question/true-false";
 import { TraLoiNganResult } from "../question/short-answer";
@@ -9,7 +8,7 @@ import { SapXep } from "../question/sorting";
 import { DungSaiTHPTResult } from "../question/true-false-thpt";
 
 function displayQuestion(answer, partIndex, questionIndex) {
-  //console.log(question);
+  //console.log(answer.studentAnswer);
   switch (answer.question.type) {
     case "multiple-choice": return <TracNghiemResult i={questionIndex} part={partIndex} answer={answer} key={`question-${partIndex}_${questionIndex}`} />
     case "true-false": return <DungSaiResult i={questionIndex} answer={answer} />
@@ -24,16 +23,13 @@ function displayQuestion(answer, partIndex, questionIndex) {
 
 interface ResultExamPartProps {
   i: number;
-  partTitle: string,
-  partAnswers: any[],
+  partTitle: string;
+  partAnswers: any[];
+  currentQuestion: number;
+  setCurrentQuestion: (q: number) => void;
 }
 
-const ResultExamPart = ({i, partTitle, partAnswers}: ResultExamPartProps) => {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-
-  useEffect(() => {
-    setCurrentQuestion(0);
-  }, [partTitle]);
+const ResultExamPart = ({i, partTitle, partAnswers, currentQuestion, setCurrentQuestion}: ResultExamPartProps) => {
 
   return (
     <>

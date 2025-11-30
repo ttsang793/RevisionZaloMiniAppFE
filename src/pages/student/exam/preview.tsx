@@ -1,12 +1,13 @@
-import { Calendar3, PersonFill, ClockFill, TrophyFill, ChatTextFill, Heart } from "react-bootstrap-icons"
+import { Calendar3, PersonFill, ClockFill, TrophyFill, ChatTextFill } from "react-bootstrap-icons"
 import CommentBlock from "@/components/student/exam/comment";
-import { useNavigate, useParams } from "react-router-dom";
-import { Avatar, Box, Text, Page, Modal } from "zmp-ui";
+import { Avatar, Box, Text, Page, Modal, useNavigate, useParams } from "zmp-ui";
 import { useState, useEffect } from "react";
 import AppHeader from "@/components/header";
-import { Exam, getExamById } from "@/models/exam";
-import { handleFavorite, handleFollowing, handleHistory } from "@/models/student";
-import { stringToDate } from "@/script/util";
+import { Exam, ExamAttemptsRecord, getExamById, getExamAttemptsRecordByExamId, getExamTopicsByExamId } from "@/models/exam";
+import { handleHistory } from "@/models/student";
+import { stringToDate, floatTwoDigits, parseMinutesAndSeconds } from "@/script/util";
+import { FavoriteIcon } from "@/components/student/exam/favorite";
+import { FollowButton } from "@/components/student/follow/follow-button";
 
 export default function TestPreviewPage() {
   const { id } = useParams();
@@ -14,18 +15,12 @@ export default function TestPreviewPage() {
   const navTo = useNavigate();
 
   const [examInfo, setExamInfo] = useState<Exam>(new Exam());
+  const [examAttemptsRecord, setExamAttemptsRecord] = useState<ExamAttemptsRecord>(new ExamAttemptsRecord());
+  const [topic, setTopic] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
-    if (id !== undefined) {
-      handleHistory(Number(id));
-      getExamById(Number(id)).then(response => {
-        setExamInfo(response.data);
-        setLoading(false);
-      })
-    }
-    else setLoading(false);
+    fetchData();
   }, []);
 
   return loading ? <></> : (
@@ -43,16 +38,11 @@ export default function TestPreviewPage() {
                 <Avatar src={examInfo.teacherAvatar} size={24} className="me-1" />
                 {examInfo.teacherName}
               </Box>
-              <button
-                className="zaui-bg-blue-80 text-white rounded-full py-1 px-2 text-sm"
-                onClick={() => handleFollowing(examInfo.teacherId)}
-              >
-                Theo dõi
-              </button>
+              <FollowButton teacherId={examInfo.teacherId} />
             </Box>
           </Box>
 
-          <Heart className="zaui-text-blue-80" size={32} onClick={() => handleFavorite(Number(id))} />
+          <FavoriteIcon examId={examInfo.id!} size={32} />
         </Box>
 
         <hr />
@@ -72,17 +62,25 @@ export default function TestPreviewPage() {
           <Calendar3 /><span><b>Ngày xuất bản: {stringToDate(examInfo.publishedAt)}</b></span>
         </li>
         <li className="grid grid-cols-[16px_1fr] gap-x-2 text-justify py-0.5">
-          <PersonFill /><span><b>Lượt làm bài:</b> 100 thí sinh</span>
+          <PersonFill /><span><b>Lượt làm bài:</b> {examAttemptsRecord.count} lượt</span>
         </li>
         <li className="grid grid-cols-[16px_1fr] gap-x-2 text-justify py-0.5">
           <ClockFill /><span><b>Thời gian:</b> {examInfo.timeLimit / 60} phút | 3 phần | 22 câu hỏi</span>
         </li>
-        <li className="grid grid-cols-[16px_1fr] gap-x-2 text-justify py-0.5">
-          <TrophyFill /><span><b>Điểm cao nhất:</b> 9,8 (70 phút 39 giây)</span>
-        </li>
-        <li className="grid grid-cols-[16px_1fr] gap-x-2 text-justify py-0.5">
-          <ChatTextFill /><span><b>Chủ đề:</b> Tính đơn điệu và cực trị của hàm số; Giá trị lớn nhất, giá trị nhỏ nhất của hàm số; Khảo sát và vẽ đồ thị của hàm số</span>
-        </li>
+        {
+          (!examAttemptsRecord.maxTotalPoint) ? <></> : (
+            <li className="grid grid-cols-[16px_1fr] gap-x-2 text-justify py-0.5">
+              <TrophyFill /><span><b>Điểm cao nhất:</b> {floatTwoDigits(examAttemptsRecord.maxTotalPoint)} ({parseMinutesAndSeconds(examAttemptsRecord.duration!)})</span>
+            </li>
+          )
+        }
+        {
+          (topic.length === 0) ? <></> : (
+            <li className="grid grid-cols-[16px_1fr] gap-x-2 text-justify py-0.5">
+              <ChatTextFill /><span><b>Chủ đề:</b> {topic.join(";")}</span>
+            </li>
+          )
+        }
       </ul>
       
       <CommentBlock id={id} />
@@ -109,9 +107,26 @@ export default function TestPreviewPage() {
     </Page>
   )
 
+  async function fetchData() {
+    setLoading(true);
+    if (id !== undefined) {
+      const examId = Number(id);
+      handleHistory(examId);
+      
+      const examResponse = await getExamById(examId);
+      setExamInfo(examResponse.data);
+      
+      const topicResponse = await getExamTopicsByExamId(examId);
+      setTopic(topicResponse.data);
+
+      const earResponse = await getExamAttemptsRecordByExamId(examId);
+      setExamAttemptsRecord(earResponse.data);
+    }
+    setLoading(false);
+  }
+
   function handleTake() {
     setTakeVisible(false);
-    console.log(examInfo.displayType)
     if (examInfo.displayType === "pdf") navTo(`/student/exam/pdf/take/${id}`);
     else navTo(`/student/exam/take/${id}`);
   }

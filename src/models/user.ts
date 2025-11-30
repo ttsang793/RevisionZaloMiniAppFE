@@ -8,9 +8,11 @@ class User {
   name: string = "";
   avatar: string = "/avatar/default.jpg";
   email: string = "";
+  notification?: boolean[];
 }
 
 class Student extends User {
+  grade: number = 6;
 }
 
 class Teacher extends User {
@@ -18,9 +20,9 @@ class Teacher extends User {
   grades: number[] = [];
   introduction?: string;
 
-  constructor(name: string) {
+  constructor(name?: string) {
     super();
-    this.name = name;
+    this.name = name || "";
   }
 }
 
@@ -49,7 +51,7 @@ function getStudentById() {
   return axios.get(`/api/student/${id}`);
 }
 
-async function addStudent(userInfo, email): Promise<number> {
+async function addStudent(userInfo, email): Promise<any> {
   const student = new Student()
   student.zaloId = userInfo.id;
   student.name = userInfo.name;
@@ -60,25 +62,26 @@ async function addStudent(userInfo, email): Promise<number> {
     const response = await axios.post("/api/student", student, {
       headers: { "Content-Type": "application/json" }
     });
-    return response.status;
+    return response;
   }
   catch (err) {
-    console.error(err);
-    return 500;
+    return err;
   }
 }
 
-function updateStudent(student: Student) {
-  axios.put(`/api/student/${student.id}`, student, {
-    headers: { "Content-Type": "application/json" }
-  }).then(response => {
-    console.log(response.status);
-  }).catch(err => {
-    console.error(err);
-  })
+async function updateStudent(student: Student): Promise<any> {
+  try {
+    const response = await axios.put(`/api/student/${student.id}`, student, {
+      headers: { "Content-Type": "application/json" }
+    })
+    return response;
+  }
+  catch (err) {
+    return err;
+  }
 }
 
-async function deleteStudent() : Promise<number> {
+async function deleteStudent(): Promise<number> {
   try {
     const response = await axios.delete(`/api/student/${id}`);
     return response.data;
@@ -89,8 +92,8 @@ async function deleteStudent() : Promise<number> {
   }
 }
 
-function getTeacherById() {
-  return axios.get(`/api/teacher/${id}`);
+function getTeacherById(teacherId = id) {
+  return axios.get(`/api/teacher/${teacherId}`);
 }
 
 async function getTeacherSubjectById(id) {
@@ -111,14 +114,16 @@ async function addTeacher(teacher: Teacher): Promise<number> {
   }
 }
 
-function updateTeacher(teacher: Teacher) {
-  axios.put(`/api/teacher/${teacher.id}`, teacher, {
-    headers: { "Content-Type": "application/json" }
-  }).then(response => {
-    console.log(response.status);
-  }).catch(err => {
-    console.error(err);
-  })
+async function updateTeacher(teacher: Teacher): Promise<any> {
+  try {
+    const response = await axios.put(`/api/teacher/${teacher.id}`, teacher, {
+      headers: { "Content-Type": "application/json" }
+    })
+    return response;
+  }
+  catch (err) {
+    return err;
+  }
 }
 
 async function deleteTeacher(): Promise<number> {

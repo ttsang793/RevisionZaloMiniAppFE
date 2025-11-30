@@ -9,7 +9,7 @@ export default function FavoritePage() {
   const [examList, setExamList] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchData = () => {    
     getFavorite().then(response => {
       setExamList(response.data);
       setLoading(false);
@@ -17,7 +17,9 @@ export default function FavoritePage() {
       console.error(err);
       setLoading(false);
     })
-  }, []);
+  }
+
+  useEffect(() => fetchData(), []);
 
   return loading ? (
     <Page className="flex z-1000 bg-white items-center justify-center">
@@ -28,7 +30,8 @@ export default function FavoritePage() {
       <StudentHeader title="Đề thi yêu thích" />
       <Box className="flex gap-5 flex-wrap justify-center">
       {
-        loading ? <>Đang tải đề, chờ chút nhé!</> : examList.map((exam: Exam) => <ExamHolder exam={exam} latest="21/10/2025" key={`exam-${exam.id}`} />)
+        loading ? <>Đang tải đề, chờ chút nhé!</>
+                : examList.map((exam: Exam) => <ExamHolder exam={exam} latest="21/10/2025" id={exam.id} page="favorite" fetchData={fetchData} key={`exam-${exam.id}`} />)
       }
       </Box>
     </Page>

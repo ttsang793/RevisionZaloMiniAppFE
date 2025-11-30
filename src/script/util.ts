@@ -14,6 +14,10 @@ function fisherYatesShuffle(array: any[]): any[] {
   return array;
 }
 
+function div(a: number, b: number): number {
+  return Math.ceil(a / b);
+}
+
 function floatTwoDigits(float: number) {
   return float.toFixed(2).replace('.', ',')
 }
@@ -26,4 +30,9 @@ function stringToDate(dateString: string) {
   return new Date(dateString).toLocaleDateString("en-GB");
 }
 
-export { backToTop, fisherYatesShuffle, floatTwoDigits, sumThenParseFloat, stringToDate }
+function parseMinutesAndSeconds(second: number): string {
+  if (second < 60) return `${second} giây`
+  return `${div(second, 60)} phút ${second % 60} giây`;
+}
+
+export { backToTop, fisherYatesShuffle, floatTwoDigits, sumThenParseFloat, stringToDate, parseMinutesAndSeconds }
