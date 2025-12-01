@@ -210,8 +210,8 @@ export default function TeacherSettingPage() {
   }
 
   async function handleDelete() {
-    const status = await deleteTeacher();
-    if (status === 200) {
+    const response = await deleteTeacher();
+    if (response.status === 200) {
       openSnackbar({
         text: "Xóa tài khoản thành công!",
         duration: 1500
@@ -219,6 +219,9 @@ export default function TeacherSettingPage() {
       sessionStorage.clear();
       navTo("/");
     }
-    else openSnackbar({ text: "Lỗi hệ thống! Vui lòng thử lại sau!" })
+    else {
+      openSnackbar({ text: "Lỗi hệ thống! Vui lòng thử lại sau!" })
+      console.error(response);
+    }
   }
 }

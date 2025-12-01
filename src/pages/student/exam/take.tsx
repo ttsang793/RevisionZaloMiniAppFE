@@ -1,4 +1,4 @@
-import { Box, Page, Text, Modal, useParams, useNavigate } from "zmp-ui";
+import { Box, Page, Text, Modal, useParams, useNavigate, useSnackbar } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { ExamQuestion, getExamQuestionWithQuestions } from "@/models/exam-question";
 import { ExamPart } from "@/components/student/exam/exam-part";
@@ -13,6 +13,7 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
   const [allowEarlySubmit, setAllowEarlySubmit] = useState(true);
   const [earlySubmitVisible, setEarlySubmitVisible] = useState(false);
   const [loading, setLoading] = useState(true);
+  const { openSnackbar } = useSnackbar();
 
   const [examAttempt, setExamAttempt] = useState<ExamAttempt>(new ExamAttempt(Number(id), practice));
   const [examInfo, setExamInfo] = useState<Exam>(new Exam());
@@ -152,8 +153,24 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
 
   async function turnIn() {
     setEarlySubmitVisible(false);
+    openSnackbar({
+      text: "Đang nộp bài...",
+      type: "loading"
+    })
+
     const submitStatus = await insertAttempt(examAttempt, examQuestionList, examAnswerList);
-    /*if (submitStatus === 201)
-      await checkAchievement().then(() => navTo(`/student/exam/result/${id}`));*/
+    if (submitStatus === 201) {      
+      openSnackbar({
+        text: "Nộp bài thành công!",
+        type: "success",
+        duration: 1500
+      })
+
+      setTimeout(() => {
+        navTo(`/student/exam/result/${id}`, { replace: true })
+      }, 1500);
+
+      //await checkAchievement().then(() => navTo(`/student/exam/result/${id}`));
+    }
   }
 }

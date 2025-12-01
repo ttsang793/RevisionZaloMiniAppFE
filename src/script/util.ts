@@ -18,7 +18,8 @@ function div(a: number, b: number): number {
   return Math.ceil(a / b);
 }
 
-function floatTwoDigits(float: number) {
+function floatTwoDigits(float: number): string {
+  if (float === 10) return "10";
   return float.toFixed(2).replace('.', ',')
 }
 

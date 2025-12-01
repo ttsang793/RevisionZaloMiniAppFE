@@ -12,18 +12,13 @@ class User {
 }
 
 class Student extends User {
-  grade: number = 6;
+  grade: number = -1;
 }
 
 class Teacher extends User {
   subjectId: string = "-1";
   grades: number[] = [];
   introduction?: string;
-
-  constructor(name?: string) {
-    super();
-    this.name = name || "";
-  }
 }
 
 class Admin extends User {
@@ -51,13 +46,7 @@ function getStudentById() {
   return axios.get(`/api/student/${id}`);
 }
 
-async function addStudent(userInfo, email): Promise<any> {
-  const student = new Student()
-  student.zaloId = userInfo.id;
-  student.name = userInfo.name;
-  student.avatar = userInfo.avatar;
-  student.email = email;
-
+async function addStudent(student: Student): Promise<any> {
   try {
     const response = await axios.post("/api/student", student, {
       headers: { "Content-Type": "application/json" }
@@ -81,10 +70,10 @@ async function updateStudent(student: Student): Promise<any> {
   }
 }
 
-async function deleteStudent(): Promise<number> {
+async function deleteStudent(): Promise<any> {
   try {
     const response = await axios.delete(`/api/student/${id}`);
-    return response.data;
+    return response;
   }
   catch (err) {
     console.error(err);
@@ -101,16 +90,15 @@ async function getTeacherSubjectById(id) {
   return response.data;
 }
 
-async function addTeacher(teacher: Teacher): Promise<number> {
+async function addTeacher(teacher: Teacher): Promise<any> {
   try {
     const response = await axios.post("/api/teacher", teacher, {
       headers: { "Content-Type": "application/json" }
     });
-    return response.status;
+    return response;
   }
   catch (err) {
-    console.error(err);
-    return 500;
+    return err;
   }
 }
 
@@ -126,14 +114,13 @@ async function updateTeacher(teacher: Teacher): Promise<any> {
   }
 }
 
-async function deleteTeacher(): Promise<number> {
+async function deleteTeacher(): Promise<any> {
   try {
     const response = await axios.delete(`/api/teacher/${id}`);
-    return response.data;
+    return response;
   }
   catch (err) {
-    console.error(err);
-    return 500;
+    return err;
   }
 }
 

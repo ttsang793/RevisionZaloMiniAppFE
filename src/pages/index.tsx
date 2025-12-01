@@ -19,7 +19,7 @@ export default function ChooseRolePage() {
     {
       loading ? <></> : (
         <div className="section-container flex flex-col gap-4">
-          <Text.Title size="xLarge">Chào mừng bạn đến với MáyÔnTập! Mời bạn chọn vai trò:</Text.Title>
+          <Text.Title size="xLarge">Chào mừng bạn đến với EmOnThi! Mời bạn chọn vai trò:</Text.Title>
 
           <button
             className="w-full zaui-bg-green-20 border zaui-border-green-80 text-lg rounded-full py-2"

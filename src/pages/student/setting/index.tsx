@@ -161,8 +161,8 @@ export default function StudentSettingPage() {
   }
 
   async function handleDelete() {
-    const status = await deleteStudent();
-    if (status === 200) {
+    const response = await deleteStudent();
+    if (response.status === 200) {
       openSnackbar({
         text: "Xóa tài khoản thành công!",
         duration: 1500

@@ -4,24 +4,19 @@ import { useParams } from "react-router-dom";
 import { Text, Page, Tabs } from "zmp-ui";
 import { useState, useEffect } from "react";
 import AppHeader from "@/components/header";
-import { Exam, getExamById } from "@/models/exam";
-import ExamMarking from "./marking";
-import { stringToDate } from "@/script/util";
+import { Exam, ExamAttemptsRecord, getExamById, getExamAttemptsRecordByExamId, getExamTopicsByExamId } from "@/models/exam";
+import { stringToDate, floatTwoDigits, parseMinutesAndSeconds } from "@/script/util";
+import ExamMarking from "./marking-list";
 
 export default function ExamDetail() {
   const { id, type } = useParams();
   const [examInfo, setExamInfo] = useState<Exam>(new Exam());
   const [loading, setLoading] = useState(true);
+  const [examAttemptsRecord, setExamAttemptsRecord] = useState<ExamAttemptsRecord>(new ExamAttemptsRecord());
+  const [topic, setTopic] = useState([]);
 
   useEffect(() => {
-    setLoading(true);
-    if (id !== undefined) {
-      getExamById(Number(id)).then(response => {
-        setExamInfo(response.data);
-        setLoading(false);
-      })
-    }
-    else setLoading(false);
+    fetchData();
   }, []);
 
   return loading ? <></> : (
@@ -33,23 +28,31 @@ export default function ExamDetail() {
 
       <ul className="section-container">
         <li className="grid grid-cols-[16px_1fr] gap-x-2 text-justify py-0.5">
-          <Calendar3 /><span><b>Ngày xuất bản: {stringToDate(examInfo.publishedAt)}</b></span>
+          <Calendar3 /><span><b>Ngày xuất bản: {stringToDate(examInfo.publishedAt.toString())}</b></span>
         </li>
         <li className="grid grid-cols-[16px_1fr] gap-x-2 text-justify py-0.5">
-          <PersonFill /><span><b>Lượt làm bài:</b> 100 thí sinh</span>
+          <PersonFill /><span><b>Lượt làm bài:</b> {examAttemptsRecord.count} lượt</span>
         </li>
         <li className="grid grid-cols-[16px_1fr] gap-x-2 text-justify py-0.5">
           <ClockFill /><span><b>Thời gian:</b> {examInfo.timeLimit / 60} phút | 3 phần | 22 câu hỏi</span>
         </li>
-        <li className="grid grid-cols-[16px_1fr] gap-x-2 text-justify py-0.5">
-          <TrophyFill /><span><b>Điểm cao nhất:</b> 9,8 (70 phút 39 giây)</span>
-        </li>
-        <li className="grid grid-cols-[16px_1fr] gap-x-2 text-justify py-0.5">
-          <ChatTextFill /><span><b>Chủ đề:</b> Tính đơn điệu và cực trị của hàm số; Giá trị lớn nhất, giá trị nhỏ nhất của hàm số; Khảo sát và vẽ đồ thị của hàm số</span>
-        </li>
+        {
+          (!examAttemptsRecord.maxTotalPoint) ? <></> : (
+            <li className="grid grid-cols-[16px_1fr] gap-x-2 text-justify py-0.5">
+              <TrophyFill /><span><b>Điểm cao nhất:</b> {floatTwoDigits(examAttemptsRecord.maxTotalPoint)} ({parseMinutesAndSeconds(examAttemptsRecord.duration!)})</span>
+            </li>
+          )
+        }
+        {
+          (topic.length === 0) ? <></> : (
+            <li className="grid grid-cols-[16px_1fr] gap-x-2 text-justify py-0.5">
+              <ChatTextFill /><span><b>Chủ đề:</b> {topic.join(";")}</span>
+            </li>
+          )
+        }
       </ul>
 
-      <Tabs>
+      <Tabs defaultActiveKey={type}>
         <Tabs.Tab label="Bình luận" key="comment">
           <CommentBlock id={id} />
         </Tabs.Tab>
@@ -59,4 +62,20 @@ export default function ExamDetail() {
       </Tabs>
     </Page>
   )
+
+  async function fetchData() {
+    setLoading(true);
+    if (id !== undefined) {
+      const examId = Number(id);      
+      const examResponse = await getExamById(examId);
+      setExamInfo(examResponse.data);
+      
+      const topicResponse = await getExamTopicsByExamId(examId);
+      setTopic(topicResponse.data);
+
+      const earResponse = await getExamAttemptsRecordByExamId(examId);
+      setExamAttemptsRecord(earResponse.data);
+    }
+    setLoading(false);
+  }
 }

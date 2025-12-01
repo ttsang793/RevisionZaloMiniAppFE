@@ -1,12 +1,13 @@
 import { Topic, getTopicById, insertTopic, updateTopic } from "@/models/topic";
 import { getActiveSubjects, Subject } from "@/models/subject";
-import { Text, Input, Button, Checkbox, Select, useSnackbar } from "zmp-ui";
+import { Icon, Text, Input, Button, Checkbox, Select, useSnackbar } from "zmp-ui";
 import { useState, useEffect } from "react";
 
 export default function InfoTopicModal({visible = false, setVisible, editId = "", setEditId, fetchData}) {
   const { openSnackbar } = useSnackbar();
   const [subjectList, setSubjectList] = useState([]);
   const [topic, setTopic] = useState<Topic>({ id: "", name: "", grades: [], subjectId: "" });
+  const [errors, setErrors] = useState<{name?: string, grade?: string, subject?: string}>({});
 
   useEffect(() => {
     if (editId !== "") getTopicById(editId).then(topic => setTopic(topic));
@@ -14,7 +15,7 @@ export default function InfoTopicModal({visible = false, setVisible, editId = ""
   }, [editId])
 
   return (
-    <div className={`fixed top-0 bottom-0 right-0 left-0 bg-gray-900/50 h-full ${visible ? "flex items-center justify-center" : "hidden"}`}>
+    <div className={`fixed top-0 bottom-0 right-0 left-0 bg-gray-900/50 h-full z-50 ${visible ? "flex items-center justify-center" : "hidden"}`}>
       <div className="bg-white mx-20 p-8 relative">
         <button className="absolute top-2 right-5 text-3xl" onClick={() => closeModal()}>&times;</button>
 
@@ -34,11 +35,12 @@ export default function InfoTopicModal({visible = false, setVisible, editId = ""
             placeholder="Nhập tên chủ đề"
             label="Tên chủ đề:"
             maxLength={100}
-            onChange={e => setTopic({...topic, name: e.target.value})}
+            onChange={e => { setErrors({...errors, name: ""}); setTopic({...topic, name: e.target.value})} }
+            errorText={errors.name} status={!errors.name ? "" : "error"}
           />
         </div>
 
-        <div className="mb-4">
+        <div>
           <Text size="small" className="mt-4 mb-2">Lớp:</Text>
           <Checkbox className="me-2" checked={topic.grades.includes(6)} label="6" value={6} onChange={() => handleGrade(6)} />
           <Checkbox className="me-2" checked={topic.grades.includes(7)} label="7" value={7} onChange={() => handleGrade(7)} />
@@ -49,11 +51,15 @@ export default function InfoTopicModal({visible = false, setVisible, editId = ""
           <Checkbox checked={topic.grades.includes(12)} label="12" value={12} onChange={() => handleGrade(12)} />
         </div>
 
+        <Text className="error mt-1">
+          {!errors.grade ? <></> : <><Icon icon="zi-warning-solid" />{errors.grade}</> }
+        </Text>
+
         <Select
-          label="Môn học"
-          closeOnSelect
-          defaultValue="-1"
-          onChange={(e: string) => setTopic({...topic, subjectId: e})}
+          label="Môn học" closeOnSelect defaultValue="-1"
+          label={<Text size="small" className="mt-4">Môn học <span className="required">*</span></Text>}
+          onChange={(e: string) => { setErrors({...errors, subject: ""}); setTopic({...topic, subjectId: e})} }
+          errorText={errors.subject} status={!errors.subject ? "" : "error"}
         >
           <Select.Option value="-1" title="Chọn môn học" disabled />
           {
@@ -63,7 +69,7 @@ export default function InfoTopicModal({visible = false, setVisible, editId = ""
 
         <Button
           fullWidth
-          onClick={() => validation(editId)}
+          onClick={() => validation()}
           className="mt-8"
         >
           {editId ? "Cập nhật chủ đề" : "Thêm chủ đề mới"}
@@ -75,56 +81,66 @@ export default function InfoTopicModal({visible = false, setVisible, editId = ""
   function closeModal() {
     setVisible(false);
     setEditId("");
+    setErrors({});
     setTopic({ name: "", grades: [], subjectId: "" });
   }
 
-  function handleGrade(grade) {
+  function handleGrade(grade: number) {
+    setErrors({...errors, grade: ""});
     const grades = topic.grades;
     const index = grades.findIndex(c => c === grade);
     index === -1 ? grades.push(grade) : grades.splice(index, 1);
     setTopic({...topic, grades});
   }
 
-  function validation(edit) {
-    const isError: boolean = false;
+  function validation() {
+    const newError: {name?: string, grade?: string, subject?: string} = {};
+    if (!topic.name) newError.name = "Vui lòng nhập tên môn học!";
+    if (topic.grades.length === 0) newError.grade = "Vui lòng chọn ít nhất 1 lớp học!";
+    if (!topic.subjectId || topic.subjectId === "-1") newError.subject = "Vui lòng chọn môn học!";
+
+    setErrors(prev => prev = newError);
+    if (Object.keys(newError).length !== 0) return;
+    else handleValidSubmit();
+  }
+
+  function handleValidSubmit() {
+    const orderClasses = topic.grades.sort((a, b) => a - b);
     
-    if (!isError) {
-      const orderClasses = topic.grades.sort((a, b) => a - b);
-      
-      if (edit) setTopic({...topic, grades: orderClasses, id: edit});
-      else setTopic({...topic, grades: orderClasses});
+    if (editId) setTopic({...topic, grades: orderClasses, id: editId});
+    else setTopic({...topic, grades: orderClasses});
 
-      openSnackbar({
-        text: `Bạn có muốn ${edit ? "cập nhật thông tin" : "thêm"} chủ đề này?`,
-        action: {
-          text: "Có",
-          close: true,
-          onClick: async () => {
-            const response = edit ? await updateTopic(topic) : await insertTopic(topic);
+    openSnackbar({
+      text: `Bạn có muốn ${editId ? "cập nhật thông tin" : "thêm"} chủ đề này?`,
+      action: {
+        text: "Có",
+        close: true,
+        onClick: async () => {
+          const response = editId ? await updateTopic(topic) : await insertTopic(topic);
 
-            if (edit ? response.status === 200 : response.status === 201) {
-              openSnackbar({
-                text: `${edit ? "Cập nhật" : "Thêm"} chủ đề thành công!`,
-                type: "success",
-                duration: 1500
-              })
-              setVisible(false);
-              fetchData();
-            }
-            else {
-              openSnackbar({
-                text: `${edit ? "Cập nhật" : "Thêm"} chủ đề thất bại!`,
-                type: "error"
-              });
-              console.error(response);
-            }
+          if (editId ? response.status === 200 : response.status === 201) {
+            openSnackbar({
+              text: `${editId ? "Cập nhật" : "Thêm"} chủ đề thành công!`,
+              type: "success",
+              duration: 1500
+            })
+            setVisible(false);
+            fetchData();
           }
-        },
-        type: `${topic.isVisible ? "warning" : "default"}`,
-        verticalAction: true,
-        icon: true,
-        duration: 5000
-      });
-    }
+          else {
+            openSnackbar({
+              text: `${editId ? "Cập nhật" : "Thêm"} chủ đề thất bại!`,
+              type: "error"
+            });
+            console.error(response);
+          }
+        }
+      },
+      type: `${topic.isVisible ? "warning" : "default"}`,
+      verticalAction: true,
+      icon: true,
+      duration: 5000
+    });
+
   }
 }

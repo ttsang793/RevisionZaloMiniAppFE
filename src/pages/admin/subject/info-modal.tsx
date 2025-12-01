@@ -1,5 +1,5 @@
 import { Subject, getSubjectById, insertSubject, updateSubject } from "@/models/subject";
-import { Text, Input, Button, Checkbox, useSnackbar } from "zmp-ui";
+import { Icon, Text, Input, Button, Checkbox, useSnackbar } from "zmp-ui";
 import { useState, useEffect } from "react";
 
 export default function InfoSubjectModal({visible = false, setVisible, editId = "", setEditId, fetchData}) {
@@ -11,13 +11,14 @@ export default function InfoSubjectModal({visible = false, setVisible, editId = 
       questionGF: false, questionST: false,
     }
   );
+  const [errors, setErrors] = useState<{id?: string, name?: string, grade?: string}>({});
 
   useEffect(() => {
     if (editId != "") fillSubject();
   }, [editId])
 
   return (
-    <div className={`fixed top-0 bottom-0 right-0 left-0 bg-gray-900/50 h-full ${visible ? "flex items-center justify-center" : "hidden"}`}>
+    <div className={`fixed top-0 bottom-0 right-0 left-0 bg-gray-900/50 h-full z-50 ${visible ? "flex items-center justify-center" : "hidden"}`}>
       <div className="bg-white mx-20 p-8 relative">
         <button className="absolute top-2 right-5 text-3xl" onClick={() => closeModal()}>&times;</button>
 
@@ -29,8 +30,9 @@ export default function InfoSubjectModal({visible = false, setVisible, editId = 
             placeholder="Nhập mã (tối đa 4 kí tự)"
             label="Nhập mã môn học:"
             maxLength={4}
-            onChange={e => !editId && setSubject({...subject, id: e.target.value})}
+            onChange={e => handleChangeId(e.target.value)}
             disabled={editId !== ""}
+            errorText={errors.id} status={!errors.id ? "" : "error"}
           />
 
           <Input
@@ -38,7 +40,8 @@ export default function InfoSubjectModal({visible = false, setVisible, editId = 
             placeholder="Nhập tên môn học"
             label="Nhập tên môn học:"
             maxLength={100}
-            onChange={e => setSubject({...subject, name: e.target.value})}
+            onChange={e => { setErrors({...errors, name: ""}); setSubject({...subject, name: e.target.value})} }
+            errorText={errors.name} status={!errors.name ? "" : "error"}
           />
         </div>
 
@@ -52,6 +55,10 @@ export default function InfoSubjectModal({visible = false, setVisible, editId = 
           <Checkbox className="me-2" checked={subject.grades.includes(11)} label="11" value={11} onChange={() => handleGrade(11)} />
           <Checkbox checked={subject.grades.includes(12)} label="12" value={12} onChange={() => handleGrade(12)} />
         </div>
+
+        <Text className="error mt-1">
+          {!errors.grade ? <></> : <><Icon icon="zi-warning-solid" />{errors.grade}</> }
+        </Text>
 
         <div>
           <Text size="small" className="mt-4 mb-2">Loại câu hỏi:</Text>
@@ -67,7 +74,7 @@ export default function InfoSubjectModal({visible = false, setVisible, editId = 
 
         <Button
           fullWidth
-          onClick={() => validation(editId)}
+          onClick={() => validation()}
         >
           {editId ? "Cập nhật môn học" : "Thêm môn học mới"}
         </Button>
@@ -83,6 +90,7 @@ export default function InfoSubjectModal({visible = false, setVisible, editId = 
   function closeModal() {
     setVisible(false);
     setEditId("");
+    setErrors({});
     setSubject(
       {
         id: "", name: "", grades: [], isVisible: true,
@@ -92,51 +100,73 @@ export default function InfoSubjectModal({visible = false, setVisible, editId = 
     )
   }
 
-  function handleGrade(grade) {
+  function handleChangeId(val: string) {
+    if (!editId) {
+      setErrors({...errors, id: ""});
+      setSubject({...subject, id: val})
+    }
+  }
+
+  function handleGrade(grade: number) {
+    setErrors({...errors, grade: ""});
     const grades = subject.grades;
     const index = grades.findIndex(c => c === grade);
     index === -1 ? grades.push(grade) : grades.splice(index, 1);
     setSubject({...subject, grades});
   }
 
-  function validation(edit) {
-    const isError: boolean = false;
+  function validation() {
+    const newError: {id?: string, name?: string, grade?: string} = {};
+    if (!subject.id) newError.id = "Vui lòng nhập mã môn học!";
+    else if (/^[a-zA-Z]{2,4}$/.test(subject.id) === false) newError.id = "Mã môn học phải từ 2-4 chữ cái!";
 
-    if (!isError) {
-      const orderClasses = subject.grades.sort((a, b) => a - b);
-      setSubject({...subject, grades: orderClasses});
+    if (!subject.name) newError.name = "Vui lòng nhập tên môn học!";
+    if (subject.grades.length === 0) newError.grade = "Vui lòng chọn ít nhất 1 lớp học!";
 
-      openSnackbar({
-        text: `Bạn có muốn ${edit ? "cập nhật thông tin" : "thêm"} môn học này?`,
-        action: {
-          text: "Có",
-          close: true,
-          onClick: async () => {
-            const response = edit ? await updateSubject(subject) : await insertSubject(subject);
+    setErrors(prev => prev = newError);
+    if (Object.keys(newError).length !== 0) return;
+    else handleValidSubmit();
+  }
+  
+  function handleValidSubmit() {
+    const orderClasses = subject.grades.sort((a, b) => a - b);
+    setSubject({...subject, id: subject.id.toUpperCase(), grades: orderClasses});
 
-            if (edit ? response.status === 200 : response.status === 201) {
-              openSnackbar({
-                text: `${edit ? "Cập nhật" : "Thêm"} môn học thành công!`,
-                type: "success",
-                duration: 1500
-              })
-              fetchData();
-              setVisible(false);
-            }
-            else {
-              openSnackbar({
-                text: `${edit ? "Cập nhật" : "Thêm"} môn học thất bại!`,
-                type: "error"
-              });
-              console.error(response);
-            }
+    openSnackbar({
+      text: `Bạn có muốn ${editId ? "cập nhật thông tin" : "thêm"} môn học này?`,
+      action: {
+        text: "Có",
+        close: true,
+        onClick: async () => {
+          const response = editId ? await updateSubject(subject) : await insertSubject(subject);
+
+          if (editId ? response.status === 200 : response.status === 201) {
+            openSnackbar({
+              text: `${editId ? "Cập nhật" : "Thêm"} môn học thành công!`,
+              type: "success",
+              duration: 1500
+            })
+            fetchData();
+            setVisible(false);
           }
-        },
-        type: `${subject.isVisible ? "warning" : "default"}`,
-        verticalAction: true,
-        icon: true,
-        duration: 5000
-      });
-    }
+          else if (response.status === 409) {
+            console.error(response);
+            const { nameError } = response.response.data;
+            if (nameError) setErrors({...errors, name: nameError});
+          }
+          else {
+            openSnackbar({
+              text: `${editId ? "Cập nhật" : "Thêm"} môn học thất bại!`,
+              type: "error"
+            });
+            console.error(response);
+          }
+        }
+      },
+      type: `${subject.isVisible ? "warning" : "default"}`,
+      verticalAction: true,
+      icon: true,
+      duration: 5000
+    });
   }
 }

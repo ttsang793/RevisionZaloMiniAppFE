@@ -3,7 +3,14 @@ import axios from "axios";
 const studentId = Number(sessionStorage.getItem("id"));
 
 class ExamAttemptGet {
-  totalPoint?: number;
+  id?: number;
+  studentId?: number;
+  examTitle?: string;
+  totalPoint: number = 0;
+  submittedAt: Date = new Date();
+  markedAt?: Date;
+  duration?: number;
+  comment?: string;
   examParts: any[] = [];
 }
 
@@ -85,8 +92,16 @@ function checkTrueFalseTHPT(question, answer): {numCorrect: number, point: numbe
   }
 }
 
-function getLatestAttempt(examId: number) {
+function getLatestExamAttempt(examId: number) {
   return axios.get(`/api/exam-attempt/${studentId}/${examId}`);
+}
+
+function getExamAttemptById(examAttemptId: number) {
+  return axios.get(`/api/exam-attempt/${examAttemptId}`);
+}
+
+function getExamAttemptsByExamId(id: number) {
+  return axios.get(`/api/exam-attempt/exam/${id}`);
 }
 
 async function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], answerList: any[][]): Promise<number> {
@@ -203,4 +218,4 @@ async function checkAchievement() {
   await axios.post(`/api/exam-attempt/achievement/${studentId}`);
 }
 
-export { ExamAttempt, ExamAttemptGet, getLatestAttempt, insertAttempt, checkAchievement };
+export { ExamAttempt, ExamAttemptGet, getLatestExamAttempt, getExamAttemptById, getExamAttemptsByExamId, insertAttempt, checkAchievement };

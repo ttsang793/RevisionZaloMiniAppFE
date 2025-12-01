@@ -2,7 +2,8 @@ import { Box, Page, Text, useParams, useNavigate } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { ResultExamPart } from "@/components/student/exam/result-exam-part";
 import { Exam, getExamById } from "@/models/exam";
-import { ExamAttemptGet, getLatestAttempt } from "@/models/exam-attempt";
+import { ExamAttemptGet, getLatestExamAttempt } from "@/models/exam-attempt";
+import { floatTwoDigits } from "@/script/util";
 import AppHeader from "@/components/header";
 
 export default function ExamResultPage() {
@@ -22,7 +23,7 @@ export default function ExamResultPage() {
   useEffect(() => {
     if (loading) {
       getExamById(Number(id)).then(response => setExamInfo(response.data));
-      getLatestAttempt(Number(id)).then(response => {
+      getLatestExamAttempt(Number(id)).then(response => {
         setExamAttempt(response.data);
         setLoading(false);
       });
@@ -31,7 +32,7 @@ export default function ExamResultPage() {
 
   return loading ? <></> : (
     <Page className="page bg-white">
-      <AppHeader title="Bài làm" />
+      <AppHeader title="Kết quả" showBackIcon />
       {/* Tiêu đề và các phần */}
       <Text.Title className="text-center uppercase">{examInfo.title}</Text.Title>
       <Text.Title className="text-center">
@@ -55,7 +56,7 @@ export default function ExamResultPage() {
           }
         </Box>
 
-        <Text>Điểm: <b><span className="zaui-text-red-50">{examAttempt.totalPoint}</span> / 10</b></Text>
+        <Text>Điểm: <b><span className="zaui-text-red-50">{floatTwoDigits(examAttempt.totalPoint)}</span> / 10</b></Text>
       </Box>
 
       {
@@ -69,13 +70,6 @@ export default function ExamResultPage() {
       }
       
       <footer className="fixed bottom-0 right-0 left-0 text-center bg-white py-2">
-        <button
-          className="rounded-full zaui-bg-blue-70 zaui-text-blue-10 py-2 px-8 me-2"
-          onClick={() => navTo(`/student`)}
-        >
-          Trang chủ
-        </button>
-
         <button
           className="rounded-full zaui-bg-blue-70 zaui-text-blue-10 py-2 px-8"
           onClick={() => navTo(`/student/exam/preview/${id}`)}

@@ -1,18 +1,17 @@
-import { Box, Button, Input, Page, Select, Text } from "zmp-ui";
+import { Box, Button, Input, Page, Select, Text, useNavigate, useLocation, useSnackbar } from "zmp-ui";
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
 import { getActiveSubjects, Subject } from "@/models/subject";
-import { getUserInfo } from "zmp-sdk";
 
 import { Teacher, addTeacher } from "@/models/user";
 
 export default function TeacherRegisterPage() {
   const { teacherInfo } = useLocation().state || {};
   const { TextArea } = Input;
-  const [teacher, setTeacher] = useState<Teacher>(new Teacher(teacherInfo.name));
+  const [teacher, setTeacher] = useState<Teacher>(new Teacher());
   const [errors, setErrors] = useState<{email?: string, grade?: string, subject?: string}>({});
   const [level, setLevel] = useState("-1");
   const navTo = useNavigate();
+  const { openSnackbar } = useSnackbar();
 
   const [allSubject, setAllSubject] = useState([]);
   const [subjectList, setSubjectList] = useState([]);
@@ -24,7 +23,7 @@ export default function TeacherRegisterPage() {
   return (
     <Page className="flex flex-col justify-center text-center zaui-bg-blue-20 p-5">
       <Box className="section-container flex flex-col gap-4">
-        <Text.Title size="xLarge" className="border-b border-b-black pb-3">Chào mừng thầy/cô đến với hệ thống MáyÔnThi!</Text.Title>
+        <Text.Title size="xLarge" className="border-b border-b-black pb-3">Chào mừng thầy/cô đến với hệ thống EmOnThi!</Text.Title>
         <Text.Title className="italic font-normal">
           Trước khi đăng nhập, thầy/cô hãy điền các thông tin sau:
         </Text.Title>
@@ -110,17 +109,27 @@ export default function TeacherRegisterPage() {
 
     setErrors(prev => prev = newError);
     if (Object.keys(newError).length !== 0) return;
-
-    const userResponse = await getUserInfo({ autoRequestPermission: false });
     
-    teacher.zaloId = userResponse.userInfo.id;
-    teacher.name = (!teacher.name) ? userResponse.userInfo.name : teacher.name;
-    teacher.avatar = userResponse.userInfo.avatar;
+    teacher.zaloId = teacherInfo.id;
+    teacher.name = (!teacher.name) ? teacherInfo.name : teacher.name;
+    teacher.avatar = teacherInfo.avatar;
     teacher.grades = (level === "THCS") ? [6,7,8,9] : [10,11,12];
 
-    addTeacher(teacher).then(status => {
-      if (status === 201) navTo("/teacher");
-      else console.error(status);
-    }).catch(err => console.error(err));
+    const response = await addTeacher(teacher);
+    if (response.status === 201) {
+      openSnackbar({
+        text: "Đăng ký thành công!",
+        type: "success",
+        duration: 1500
+      })
+      setTimeout(() => navTo("/"), 1500);
+    }
+    else {
+      openSnackbar({
+        text: "Đăng ký thất bại! Vui lòng thử lại sau.",
+        type: "error"
+      })
+      console.error(response);
+    }
   }
 }

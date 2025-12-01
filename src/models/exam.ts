@@ -46,7 +46,7 @@ function getExamById(id: number) {
 }
 
 function getExamAttemptsRecordByExamId(id: number) {
-  return axios.get(`/api/exam-attempt/exam/${id}`);
+  return axios.get(`/api/exam-attempt/exam/${id}/record`);
 }
 
 function getExamTopicsByExamId(id: number) {
