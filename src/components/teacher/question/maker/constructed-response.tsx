@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Checkbox, Input, Select, Text, Box, useNavigate } from "zmp-ui";
+import { Checkbox, Input, Select, Text, Box, useNavigate, useSnackbar } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { XLg } from "react-bootstrap-icons";
 import { Topic } from "@/models/topic";
@@ -13,6 +13,7 @@ const QuestionMakerConstructedResponse = ({id}) => {
   const [question, setQuestion] = useState<ConstructedResponseQuestion>(new ConstructedResponseQuestion());
   const [error, setError] = useState<ConstructedResponseError>({});
   const navTo = useNavigate();
+  const { openSnackbar } = useSnackbar();
 
   const addAnswerKey = () => setQuestion({...question, answerKeys: [...question.answerKeys, ""]});
 
@@ -36,8 +37,11 @@ const QuestionMakerConstructedResponse = ({id}) => {
   return (
     <form onSubmit={e => e.preventDefault()} noValidate>
       <Input
-        label={<Text>Tiêu đề câu hỏi</Text>} placeholder="Tiêu đề câu hỏi" value={question?.title}
+        label={<Text>Tiêu đề câu hỏi <span className="required">*</span></Text>}
+        placeholder="Tiêu đề câu hỏi" required value={question?.title}
         onChange={e => setQuestion({...question, title: e.target.value})}
+        onBlur={() => setError({...error, title: ""})}
+        errorText={error.title} status={!error.title ? "" : "error"}
       />
 
       <Box>
@@ -127,9 +131,6 @@ const QuestionMakerConstructedResponse = ({id}) => {
         *: Các trường bắt buộc
       </Text>
 
-      <Checkbox className="mt-2 w-full" value="" checked={question.allowTakePhoto} onChange={e => setQuestion({...question, allowTakePhoto: e.target.checked})}>
-        <Text>Cho phép học sinh chụp ảnh trình bày câu trả lời.</Text>
-      </Checkbox>
       <Checkbox className="mt-2 w-full" value="" checked={question.allowEnter} onChange={e => setQuestion({...question, allowEnter: e.target.checked})}>
         <Text>Cho phép học sinh xuống dòng.</Text>
       </Checkbox>
@@ -144,18 +145,32 @@ const QuestionMakerConstructedResponse = ({id}) => {
     </form>
   )
 
-  function handleSubmit(): void {
+  async function handleSubmit(): Promise<void> {
     const newError: ConstructedResponseError = {};
+    if (!question.title) newError.title = "Vui lòng nhập tiêu đề!";
     if (question.grade === -1) newError.grade = "Vui lòng chọn lớp!";
     if (question.difficulty === -1) newError.difficulty = "Vui lòng chọn độ khó!";
     if (question.topicId === "-1") newError.topic = "Vui lòng chọn chủ đề!";
     if (!question.explanation) newError.explanation = "Vui lòng nhập lời giải thích!";
 
     setError(newError);
+    if (Object.keys(newError).length > 0) return;
 
-    if (Object.keys(newError).length === 0) {
-      question.type = 'constructed-response';
-      (id === undefined) ? insertConstructedResponseQuestion(question) : updateConstructedResponseQuestion(question, id);
+    question.type = 'constructed-response';
+    const response = (!id) ? await insertConstructedResponseQuestion(question) : await updateConstructedResponseQuestion(question, id);
+    if (response.status === 200 && response.status === 201) {
+      openSnackbar({
+        text: `${!id ? "Cập nhật" : "Thêm"} câu hỏi thành công!`,
+        type: "success",
+        duration: 1500
+      });
+      setTimeout(() => navTo("/teacher/question"), 1500);
+    }
+    else {
+      openSnackbar({
+        text: `${!id ? "Cập nhật" : "Thêm"} câu hỏi thất bại!`,
+        type: "error"
+      });
     }
   }
 }

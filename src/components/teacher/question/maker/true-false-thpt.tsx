@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Box, Input, Select, Text, Checkbox, Icon, useNavigate } from "zmp-ui";
+import { Box, Input, Select, Text, Checkbox, Icon, useNavigate, useSnackbar } from "zmp-ui";
 import { Topic } from "@/models/topic";
 import "./radio-checkbox.css";
 
@@ -13,6 +13,7 @@ const QuestionMakerTrueFalseTHPT = ({id}) => {
   const [question, setQuestion] = useState<TrueFalseTHPTQuestion>(new TrueFalseTHPTQuestion());
   const [error, setError] = useState<TrueFalseTHPTError>({});
   const navTo = useNavigate();
+  const { openSnackbar } = useSnackbar();
 
   const handleChangeAnswerKeys = (i: number, value: boolean) => {
     const newAnswerKeys = question.answerKeys;
@@ -163,9 +164,9 @@ const QuestionMakerTrueFalseTHPT = ({id}) => {
     </form>
   )
 
-  function handleSubmit(): void {
+  async function handleSubmit(): Promise<void> {
     const newError: TrueFalseTHPTError = {};
-    if (!question.title) newError.title = "Vui lòng nhập tiêu đề câu hỏi!";
+    if (!question.title) newError.title = "Vui lòng nhập tiêu đề!";
     for (let i: number = 0; i < question.statements.length; i++) {
       if (!question.statements[i]) {
         newError.statement = "Vui lòng nhập đầy đủ 4 mệnh đề!";
@@ -177,10 +178,23 @@ const QuestionMakerTrueFalseTHPT = ({id}) => {
     if (question.topicId === "-1") newError.topic = "Vui lòng chọn chủ đề!";
 
     setError(newError);
+    if (Object.keys(newError).length > 0) return;
 
-    if (Object.keys(newError).length === 0) {
-      question.type = 'true-false-thpt';
-      (id === undefined) ? insertTrueFalseTHPTQuestion(question) : updateTrueFalseTHPTQuestion(question, id);
+    question.type = 'true-false-thpt';
+    const response = (!id) ? await insertTrueFalseTHPTQuestion(question) : await updateTrueFalseTHPTQuestion(question, id);
+    if (response.status === 200 && response.status === 201) {
+      openSnackbar({
+        text: `${!id ? "Cập nhật" : "Thêm"} câu hỏi thành công!`,
+        type: "success",
+        duration: 1500
+      });
+      setTimeout(() => navTo("/teacher/question"), 1500);
+    }
+    else {
+      openSnackbar({
+        text: `${!id ? "Cập nhật" : "Thêm"} câu hỏi thất bại!`,
+        type: "error"
+      });
     }
   }
 }

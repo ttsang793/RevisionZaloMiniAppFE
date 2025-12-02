@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Box, Input, Radio, Select, Text } from "zmp-ui";
+import { Box, Input, Radio, Select, Text, useSnackbar } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { Topic } from "@/models/topic";
 
@@ -14,6 +14,7 @@ const QuestionMakerTrueFalse = ({id}) => {
   const [question, setQuestion] = useState<TrueFalseQuestion>(new TrueFalseQuestion());
   const [error, setError] = useState<TrueFalseError>({});
   const navTo = useNavigate();
+  const { openSnackbar } = useSnackbar();
 
   useEffect(() => {
     if (id !== undefined) getTrueFalseQuestionById(id).then(response => setQuestion(response.data));
@@ -23,8 +24,11 @@ const QuestionMakerTrueFalse = ({id}) => {
   return (
     <form onSubmit={e => e.preventDefault()} noValidate>
       <Input
-        label={<Text>Tiêu đề câu hỏi</Text>} placeholder="Tiêu đề câu hỏi" value={question?.title}
+        label={<Text>Tiêu đề câu hỏi <span className="required">*</span></Text>}
+        placeholder="Tiêu đề câu hỏi" required value={question?.title}
         onChange={e => setQuestion({...question, title: e.target.value})}
+        onBlur={() => setError({...error, title: ""})}
+        errorText={error.title} status={!error.title ? "" : "error"}  
       />
 
       <Box id="radio-answer">
@@ -119,17 +123,31 @@ const QuestionMakerTrueFalse = ({id}) => {
     </form>
   )
 
-  function handleSubmit(): void {
+  async function handleSubmit(): Promise<void> {
     const newError: TrueFalseError = {};
+    if (!question.title) newError.title = "Vui lòng nhập tiêu đề!";
     if (question.grade === -1) newError.grade = "Vui lòng chọn lớp!";
     if (question.difficulty === -1) newError.difficulty = "Vui lòng chọn độ khó!";
     if (question.topicId === "-1") newError.topic = "Vui lòng chọn chủ đề!";
 
     setError(newError);
+    if (Object.keys(newError).length > 0) return;
 
-    if (Object.keys(newError).length === 0) {
-      question.type = 'true-false';
-      (id === undefined) ? insertTrueFalseQuestion(question) : updateTrueFalseQuestion(question, id);
+    question.type = 'true-false';
+    const response = (!id) ? await insertTrueFalseQuestion(question) : await updateTrueFalseQuestion(question, id);
+    if (response.status === 200 && response.status === 201) {
+      openSnackbar({
+        text: `${!id ? "Cập nhật" : "Thêm"} câu hỏi thành công!`,
+        type: "success",
+        duration: 1500
+      });
+      setTimeout(() => navTo("/teacher/question"), 1500);
+    }
+    else {
+      openSnackbar({
+        text: `${!id ? "Cập nhật" : "Thêm"} câu hỏi thất bại!`,
+        type: "error"
+      });
     }
   }
 }

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Input, Select, Text, Box, Icon, useNavigate } from "zmp-ui";
+import { Input, Select, Text, Box, Icon, useNavigate, useSnackbar } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { XLg } from "react-bootstrap-icons";
 import { Topic } from "@/models/topic";
@@ -13,6 +13,7 @@ const QuestionMakerSorting = ({id}) => {
   const [question, setQuestion] = useState<SortingQuestion>(new SortingQuestion());
   const [error, setError] = useState<SortingError>({});
   const navTo = useNavigate();
+  const { openSnackbar } = useSnackbar();
 
   const addCorrectOrder = () => {
     if (question.correctOrder.length === 8) return;
@@ -43,8 +44,11 @@ const QuestionMakerSorting = ({id}) => {
   return (
     <form onSubmit={e => e.preventDefault()} noValidate>
       <Input
-        label={<Text>Tiêu đề câu hỏi</Text>} placeholder="Tiêu đề câu hỏi" value={question?.title}
+        label={<Text>Tiêu đề câu hỏi <span className="required">*</span></Text>}
+        placeholder="Tiêu đề câu hỏi" required value={question?.title}
         onChange={e => setQuestion({...question, title: e.target.value})}
+        onBlur={() => setError({...error, title: ""})}
+        errorText={error.title} status={!error.title ? "" : "error"}
       />
 
       <Box>
@@ -147,8 +151,9 @@ const QuestionMakerSorting = ({id}) => {
     </form>
   )
 
-  function handleSubmit(): void {
+  async function handleSubmit(): Promise<void> {
     const newError: SortingError = {};
+    if (!question.title) newError.title = "Vui lòng nhập tiêu đề!";
     for (let i: number = 0; i < question.correctOrder.length; i++) {
       if (!question.correctOrder[i]) {
         newError.answer = "Vui lòng nhập đầy đủ (các) đáp án!";
@@ -160,10 +165,23 @@ const QuestionMakerSorting = ({id}) => {
     if (question.topicId === "-1") newError.topic = "Vui lòng chọn chủ đề!";
 
     setError(newError);
+    if (Object.keys(newError).length > 0) return;
 
-    if (Object.keys(newError).length === 0) {
-      question.type = 'sorting';
-      (id === undefined) ? insertSortingQuestion(question) : updateSortingQuestion(question, id);
+    question.type = 'sorting';
+    const response = (!id) ? await insertSortingQuestion(question) : await updateSortingQuestion(question, id);
+    if (response.status === 200 && response.status === 201) {
+      openSnackbar({
+        text: `${!id ? "Cập nhật" : "Thêm"} câu hỏi thành công!`,
+        type: "success",
+        duration: 1500
+      });
+      setTimeout(() => navTo("/teacher/question"), 1500);
+    }
+    else {
+      openSnackbar({
+        text: `${!id ? "Cập nhật" : "Thêm"} câu hỏi thất bại!`,
+        type: "error"
+      });
     }
   }
 }

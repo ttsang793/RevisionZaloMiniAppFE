@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Box, Input, Select, Text, useNavigate } from "zmp-ui";
+import { Box, Input, Select, Text, useNavigate, useSnackbar } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { Topic } from "@/models/topic";
 
@@ -14,6 +14,7 @@ const QuestionMakerMutipleChoice = ({id}) => {
   const [question, setQuestion] = useState<MultipleChoiceQuestion>(new MultipleChoiceQuestion());
   const [error, setError] = useState<MultipleChoiceError>(new MultipleChoiceError());
   const navTo = useNavigate();
+  const { openSnackbar } = useSnackbar();
 
   const handleWrongAnswerChange = (val: string, index: number) => {
     const newWrongAnswer = [...question.wrongAnswer];
@@ -35,8 +36,11 @@ const QuestionMakerMutipleChoice = ({id}) => {
   return (
     <form onSubmit={e => e.preventDefault()} noValidate>
       <Input
-        label={<Text>Tiêu đề câu hỏi</Text>} placeholder="Tiêu đề câu hỏi" value={question?.title}
+        label={<Text>Tiêu đề câu hỏi <span className="required">*</span></Text>}
+        placeholder="Tiêu đề câu hỏi" required value={question?.title}
         onChange={e => setQuestion({...question, title: e.target.value})}
+        onBlur={() => setError({...error, title: ""})}
+        errorText={error.title} status={!error.title ? "" : "error"}
       />
 
       <Box>
@@ -143,10 +147,11 @@ const QuestionMakerMutipleChoice = ({id}) => {
     </form>
   )
 
-  function handleSubmit(): void {
+  async function handleSubmit(): Promise<void> {
     let errorFlag = false;
     const newError: MultipleChoiceError = new MultipleChoiceError();
-    if (question.correctAnswer === "") { newError.correctAnswer = "Vui lòng nhập đáp án!"; errorFlag = true; }
+    if (!question.title) { newError.title = "Vui lòng nhập tiêu đề!"; errorFlag = true; }
+    if (!question.correctAnswer) { newError.correctAnswer = "Vui lòng nhập đáp án!"; errorFlag = true; }
     for (let i = 0; i < 2; i++)
       if (question.wrongAnswer[i] === "") { newError.wrongAnswer[i] = "Vui lòng nhập câu trả lời sai!"; errorFlag = true; }
     if (question.grade === -1) { newError.grade = "Vui lòng chọn lớp!"; errorFlag = true; }
@@ -156,8 +161,22 @@ const QuestionMakerMutipleChoice = ({id}) => {
     setError(newError);
 
     if (!errorFlag) {
-      question.type = 'multiple-choice';    
-      id === undefined ? insertMultipleChoiceQuestion(question) : updateMultipleChoiceQuestion(question, id);
+      question.type = 'multiple-choice';
+      const response = (!id) ? await insertMultipleChoiceQuestion(question) : await updateMultipleChoiceQuestion(question, id);
+      if (response.status === 200 && response.status === 201) {
+        openSnackbar({
+          text: `${!id ? "Cập nhật" : "Thêm"} câu hỏi thành công!`,
+          type: "success",
+          duration: 1500
+        });
+        setTimeout(() => navTo("/teacher/question"), 1500);
+      }
+      else {
+        openSnackbar({
+          text: `${!id ? "Cập nhật" : "Thêm"} câu hỏi thất bại!`,
+          type: "error"
+        });
+      }
     }
   }
 }

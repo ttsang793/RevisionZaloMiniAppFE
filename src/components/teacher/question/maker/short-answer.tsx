@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Input, Select, Text, Box, useNavigate, Icon } from "zmp-ui";
+import { Input, Select, Text, Box, useNavigate, Icon, useSnackbar } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { Topic } from "@/models/topic";
 
@@ -13,6 +13,7 @@ const QuestionMakerShortAnswer = ({id}) => {
   const [error, setError] = useState<ShortAnswerError>({});
   let [number, setNumber] = useState(["", "", "", ""]);
   const navTo = useNavigate();
+  const { openSnackbar } = useSnackbar();
 
   const handleNumber = (value: string, index: number) => {
     const newNumber = [...number];
@@ -33,8 +34,11 @@ const QuestionMakerShortAnswer = ({id}) => {
   return (
     <form onSubmit={e => e.preventDefault()} noValidate>
       <Input
-        label={<Text>Tiêu đề câu hỏi</Text>} placeholder="Tiêu đề câu hỏi" value={question?.title}
+        label={<Text>Tiêu đề câu hỏi <span className="required">*</span></Text>}
+        placeholder="Tiêu đề câu hỏi" required value={question?.title}
         onChange={e => setQuestion({...question, title: e.target.value})}
+        onBlur={() => setError({...error, title: ""})}
+        errorText={error.title} status={!error.title ? "" : "error"}
       />
 
       <Box>
@@ -124,19 +128,33 @@ const QuestionMakerShortAnswer = ({id}) => {
     </form>
   )
 
-  function handleSubmit(): void {
+  async function handleSubmit(): Promise<void> {
     question.answerKey = number.join("");
     const newError: ShortAnswerError = {};
+    if (!question.title) newError.title = "Vui lòng nhập tiêu đề!";
     if (!question.answerKey) newError.answer = "Vui lòng nhập đáp án!"
     if (question.grade === -1) newError.grade = "Vui lòng chọn lớp!";
     if (question.difficulty === -1) newError.difficulty = "Vui lòng chọn độ khó!";
     if (question.topicId === "-1") newError.topic = "Vui lòng chọn chủ đề!";
 
     setError(newError);
+    if (Object.keys(newError).length > 0) return;
 
-    if (Object.keys(newError).length === 0) {
-      question.type = 'short-answer';
-      (id === undefined) ? insertShortAnswerQuestion(question) : updateShortAnswerQuestion(question, id);
+    question.type = 'short-answer';
+    const response = (!id) ? await insertShortAnswerQuestion(question) : await updateShortAnswerQuestion(question, id);
+    if (response.status === 200 && response.status === 201) {
+      openSnackbar({
+        text: `${!id ? "Cập nhật" : "Thêm"} câu hỏi thành công!`,
+        type: "success",
+        duration: 1500
+      });
+      setTimeout(() => navTo("/teacher/question"), 1500);
+    }
+    else {
+      openSnackbar({
+        text: `${!id ? "Cập nhật" : "Thêm"} câu hỏi thất bại!`,
+        type: "error"
+      });
     }
   }
 }

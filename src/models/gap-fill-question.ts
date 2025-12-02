@@ -2,6 +2,7 @@ import axios from "axios";
 import { GapFillQuestion } from "./question";
 
 type GapFillError = {
+  title?: string,
   answer?: string,
   grade?: string,
   difficulty?: string,
@@ -12,24 +13,28 @@ function getGapFillQuestionById(id: number) {
   return axios.get(`/api/question/${id}`);
 }
 
-function insertGapFillQuestion(fitbq: GapFillQuestion) {
-  axios.post("/api/question/manual-response", fitbq, {
-    headers: { "Content-Type": "application/json" }
-  }).then(response => {
-    console.log(response.status);
-  }).catch(err => {
-    console.error(err);
-  })
+async function insertGapFillQuestion(gfq: GapFillQuestion): Promise<any> {
+  try {
+    const response = axios.post("/api/question/manual-response", gfq, {
+      headers: { "Content-Type": "application/json" }
+    });
+    return response;
+  }
+  catch (err) {
+    return err;
+  }
 }
 
-function updateGapFillQuestion(fitbq: GapFillQuestion, id: number) {
-  axios.put(`/api/question/manual-response/${id}`, fitbq, {
-    headers: { "Content-Type": "application/json" }
-  }).then(response => {
-    console.log(response.status);
-  }).catch(err => {
-    console.error(err);
-  })
+async function updateGapFillQuestion(gfq: GapFillQuestion, id: number): Promise<any> {
+  try {
+    const response = axios.put(`/api/question/manual-response/${id}`, gfq, {
+      headers: { "Content-Type": "application/json" }
+    });
+    return response;
+  }
+  catch (err) {
+    return err;
+  }
 }
 
 export { GapFillError, getGapFillQuestionById, insertGapFillQuestion, updateGapFillQuestion }

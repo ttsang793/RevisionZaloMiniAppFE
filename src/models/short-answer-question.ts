@@ -2,6 +2,7 @@ import axios from "axios";
 import { ShortAnswerQuestion } from "./question";
 
 type ShortAnswerError = {
+  title?: string,
   answer?: string,
   grade?: string,
   difficulty?: string,
@@ -12,24 +13,28 @@ function getShortAnswerQuestionById(id: number) {
   return axios.get(`/api/question/${id}`);
 }
 
-function insertShortAnswerQuestion(saq: ShortAnswerQuestion) {
-  axios.post("/api/question/short-answer", saq, {
-    headers: { "Content-Type": "application/json" }
-  }).then(response => {
-    console.log(response.status);
-  }).catch(err => {
-    console.error(err);
-  })
+async function insertShortAnswerQuestion(saq: ShortAnswerQuestion): Promise<any> {
+  try {
+    const response = axios.post("/api/question/short-answer", saq, {
+      headers: { "Content-Type": "application/json" }
+    })
+    return response;
+  }
+  catch (err) {
+    return err;
+  }
 }
 
-function updateShortAnswerQuestion(saq: ShortAnswerQuestion, id: number) {
-  axios.put(`/api/question/short-answer/${id}`, saq, {
-    headers: { "Content-Type": "application/json" }
-  }).then(response => {
-    console.log(response.status);
-  }).catch(err => {
-    console.error(err);
-  })
+async function updateShortAnswerQuestion(saq: ShortAnswerQuestion, id: number): Promise<any> {
+  try {
+    const response = axios.put(`/api/question/short-answer/${id}`, saq, {
+      headers: { "Content-Type": "application/json" }
+    })
+    return response;
+  }
+  catch (err) {
+    return err;
+  }
 }
 
 export { ShortAnswerError, getShortAnswerQuestionById, insertShortAnswerQuestion, updateShortAnswerQuestion }

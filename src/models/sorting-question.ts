@@ -2,6 +2,7 @@ import axios from "axios";
 import { SortingQuestion } from "./question";
 
 type SortingError = {
+  title?: string,
   answer?: string,
   grade?: string,
   difficulty?: string,
@@ -12,24 +13,28 @@ function getSortingQuestionById(id: number) {
   return axios.get(`/api/question/${id}`);
 }
 
-function insertSortingQuestion(sq: SortingQuestion) {
-  axios.post("/api/question/sorting", sq, {
-    headers: { "Content-Type": "application/json" }
-  }).then(response => {
-    console.log(response.status);
-  }).catch(err => {
-    console.error(err);
-  })
+async function insertSortingQuestion(sq: SortingQuestion): Promise<any> {
+  try {
+    const response = axios.post("/api/question/sorting", sq, {
+      headers: { "Content-Type": "application/json" }
+    })
+    return response;
+  }
+  catch (err) {
+    return err;
+  }
 }
 
-function updateSortingQuestion(sq: SortingQuestion, id: number) {
-  axios.put(`/api/question/sorting/${id}`, sq, {
-    headers: { "Content-Type": "application/json" }
-  }).then(response => {
-    console.log(response.status);
-  }).catch(err => {
-    console.error(err);
-  })
+async function updateSortingQuestion(sq: SortingQuestion, id: number): Promise<any> {
+  try {
+    const response = axios.put(`/api/question/sorting/${id}`, sq, {
+      headers: { "Content-Type": "application/json" }
+    })
+    return response;
+  }
+  catch (err) {
+    return err;
+  }
 }
 
 export { SortingError, getSortingQuestionById, insertSortingQuestion, updateSortingQuestion }

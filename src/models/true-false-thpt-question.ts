@@ -13,24 +13,28 @@ function getTrueFalseTHPTQuestionById(id: number) {
   return axios.get(`/api/question/${id}`);
 }
 
-function insertTrueFalseTHPTQuestion(tfq: TrueFalseTHPTQuestion) {
-  axios.post("/api/question/true-false-thpt", tfq, {
-    headers: { "Content-Type": "application/json" }
-  }).then(response => {
-    console.log(response.status);
-  }).catch(err => {
-    console.error(err);
-  })
+async function insertTrueFalseTHPTQuestion(tfq: TrueFalseTHPTQuestion): Promise<any> {
+  try {
+    const response = axios.post("/api/question/true-false-thpt", tfq, {
+      headers: { "Content-Type": "application/json" }
+    });
+    return response;
+  }
+  catch (err) {
+    return err;
+  }
 }
 
-function updateTrueFalseTHPTQuestion(tfq: TrueFalseTHPTQuestion, id: number) {
-  axios.put(`/api/question/true-false-thpt/${id}`, tfq, {
-    headers: { "Content-Type": "application/json" }
-  }).then(response => {
-    console.log(response.status);
-  }).catch(err => {
-    console.error(err);
-  })
+async function updateTrueFalseTHPTQuestion(tfq: TrueFalseTHPTQuestion, id: number): Promise<any> {
+  try {
+    const response = axios.put(`/api/question/true-false-thpt/${id}`, tfq, {
+      headers: { "Content-Type": "application/json" }
+    });
+    return response;
+  }
+  catch (err) {
+    return err;
+  }
 }
 
 export { TrueFalseTHPTError, getTrueFalseTHPTQuestionById, insertTrueFalseTHPTQuestion, updateTrueFalseTHPTQuestion }
