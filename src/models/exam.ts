@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const teacherId = Number(sessionStorage.getItem("id"));
-const teacherSubject = sessionStorage.getItem("subject")!;
+const subjectId = sessionStorage.getItem("subjectId")!;
 
 class Exam {
   id?: number;
@@ -18,7 +18,7 @@ class Exam {
   teacherId: number = teacherId;
   teacherName?: string;
   teacherAvatar?: string;
-  subjectId: string = teacherSubject;
+  subjectId: string = subjectId;
   subjectName?: string;
   updatedAt: Date = new Date();
   publishedAt: Date = new Date();
@@ -63,7 +63,7 @@ function getExamsByTeacher(tId = teacherId) {
 
 async function insertExam(exam: Exam): Promise<any> {
   try {
-    const response = await axios.prototype("/api/exam", exam, {
+    const response = await axios.post("/api/exam", exam, {
       headers: { "Content-Type": "application/json" }
     })
     return response;

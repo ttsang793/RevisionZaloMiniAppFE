@@ -1,12 +1,30 @@
 import axios from "axios";
-import { SortingQuestion } from "./question";
+import { Question, QuestionError, validateInput } from "./question";
 
-type SortingError = {
-  title?: string,
-  answer?: string,
-  grade?: string,
-  difficulty?: string,
-  topic?: string
+class SortingQuestion extends Question {
+  correctOrder: string[] = ["", "", ""];
+
+  constructor() {
+    super("sorting");
+  }
+}
+
+class SortingError extends QuestionError {
+  answer?: string
+}
+
+function validateSortingInput(question: SortingQuestion): SortingError {
+  const error: SortingError = {}
+  validateInput(question, error);
+  
+  for (let i: number = 0; i < question.correctOrder.length; i++) {
+    if (!question.correctOrder[i]) {
+      error.answer = "Vui lòng nhập đầy đủ các mệnh đề!";
+      break;
+    }
+  }
+
+  return error;
 }
 
 function getSortingQuestionById(id: number) {
@@ -37,4 +55,4 @@ async function updateSortingQuestion(sq: SortingQuestion, id: number): Promise<a
   }
 }
 
-export { SortingError, getSortingQuestionById, insertSortingQuestion, updateSortingQuestion }
+export { SortingQuestion, SortingError, validateSortingInput, getSortingQuestionById, insertSortingQuestion, updateSortingQuestion }

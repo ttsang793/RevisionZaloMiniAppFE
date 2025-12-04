@@ -9,6 +9,7 @@ import ChooseRolePage from "@/pages";
 
 // Student
 import HomePage from "@/pages/student/index";
+import StudentRegisterPage from "@/pages/student/register";
 import FavoritePage from "@/pages/student/favorite";
 import StatisticPage from "@/pages/student/statistic";
 import StudentFooter from "./student/footer";
@@ -23,6 +24,7 @@ import PDFExamResultPage from "@/pages/student/exam/pdf-result";
 
 // Teacher
 import TeacherFooter from "./teacher/footer";
+import TeacherRegisterPage from "@/pages/teacher/register";
 import QuestionManagement from "@/pages/teacher/question";
 import QuestionMaker from "@/pages/teacher/question/maker";
 import QuestionImportWord from "@/pages/teacher/question/import-word";
@@ -30,9 +32,9 @@ import ExamMaker from "@/pages/teacher/exam/maker";
 import ExamQuestions from "@/pages/teacher/exam/maker/Exam";
 import PDFExamQuestions from "@/pages/teacher/exam/maker/PDF-exam";
 import ExamManagement from "@/pages/teacher/exam";
+import ExamDetail from "@/pages/teacher/exam/detail";
 import ExamMarking from "@/pages/teacher/exam/detail/marking";
 import TeacherSettingPage from "@/pages/teacher/setting";
-import TeacherRegisterPage from "@/pages/teacher/register";
 
 // Admin
 import AdminLoginPage from "@/pages/admin/login";
@@ -40,13 +42,12 @@ import SubjectManagement from "@/pages/admin/subject";
 import TopicManagement from "@/pages/admin/topic";
 import AdminResetPasswordPage from "@/pages/admin/reset-password";
 import { AdminFooter, AdminHeader } from "./admin/head-foot";
+import SampleUpload from "@/pages/admin/sample";
 
 // Error
 import Error403 from "@/pages/errors/403";
 import Error404 from "@/pages/errors/404";
 import Error500 from "@/pages/errors/500";
-import StudentRegisterPage from "@/pages/student/register";
-import ExamDetail from "@/pages/teacher/exam/detail";
 
 const role = sessionStorage.getItem("role") || null;
 
@@ -98,6 +99,7 @@ const Layout = () => {
               <Route path="subject" element={<SubjectManagement />} />
               <Route path="topic" element={<TopicManagement />} />
               <Route path="reset-password" element={<AdminResetPasswordPage />} />
+              <Route path="sample" element={<SampleUpload />} />
               <Route path="*" element={<Navigate to="/admin" />} />
             </Route>
 

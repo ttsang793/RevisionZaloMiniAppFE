@@ -58,14 +58,18 @@ export default function ChooseRolePage() {
       sessionStorage.setItem("avatar", curUserData.avatar);      
 
       if (curUserData.role === "GV") {
-        sessionStorage.setItem("subject", await getTeacherSubjectById(curUserData.id));
+        const response = await getTeacherSubjectById(curUserData.id);
+        console.log(response);
+
+        sessionStorage.setItem("subjectId", response.data.id);
+        sessionStorage.setItem("subjectName", response.data.name);
         navTo("/teacher");
       }
       else if (curUserData.role === "HS") navTo("/student");
       else throw new Error();
     }
     catch (err) {
-      console.log("We've catch an error");
+      console.error(err);
       sessionStorage.removeItem("avatar");
       setLoading(false);
     }

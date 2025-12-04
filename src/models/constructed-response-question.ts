@@ -1,12 +1,27 @@
 import axios from "axios";
-import { ConstructedResponseQuestion } from "./question";
+import { Question, QuestionError, validateInput } from "./question";
 
-type ConstructedResponseError = {
-  title?: string,
-  grade?: string,
-  difficulty?: string,
-  topic?: string,
-  explanation?: string
+class ConstructedResponseQuestion extends Question {
+  answerKeys: string[] = [];
+  allowTakePhoto: boolean = false;
+  allowEnter: boolean = false;
+  markAsWrong: boolean = false;
+
+  constructor() {
+    super("constructed-response");
+  }
+}
+
+class ConstructedResponseError extends QuestionError {
+  explanation?: string;
+}
+
+function validateConstructedResponseInput(question: ConstructedResponseQuestion): ConstructedResponseError {
+  const error: ConstructedResponseError = {}
+  validateInput(question, error);
+  if (!question.explanation) error.explanation = "Vui lòng nhập lời giải thích!";
+
+  return error;
 }
 
 function getConstructedResponseQuestionById(id: number) {
@@ -37,4 +52,4 @@ async function updateConstructedResponseQuestion(crq: ConstructedResponseQuestio
   }    
 }
 
-export { ConstructedResponseError, getConstructedResponseQuestionById, insertConstructedResponseQuestion, updateConstructedResponseQuestion }
+export { ConstructedResponseQuestion, ConstructedResponseError, validateConstructedResponseInput, getConstructedResponseQuestionById, insertConstructedResponseQuestion, updateConstructedResponseQuestion }

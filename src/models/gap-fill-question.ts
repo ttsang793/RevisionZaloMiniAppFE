@@ -1,12 +1,30 @@
 import axios from "axios";
-import { GapFillQuestion } from "./question";
+import { Question, QuestionError, validateInput } from "./question";
 
-type GapFillError = {
-  title?: string,
-  answer?: string,
-  grade?: string,
-  difficulty?: string,
-  topic?: string
+class GapFillQuestion extends Question {
+  answerKeys: string[] = [""];
+  markAsWrong: boolean = false;
+
+  constructor() {
+    super("gap-fill");
+  }
+}
+
+class GapFillError extends QuestionError {
+  answer?: string;
+}
+
+function validateGapFillInput(question: GapFillQuestion): GapFillError {
+  const error: GapFillError = {}
+  validateInput(question, error);
+  for (let i: number = 0; i < question.answerKeys.length; i++) {
+      if (!question.answerKeys[i]) {
+        error.answer = "Vui lòng nhập đầy đủ (các) đáp án!";
+        break;
+      }
+    }
+
+  return error;
 }
 
 function getGapFillQuestionById(id: number) {
@@ -37,4 +55,4 @@ async function updateGapFillQuestion(gfq: GapFillQuestion, id: number): Promise<
   }
 }
 
-export { GapFillError, getGapFillQuestionById, insertGapFillQuestion, updateGapFillQuestion }
+export { GapFillQuestion, GapFillError, validateGapFillInput, getGapFillQuestionById, insertGapFillQuestion, updateGapFillQuestion }

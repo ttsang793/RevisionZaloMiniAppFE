@@ -1,12 +1,24 @@
 import axios from "axios";
-import { ShortAnswerQuestion } from "./question";
+import { Question, QuestionError, validateInput } from "./question";
 
-type ShortAnswerError = {
-  title?: string,
-  answer?: string,
-  grade?: string,
-  difficulty?: string,
-  topic?: string
+class ShortAnswerQuestion extends Question {
+  answerKey: string = "";
+
+  constructor() {
+    super("short-answer");
+  }
+}
+
+class ShortAnswerError extends QuestionError {
+  answer?: string
+}
+
+function validateShortAnswerInput(question: ShortAnswerQuestion): ShortAnswerError {
+  const error: ShortAnswerError = {}
+  validateInput(question, error);
+  if (!question.answerKey) error.answer = "Vui lòng nhập đáp án!"
+
+  return error;
 }
 
 function getShortAnswerQuestionById(id: number) {
@@ -37,4 +49,4 @@ async function updateShortAnswerQuestion(saq: ShortAnswerQuestion, id: number): 
   }
 }
 
-export { ShortAnswerError, getShortAnswerQuestionById, insertShortAnswerQuestion, updateShortAnswerQuestion }
+export { ShortAnswerQuestion, ShortAnswerError, validateShortAnswerInput, getShortAnswerQuestionById, insertShortAnswerQuestion, updateShortAnswerQuestion }

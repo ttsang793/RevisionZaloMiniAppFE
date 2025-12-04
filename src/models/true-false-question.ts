@@ -1,11 +1,18 @@
 import axios from "axios";
-import { TrueFalseQuestion } from "./question";
+import { Question, QuestionError, validateInput } from "./question";
 
-type TrueFalseError = {
-  title?: string
-  grade?: string,
-  difficulty?: string,
-  topic?: string
+class TrueFalseQuestion extends Question {
+  answerKey: boolean = true;
+
+  constructor() {
+    super("true-false");
+  }
+}
+
+function validateTrueFalseInput(question: TrueFalseQuestion): QuestionError {
+  const error: QuestionError = {}
+  validateInput(question, error);
+  return error;
 }
 
 function getTrueFalseQuestionById(id: number) {
@@ -36,4 +43,4 @@ async function updateTrueFalseQuestion(tfq: TrueFalseQuestion, id: number): Prom
   }
 }
 
-export { TrueFalseError, getTrueFalseQuestionById, insertTrueFalseQuestion, updateTrueFalseQuestion }
+export { TrueFalseQuestion, validateTrueFalseInput, getTrueFalseQuestionById, insertTrueFalseQuestion, updateTrueFalseQuestion }

@@ -86,8 +86,7 @@ function getTeacherById(teacherId = id) {
 }
 
 async function getTeacherSubjectById(id) {
-  const response = await axios.get(`/api/teacher/${id}/subject`);
-  return response.data;
+  return await axios.get(`/api/teacher/${id}/subject`);
 }
 
 async function addTeacher(teacher: Teacher): Promise<any> {

@@ -1,5 +1,5 @@
 import AppHeader from "@/components/header";
-import { Box, Checkbox, Input, Page, Select, Text, useNavigate, useParams } from "zmp-ui";
+import { Box, Checkbox, Input, Page, Select, Text, useNavigate, useParams, useSnackbar } from "zmp-ui";
 import { useEffect, useState } from "react";
 import { Exam, getExamById, insertExam, updateExam } from "@/models/exam";
 
@@ -14,6 +14,7 @@ type ExamMakerError = {
 export default function ExamMaker() {
   const navTo = useNavigate();
   const { type, id } = useParams();
+  const { openSnackbar } = useSnackbar();
 
   const [examInfo, setExamInfo] = useState<Exam>(new Exam());
   const [timeLimit, setTimeLimit] = useState("");
@@ -149,7 +150,7 @@ export default function ExamMaker() {
     </Page>
   )
 
-  function handleSubmit() {
+  async function handleSubmit(): Promise<any> {
     let errorFlag = false;
     const newError = { grade: "", examType: "", title: "", timeLimit: "", earlyTurnIn: "" };
     if (examInfo.grade === -1) { errorFlag = true; newError.grade = "Vui lòng nhập lớp!" }
@@ -176,8 +177,21 @@ export default function ExamMaker() {
     examInfo.timeLimit = Number(timeLimit);
     examInfo.earlyTurnIn = Number(earlyTurnIn);
 
-    examInfo.subjectId = "TOAN";
-
-    (id === undefined) ? insertExam(examInfo) : updateExam(examInfo, Number(id));
+    const response = (!id) ? await insertExam(examInfo) : await updateExam(examInfo, Number(id));
+    if (response.status === 200 || response.status === 201) {
+      openSnackbar({
+        text: `${!id ? "Thêm" : "Cập nhật"} thông tin bài kiểm tra thành công!`,
+        type: "success",
+        duration: 1500
+      })
+      setTimeout(() => navTo("/teacher/exam"), 1500);
+    }
+    else {
+      console.log(response);
+      openSnackbar({
+        text: `${!id ? "Thêm" : "Cập nhật"} thông tin bài kiểm tra thất bại!`,
+        type: "error"
+      })
+    }
   }
 }

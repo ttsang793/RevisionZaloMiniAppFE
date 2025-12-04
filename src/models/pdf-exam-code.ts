@@ -3,8 +3,8 @@ import axios from "axios";
 class ExamCode {
   examId: number = -1;
   code: string = "";
-  taskPDF: string = "/pdf/sample.pdf";
-  answerPDF: string = "/pdf/sample.pdf";
+  taskPDFFile?: File;
+  answerPDFFile?: File;
   numPart: number = -1;
   questions: ExamCodeQuestion[][] = []
 
@@ -29,16 +29,12 @@ class ExamCodeQuestion {
 class ExamCodePost {
   examId: number;
   code: string;
-  taskPDF: string;
-  answerPDF: string;
   numPart: number;
   questions: ExamCodeQuestion[] = []
 
   constructor(examCode: ExamCode) {
     this.examId = examCode.examId;
     this.code = examCode.code;
-    this.taskPDF = examCode.taskPDF;
-    this.answerPDF = examCode.answerPDF;
     this.numPart = examCode.questions.length;
     this.questions = examCode.questions.reduce((flattened, currentArr) => flattened.concat(currentArr), []);
   }
@@ -85,11 +81,15 @@ function insertCode(examCodes: ExamCode[]) {
   const examCodesPostList: ExamCodePost[] = [];
   examCodes.forEach(ec => examCodesPostList.push(new ExamCodePost(ec)));
   
-  axios.post("/api/pdf-exam-code", examCodesPostList, {
-    "headers": { "Content-Type": "application/json" }
-  }).then(response => {
-    console.log(response.status);
-  }).catch(err => console.error(err))
+  try {
+    const response = axios.post("/api/pdf-exam-code", examCodesPostList, {
+      "headers": { "Content-Type": "application/json" }
+    })
+    return response;
+  }
+  catch (err) {
+    return err;
+  }
 }
 
 export { ExamCode, ExamCodeQuestion, ExamCodeGet, ExamCodeQuestionGet, getExamCodeByExamId, insertCode }

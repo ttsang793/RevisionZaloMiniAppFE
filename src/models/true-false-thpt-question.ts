@@ -1,12 +1,34 @@
 import axios from "axios";
-import { TrueFalseTHPTQuestion } from "./question";
+import { Question, QuestionError, validateInput } from "./question";
 
-type TrueFalseTHPTError = {
-  title?: string,
-  statement?: string,
-  grade?: string,
-  difficulty?: string,
-  topic?: string
+class TrueFalseTHPTQuestion extends Question {
+  passageTitle?: string;
+  passageContent?: string;
+  passageAuthor?: string;
+  statements: string[] = ["", "", "", ""]
+  answerKeys: boolean[] = [false, false, false, false];
+
+  constructor() {
+    super("true-false-thpt");
+  }
+}
+
+class TrueFalseTHPTError extends QuestionError {
+  statement?: string;
+}
+
+function validateTrueFalseTHPTInput(question: TrueFalseTHPTQuestion): TrueFalseTHPTError {
+  const error: TrueFalseTHPTError = {}
+  validateInput(question, error);
+
+  for (let i: number = 0; i < question.statements.length; i++) {
+      if (!question.statements[i]) {
+        error.statement = "Vui lòng nhập đầy đủ 4 mệnh đề!";
+        break;
+      }
+    }
+
+  return error;
 }
 
 function getTrueFalseTHPTQuestionById(id: number) {
@@ -37,4 +59,4 @@ async function updateTrueFalseTHPTQuestion(tfq: TrueFalseTHPTQuestion, id: numbe
   }
 }
 
-export { TrueFalseTHPTError, getTrueFalseTHPTQuestionById, insertTrueFalseTHPTQuestion, updateTrueFalseTHPTQuestion }
+export { TrueFalseTHPTQuestion, TrueFalseTHPTError, validateTrueFalseTHPTInput, getTrueFalseTHPTQuestionById, insertTrueFalseTHPTQuestion, updateTrueFalseTHPTQuestion }

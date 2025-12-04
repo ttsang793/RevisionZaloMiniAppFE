@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Text } from "zmp-ui";
+import { Box, Text, useSnackbar } from "zmp-ui";
 import { PDFExamPart as ExamPart, PDFExamPart } from "./PDF-exam-part";
 import { ChevronDown, ChevronUp, XLg } from "react-bootstrap-icons";
 import { ExamCode, ExamCodeQuestion } from "@/models/pdf-exam-code";
@@ -13,6 +13,9 @@ interface PDFExamCodeProps {
 
 const PDFExamCode = ({i, examCode, updateExamCode, deleteExamCode}: PDFExamCodeProps) => {
   const [showPDF, setShowPDF] = useState(false);
+  const { openSnackbar } = useSnackbar();
+  const [taskPDFName, setTaskPDFName] = useState("");
+  const [answerPDFName, setAnswerPDFName] = useState("");
 
   const handleCode = (e): void => {
     if (!isNaN(Number(e.nativeEvent.data)) || e.nativeEvent.inputType.startsWith("delete")) {
@@ -51,6 +54,31 @@ const PDFExamCode = ({i, examCode, updateExamCode, deleteExamCode}: PDFExamCodeP
     updateExamCode(i, {...examCode, questions: newQuestions});
   }
 
+  const handlePDFUpload = (e, type: string) => {
+    try {
+      if (type === "task") {
+        updateExamCode(i, {...examCode, taskPDFFile: e.target.files[0]});
+        setTaskPDFName(e.target.files[0].name);
+      }
+      else if (type === "answer") {
+        updateExamCode(i, {...examCode, answerPDFFile: e.target.files[0]});
+        setAnswerPDFName(e.target.files[0].name);
+      }
+      else throw new Error;
+      console.log(e.target.files[0]);
+
+      const reader = new FileReader();
+      reader.readAsDataURL(e.target.files[0]);
+    }
+    catch (err) {
+      console.log(err);
+      openSnackbar({
+        text: "Không tải được file PDF!",
+        type: "error"
+      })
+    }
+  }
+
   return (
     <Box className="border-y zaui-border-blue-80 mb-6">
       <Box className="flex items-center justify-between zaui-bg-blue-20 p-2 gap-x-1">
@@ -58,7 +86,7 @@ const PDFExamCode = ({i, examCode, updateExamCode, deleteExamCode}: PDFExamCodeP
           <label>Mã đề: </label>
           <input
             type="text"
-            className="py-1 px-2 bg-white w-12 ms-1 focus:outline focus:outline-1"
+            className="py-1 px-2 bg-white w-20 ms-1 focus:outline focus:outline-1"
             placeholder="Mã"
             minLength={3}
             maxLength={3}
@@ -66,11 +94,6 @@ const PDFExamCode = ({i, examCode, updateExamCode, deleteExamCode}: PDFExamCodeP
             onChange={e => handleCode(e)}
           />
         </Box>
-
-        <button className="zaui-bg-blue-80 text-white rounded-full py-1 px-4">
-          Nhập đáp án
-        </button>
-
         <XLg size={24} onClick={() => deleteExamCode(i)} />
       </Box>
 
@@ -86,13 +109,21 @@ const PDFExamCode = ({i, examCode, updateExamCode, deleteExamCode}: PDFExamCodeP
             </button>
           </Box>
           <Box className={showPDF ? "flex flex-col flex-1 p-2 gap-y-4 text-sm" : "hidden"}>
-            <Box className="py-10 px-4 border border-zinc-300 rounded-lg zaui-text-gray-40 flex place-items-center text-center">
-              <Text>Nhấn vào đây để nhập đề thi (PDF) <span className="zaui-text-red-50">*</span></Text>
+            <Box
+              className="py-10 px-4 border border-zinc-300 rounded-lg zaui-text-gray-40 flex place-items-center text-center cursor-pointer"
+              onClick={() => document.querySelector(`.task-${i}`).click()}
+            >
+              <Text>{!taskPDFName ? <>Nhấn vào đây để nhập đề thi (PDF) <span className="zaui-text-red-50">*</span></> : taskPDFName}</Text>
             </Box>
+            <input type="file" className={`task-${i} hidden`} accept="application/pdf" onChange={e => handlePDFUpload(e, "task")}  />
             
-            <Box className="p-4 border border-zinc-300 rounded-lg zaui-text-gray-40 flex place-items-center text-center">
-              <Text>Nhấn vào đây để file đáp án (PDF) <span className="zaui-text-red-50">*</span></Text>
+            <Box
+              className="p-4 border border-zinc-300 rounded-lg zaui-text-gray-40 flex place-items-center text-center cursor-pointer"
+              onClick={() => document.querySelector(`.answer-${i}`).click()}
+            >
+              <Text>{!answerPDFName ? <>Nhấn vào đây để file đáp án (PDF) <span className="zaui-text-red-50">*</span></> : answerPDFName}</Text>
             </Box>
+            <input type="file" className={`answer-${i} hidden`} accept="application/pdf" onChange={e => handlePDFUpload(e, "answer")} />
           </Box>
         </Box>
 

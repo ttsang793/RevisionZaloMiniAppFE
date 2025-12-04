@@ -1,4 +1,4 @@
-import { Box, Page, Text } from "zmp-ui";
+import { Box, Page, Text, useSnackbar } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AppHeader from "@/components/header";
@@ -12,14 +12,10 @@ export default function QuestionManagement() {
   const [loading, setLoading] = useState(true);
   const [openChoose, setOpenChoose] = useState(false);
   const navTo = useNavigate();
+  const { openSnackbar } = useSnackbar();
 
   useEffect(() => {
-    setLoading(true);
-
-    try {
-      getQuestionsByTeacher().then(response => setQuestionList(response.data))
-    }
-    finally { setLoading(false) }
+    fetchData();
   }, [])
 
   return (
@@ -30,7 +26,7 @@ export default function QuestionManagement() {
         <Text.Title className="mb-2">Thêm câu hỏi</Text.Title>
         <Box className="grid grid-cols-3 gap-x-1 place-items-start">
           <button className="flex flex-col items-center w-full" onClick={() => setOpenChoose(true)}>
-            <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
+            <img src="/icon/icon_add.png" alt="" className="size-12 rounded-lg mb-1" />
             Chọn loại câu
           </button>
           <button className="flex flex-col items-center w-full">
@@ -38,7 +34,7 @@ export default function QuestionManagement() {
             Tải file Word mẫu
           </button>
           <button className="flex flex-col items-center w-full" onClick={() => navTo("word")}>
-            <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
+            <img src="/icon/icon_word.png" alt="" className="size-12 rounded-lg mb-1" />
             Nhập từ file Word
           </button>
         </Box>
@@ -61,4 +57,15 @@ export default function QuestionManagement() {
       <ChooseQuestionType visible={openChoose} setVisible={setOpenChoose} />
     </Page>
   )
+
+  async function fetchData() {
+    setLoading(true);
+
+    try {
+      getQuestionsByTeacher().then(response => setQuestionList(response.data))
+    }
+    finally {
+      setLoading(false)
+    }
+  }
 }

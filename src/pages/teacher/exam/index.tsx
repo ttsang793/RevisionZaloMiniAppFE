@@ -25,11 +25,11 @@ export default function ExamManagement() {
         <Text.Title className="mb-2">Thêm đề thi</Text.Title>
         <Box className="grid grid-cols-2 gap-x-1 place-items-start">
           <button className="flex flex-col items-center w-full" onClick={() => navTo("maker/normal")}>
-            <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
+            <img src="/icon/icon_add.png" alt="" className="size-12 rounded-lg mb-1" />
             Từ ngân hàng câu hỏi
           </button>
           <button className="flex flex-col items-center w-full" onClick={() => navTo("maker/PDF")}>
-            <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
+            <img src="/icon/icon_pdf.png" alt="" className="size-12 rounded-lg mb-1" />
             Nhập từ file PDF
           </button>
         </Box>

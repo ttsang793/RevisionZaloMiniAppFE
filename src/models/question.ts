@@ -1,54 +1,32 @@
 import axios from "axios";
 
 const teacherId = Number(sessionStorage.getItem("id"));
+const subjectId = sessionStorage.getItem("subjectId");
+const subjectName = sessionStorage.getItem("subjectName");
 
 class Question {
   id?: number;
   title: string = "";
+  image?: any;
   grade: number = -1;
   type: string = "";
   difficulty?: number = -1;
-  topicId?: string = "-1";
-  subjectName?: string;
+  topicId: string | null = null;
+  subjectId: string = subjectId!;
+  subjectName: string = subjectName!;
   teacherId: number = teacherId;
   explanation?: string;
+
+  constructor(type?: string) {
+    this.type = type || "";
+  }
 }
 
-class MultipleChoiceQuestion extends Question {
-  correctAnswer: string = "";
-  wrongAnswer: string[] = [];
-}
-
-class TrueFalseQuestion extends Question {
-  answerKey: boolean = true;
-}
-
-class ShortAnswerQuestion extends Question {
-  answerKey: string = "";
-}
-
-class GapFillQuestion extends Question {
-  answerKeys: string[] = [""];
-  markAsWrong: boolean = false;
-}
-
-class ConstructedResponseQuestion extends Question {
-  answerKeys: string[] = [];
-  allowTakePhoto: boolean = false;
-  allowEnter: boolean = false;
-  markAsWrong: boolean = false;
-}
-
-class SortingQuestion extends Question {
-  correctOrder: string[] = ["", "", ""];
-}
-
-class TrueFalseTHPTQuestion extends Question {
-  passageTitle?: string;
-  passageContent?: string;
-  passageAuthor?: string;
-  statements: string[] = ["", "", "", ""]
-  answerKeys: boolean[] = [false, false, false, false];
+class QuestionError {
+  title?: string;
+  grade?: string;
+  difficulty?: string;
+  topic?: string
 }
 
 const questionType = [
@@ -70,15 +48,21 @@ function getQuestionsFilterByTeacher(title?: string, type?: string) {
   return axios.get(`/api/question/teacher/filter/${teacherId}?type=${type}&title=${title}`);
 }
 
-function deleteQuestion(id: number) {
-  axios.delete(`/api/question/${id}`)
-    .then(response => {
-      console.log(response.status);
-    })
-    .catch(err => {
-      console.error(err);
-    })
+function validateInput(question: Question, error: QuestionError) {
+  if (!question.title) error.title = "Vui lòng nhập tiêu đề!";
+  if (question.grade === -1) error.grade = "Vui lòng chọn lớp!";
+  if (question.difficulty === -1) error.difficulty = "Vui lòng chọn độ khó!";
+  if (!question.topicId || question.topicId === "-1") error.topic = "Vui lòng chọn chủ đề!";
 }
 
-export { questionType, Question, MultipleChoiceQuestion, TrueFalseQuestion, ShortAnswerQuestion, GapFillQuestion, ConstructedResponseQuestion, SortingQuestion, TrueFalseTHPTQuestion,
-  getQuestionsByTeacher, getQuestionsFilterByTeacher, deleteQuestion }
+async function deleteQuestion(id: number): Promise<any> {
+  try {
+    const response = axios.delete(`/api/question/${id}`);
+    return response;
+  }
+  catch(err) {
+    return err;
+  }
+}
+
+export { questionType, Question, QuestionError, getQuestionsByTeacher, getQuestionsFilterByTeacher, validateInput, deleteQuestion }

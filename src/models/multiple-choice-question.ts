@@ -1,13 +1,32 @@
 import axios from "axios";
-import { MultipleChoiceQuestion } from "./question";
+import { Question, QuestionError, validateInput } from "./question";
 
-class MultipleChoiceError {
-  title?: string;
-  correctAnswer?: string;
+class MultipleChoiceQuestion extends Question {
+  correctAnswer: string = "";
   wrongAnswer: string[] = [];
-  grade?: string;
-  difficulty?: string;
-  topic?: string
+
+  constructor() {
+    super("multiple-choice");
+  }
+}
+
+class MultipleChoiceError extends QuestionError {
+  correctAnswer?: string;
+  wrongAnswer?: string;
+}
+
+function validateMultipleChoiceInput(question: MultipleChoiceQuestion): MultipleChoiceError {
+  const error: MultipleChoiceError = { }
+  validateInput(question, error);
+
+  if (!question.correctAnswer) error.correctAnswer = "Vui lòng nhập câu trả lời đúng!"
+  for (let i = 0; i <= 2; i++)
+    if (!question.wrongAnswer[i]) { 
+      error.wrongAnswer = "Vui lòng nhập đầy đủ các câu trả lời sai!";
+      break;
+    }
+
+  return error;
 }
 
 function getMultipleChoiceQuestionById(id: number) {
@@ -38,4 +57,4 @@ async function updateMultipleChoiceQuestion(mcq: MultipleChoiceQuestion, id: num
   }
 }
 
-export { MultipleChoiceError, getMultipleChoiceQuestionById, insertMultipleChoiceQuestion, updateMultipleChoiceQuestion }
+export { MultipleChoiceQuestion, MultipleChoiceError, validateMultipleChoiceInput, getMultipleChoiceQuestionById, insertMultipleChoiceQuestion, updateMultipleChoiceQuestion }
