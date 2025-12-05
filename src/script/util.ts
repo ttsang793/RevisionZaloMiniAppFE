@@ -15,7 +15,7 @@ function fisherYatesShuffle(array: any[]): any[] {
 }
 
 function div(a: number, b: number): number {
-  return Math.ceil(a / b);
+  return Math.floor(a / b);
 }
 
 function floatTwoDigits(float: number): string {

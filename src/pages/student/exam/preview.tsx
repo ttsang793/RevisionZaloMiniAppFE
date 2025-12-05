@@ -77,7 +77,7 @@ export default function TestPreviewPage() {
         {
           (topic.length === 0) ? <></> : (
             <li className="grid grid-cols-[16px_1fr] gap-x-2 text-justify py-0.5">
-              <ChatTextFill /><span><b>Chủ đề:</b> {topic.join(";")}</span>
+              <ChatTextFill /><span><b>Chủ đề:</b> {topic.join("; ")}</span>
             </li>
           )
         }

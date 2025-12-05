@@ -1,4 +1,4 @@
-import { Box, Input, Radio, Text } from "zmp-ui";
+import { Box, Input, Radio, Text, ImageViewer } from "zmp-ui";
 import "./question.css"
 import { useState, useEffect } from "react";
 import { CheckLg, XLg } from "react-bootstrap-icons";
@@ -12,6 +12,7 @@ const showCorrect = (isCorrect: boolean | undefined) => {
 const DungSai = ({i, question, answer, practice, updateAnswer}) => {
   const [checkCorrect, setCheckCorrect] = useState(false);
   const { TextArea } = Input;
+  const [visible, setVisible] = useState(false);
   
   const handleCorrect = (a: string) => {
     let curAns;
@@ -29,6 +30,11 @@ const DungSai = ({i, question, answer, practice, updateAnswer}) => {
         <Text size="small" bold className="text-justify">
           Câu {i + 1}. {question.title}
         </Text>
+
+        <Box className="place-items-center">
+          <img src={question.imageUrl} className="max-h-44 max-w-72" onClick={() => setVisible(true)} />
+        </Box>
+        
         <Box>
           <Radio.Group value={answer} onChange={checkCorrect ? () => {} : updateAnswer}>
             <Box className="flex items-center gap-x-1">
@@ -39,8 +45,9 @@ const DungSai = ({i, question, answer, practice, updateAnswer}) => {
             </Box>
           </Radio.Group>
         </Box>
-      </Box>
-      
+
+        <ImageViewer images={[{src: question.imageUrl}]} visible={visible} onClose={() => setVisible(false)} />
+      </Box>      
 
       {
         !practice ? <></> : (
@@ -74,11 +81,12 @@ const DungSai = ({i, question, answer, practice, updateAnswer}) => {
 const DungSaiResult = ({i, answer}) => {
   const question = answer.question;
   const { TextArea } = Input;
+  const [visible, setVisible] = useState(false);
 
   const handleCorrect = (a: string) => {
     let curAns;
-    if ((answer.studentAnswer === "true" || question.answerKey) && a === "true") curAns = true;
-    else if ((answer.studentAnswer === "false" || !question.answerKey) && a === "false") curAns = false;
+    if ((answer.studentAnswer[0] === "true" || question.answerKey) && a === "true") curAns = true;
+    else if ((answer.studentAnswer[0] === "false" || !question.answerKey) && a === "false") curAns = false;
     else return;
 
     return showCorrect(question.answerKey === curAns);
@@ -90,6 +98,11 @@ const DungSaiResult = ({i, answer}) => {
         <Text size="small" bold className="text-justify">
           Câu {i + 1}. {question.title}
         </Text>
+
+        <Box className="place-items-center">
+          <img src={question.imageUrl} className="max-h-44 max-w-72" onClick={() => setVisible(true)} />
+        </Box>
+        
         <Box>
           <Radio.Group value={answer.studentAnswer} disabled>
             <Box className="flex items-center gap-x-1">
@@ -100,6 +113,8 @@ const DungSaiResult = ({i, answer}) => {
             </Box>
           </Radio.Group>
         </Box>
+
+        <ImageViewer images={[{src: question.imageUrl}]} visible={visible} onClose={() => setVisible(false)} />
       </Box>
 
       {

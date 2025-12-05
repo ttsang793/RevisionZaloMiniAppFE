@@ -42,7 +42,6 @@ import SubjectManagement from "@/pages/admin/subject";
 import TopicManagement from "@/pages/admin/topic";
 import AdminResetPasswordPage from "@/pages/admin/reset-password";
 import { AdminFooter, AdminHeader } from "./admin/head-foot";
-import SampleUpload from "@/pages/admin/sample";
 
 // Error
 import Error403 from "@/pages/errors/403";
@@ -99,7 +98,6 @@ const Layout = () => {
               <Route path="subject" element={<SubjectManagement />} />
               <Route path="topic" element={<TopicManagement />} />
               <Route path="reset-password" element={<AdminResetPasswordPage />} />
-              <Route path="sample" element={<SampleUpload />} />
               <Route path="*" element={<Navigate to="/admin" />} />
             </Route>
 

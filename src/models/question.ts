@@ -7,7 +7,7 @@ const subjectName = sessionStorage.getItem("subjectName");
 class Question {
   id?: number;
   title: string = "";
-  image?: any;
+  imageUrl?: string;
   grade: number = -1;
   type: string = "";
   difficulty?: number = -1;
@@ -48,6 +48,10 @@ function getQuestionsFilterByTeacher(title?: string, type?: string) {
   return axios.get(`/api/question/teacher/filter/${teacherId}?type=${type}&title=${title}`);
 }
 
+function isUpdatable(id: number): Promise<any> {
+  return axios.get(`/api/question/${id}/updatable`);
+}
+
 function validateInput(question: Question, error: QuestionError) {
   if (!question.title) error.title = "Vui lòng nhập tiêu đề!";
   if (question.grade === -1) error.grade = "Vui lòng chọn lớp!";
@@ -65,4 +69,4 @@ async function deleteQuestion(id: number): Promise<any> {
   }
 }
 
-export { questionType, Question, QuestionError, getQuestionsByTeacher, getQuestionsFilterByTeacher, validateInput, deleteQuestion }
+export { questionType, Question, QuestionError, getQuestionsByTeacher, getQuestionsFilterByTeacher, isUpdatable, validateInput, deleteQuestion }

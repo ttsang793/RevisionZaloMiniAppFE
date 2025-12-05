@@ -66,20 +66,6 @@ export default function StudentSettingPage() {
       </Box>
 
       <Box className="section-container">
-        <Box className="grid grid-cols-[1fr_32px] mb-2 items-center">
-          <Text.Title className="zaui-text-blue-80">Nhắc nhở ôn tập</Text.Title>
-          <button
-            className="zaui-bg-blue-80 text-white rounded-lg text-center size-8 text-xl"
-          >
-            +
-          </button>
-        </Box>
-
-        <SettingAlarm />
-        <SettingAlarm />
-      </Box>
-
-      <Box className="section-container">
         <Box className="grid grid-cols-[80px_1fr] w-full gap-x-4">
           <Box className="relative mb-2">
             <img src="/avatar/default.jpg" alt="Avatar" className="h-25 rounded-full border-1 border-zinc-300" />

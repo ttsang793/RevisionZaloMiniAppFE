@@ -17,15 +17,15 @@ class ExamAttemptGet {
 class ExamAttempt {
   id?: number;
   examId: number;
-  studentId: number;
+  studentId: number = studentId;
   totalPoint?: number;
   startedAt?: Date;
+  comment?: string;
   partOrder: number[] = [];
   isPractice: boolean = false;
   examAttemptAnswers: ExamAttemptAnswer[] = [];
 
   constructor(examId: number, isPractice: boolean) {
-    this.studentId = 2;
     this.examId = examId;
     this.isPractice = isPractice;
   }
@@ -37,6 +37,7 @@ class ExamAttemptAnswer {
   studentAnswer: string[] = [];
   correct: number[] = [];
   point: number = 0;
+  correctPoint: number = 0;
 }
 
 const checkMultipleChoice = (question, answer) => {
@@ -49,7 +50,7 @@ const checkTrueFalse = (question, answer) => {
 }
 
 const checkShortAnswer = (question, answer) => {
-  return answer.join[""] === question.question.correctAnswer;
+  return answer.join[""] === question.question.answerKey;
 }
 
 const checkManualResponse = (question, answer) => {
@@ -93,15 +94,15 @@ function checkTrueFalseTHPT(question, answer): {numCorrect: number, point: numbe
 }
 
 function getLatestExamAttempt(examId: number) {
-  return axios.get(`/api/exam-attempt/${studentId}/${examId}`);
+  return axios.get(`/api/exam/attempt/${studentId}/${examId}/latest`);
 }
 
 function getExamAttemptById(examAttemptId: number) {
-  return axios.get(`/api/exam-attempt/${examAttemptId}`);
+  return axios.get(`/api/exam/attempt/${examAttemptId}`);
 }
 
 function getExamAttemptsByExamId(id: number) {
-  return axios.get(`/api/exam-attempt/exam/${id}`);
+  return axios.get(`/api/exam/attempt/exam/${id}`);
 }
 
 async function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], answerList: any[][]): Promise<number> {
@@ -119,8 +120,8 @@ async function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], an
           const result = checkMultipleChoice(currentQuestion, answerList[i][j]);
           answer.studentAnswer[0] = answerList[i][j];
           answer.correct[0] = result ? 1 : 0;
+          answer.answerOrder = currentQuestion.question.answerKeys;
           if (result) {
-            answer.answerOrder = currentQuestion.question.answerKeys;
             answer.point = currentQuestion.point;
             totalPoint += currentQuestion.point;
           }
@@ -151,8 +152,10 @@ async function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], an
           if (currentQuestion.question.markAsWrong) {
             const result = checkManualResponse(currentQuestion, answerList[i][j]);
             answer.correct[0] = result ? 1 : 0;
-            answer.point = currentQuestion.point;
-            totalPoint += currentQuestion.point;
+            if (result) {
+              answer.point = currentQuestion.point;
+              totalPoint += currentQuestion.point;
+            }
           }
           else answer.correct[0] = -1;
           break;
@@ -162,8 +165,10 @@ async function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], an
           if (currentQuestion.question.markAsWrong) {
             const result = checkManualResponse(currentQuestion, answerList[i][j]);
             answer.correct[0] = result ? 1 : 0;
-            answer.point = currentQuestion.point;
-            totalPoint += currentQuestion.point;
+            if (result) {
+              answer.point = currentQuestion.point;
+              totalPoint += currentQuestion.point;
+            }
           }
           else answer.correct[0] = -1;
           break;
@@ -197,10 +202,8 @@ async function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], an
 }
 
 async function postAttempt(examAttempt: ExamAttempt): Promise<number> {
-  console.log(JSON.stringify(examAttempt));
-
   try {
-    const response = await axios.post("/api/exam-attempt", examAttempt,
+    const response = await axios.post("/api/exam/attempt", examAttempt,
                             { headers: { "Content-Type": "application/json" } });
     return response.status;
   }
@@ -215,7 +218,19 @@ async function postAttempt(examAttempt: ExamAttempt): Promise<number> {
 }
 
 async function checkAchievement() {
-  await axios.post(`/api/exam-attempt/achievement/${studentId}`);
+  await axios.post(`/api/exam/attempt/achievement/${studentId}`);
 }
 
-export { ExamAttempt, ExamAttemptGet, getLatestExamAttempt, getExamAttemptById, getExamAttemptsByExamId, insertAttempt, checkAchievement };
+async function gradingAttempt(examAttempt: ExamAttempt): Promise<any> {
+  console.log(examAttempt);
+  try {
+    const response = await axios.put(`/api/exam/attempt/grading/${examAttempt.id}`, examAttempt,
+                            { headers: { "Content-Type": "application/json" } });
+    return response;
+  }
+  catch (err) {
+    return err;
+  }
+}
+
+export { ExamAttempt, ExamAttemptGet, getLatestExamAttempt, getExamAttemptById, getExamAttemptsByExamId, insertAttempt, gradingAttempt, checkAchievement };

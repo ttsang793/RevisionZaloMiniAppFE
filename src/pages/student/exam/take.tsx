@@ -12,6 +12,7 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
   const navTo = useNavigate();
   const [allowEarlySubmit, setAllowEarlySubmit] = useState(true);
   const [earlySubmitVisible, setEarlySubmitVisible] = useState(false);
+  const [autoTurnIn, setAutoTurnIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const { openSnackbar } = useSnackbar();
 
@@ -74,6 +75,8 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
     }
   }, []);
 
+  useEffect(() => { if (autoTurnIn) turnIn() }, [autoTurnIn]);
+
   return loading ? <></> : (
     <Page className="page-test">
       {/* Tiêu đề và các phần */}
@@ -103,6 +106,7 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
           timeLimit={examInfo.timeLimit}
           earlyTurnIn={examInfo.earlyTurnIn}
           setAllowEarlySubmit={setAllowEarlySubmit}
+          setAutoTurnIn={setAutoTurnIn}
         />
       </Box>
 
@@ -119,7 +123,7 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
       }
 
       <footer
-        className={allowEarlySubmit ? "fixed bottom-0 right-0 left-0 text-center bg-white" : "hidden"}
+        className={allowEarlySubmit ? "fixed bottom-4 right-0 left-0 text-center bg-white" : "hidden"}
       >
         <button
           className="rounded-full zaui-bg-blue-70 zaui-text-blue-10 py-2 px-8"

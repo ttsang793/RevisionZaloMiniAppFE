@@ -21,11 +21,11 @@ class ExamQuestionItem {
 }
 
 function getExamQuestion(id: number) {
-  return axios.get(`/api/exam/question/${id}`);
+  return axios.get(`/api/exam/${id}/question`);
 }
 
 function getExamQuestionWithQuestions(id: number) {
-  return axios.get(`/api/exam/${id}/detail`);
+  return axios.get(`/api/exam/${id}/question/attempt`);
 }
 
 function updateExam(exam: ExamQuestion, list: any[][]) {

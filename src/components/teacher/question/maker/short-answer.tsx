@@ -1,10 +1,9 @@
-import axios from "axios";
 import { Input, Text, Box, Icon } from "zmp-ui";
 import { useState } from "react";
 
 const QuestionMakerShortAnswer = ({question, setQuestion, error, setError}) => {
   const { TextArea } = Input;
-  let [number, setNumber] = useState(["", "", "", ""]);
+  let [number, setNumber] = useState(!question.answerKey ? ["", "", "", ""] : question.answerKey.split(""));
 
   const handleNumber = (value: string, index: number) => {
     const newNumber = [...number];

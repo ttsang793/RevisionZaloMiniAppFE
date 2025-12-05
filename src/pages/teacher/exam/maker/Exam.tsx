@@ -54,6 +54,7 @@ export default function ExamQuestions() {
           setExamQuestionList(prev => [...prev, questionTypes]);
         })
         setExamQuestions({...examQuestions, partTitles});
+        console.log(examQuestions);
         setLoading(false);
       });
     }

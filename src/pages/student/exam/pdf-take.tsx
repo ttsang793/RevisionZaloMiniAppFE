@@ -92,7 +92,11 @@ export default function TakePDFExamPage({practice}: {practice: boolean}) {
           }
         </Box>
 
-        <Countdown timeLimit={examInfo.timeLimit} />
+        <Countdown
+          timeLimit={examInfo.timeLimit}
+          earlyTurnIn={examInfo.earlyTurnIn}
+          setAllowEarlySubmit={setAllowEarlySubmit}
+        />
       </Box>
 
       {
@@ -106,7 +110,9 @@ export default function TakePDFExamPage({practice}: {practice: boolean}) {
         )
       }
 
-      <footer className="fixed bottom-0 right-0 left-0 text-center bg-white py-2">
+      <footer
+        className={allowEarlySubmit ? "fixed bottom-4 right-0 left-0 text-center bg-white" : "hidden"}
+      >
         <button
           className="rounded-full zaui-bg-blue-70 zaui-text-blue-10 py-2 px-8"
           onClick={() => setEarlySubmitVisible(true)}

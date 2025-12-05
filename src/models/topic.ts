@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Subject } from "./subject";
 
+const subjectId = sessionStorage.getItem("subjectId");
 type Topic = {
   id?: string,
   name: string,
@@ -15,9 +16,8 @@ const getTopics = async () => {
   return list.data;
 }
 
-const getActiveTopics = async () => {
-  const response = await axios.get("/api/topic/active");
-  return response.data;
+const getActiveTopicByGrades = async (grade) => {
+  return axios.get(`/api/topic/${subjectId}/${grade}/active`);
 }
 
 const getTopicsBySubject = async (subjectId: number) => {
@@ -65,4 +65,4 @@ const deleteTopic = async (id: string): Promise<any> => {
   }
 }
 
-export { Topic, getTopics, getActiveTopics, getTopicsBySubject, getTopicById, getTopicByName, insertTopic, updateTopic, deleteTopic }
+export { Topic, getTopics, getActiveTopicByGrades, getTopicsBySubject, getTopicById, getTopicByName, insertTopic, updateTopic, deleteTopic }

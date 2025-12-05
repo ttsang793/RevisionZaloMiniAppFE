@@ -27,6 +27,8 @@ function getShortAnswerQuestionById(id: number) {
 
 async function insertShortAnswerQuestion(saq: ShortAnswerQuestion): Promise<any> {
   try {
+    saq.answerKey = saq.answerKey.trim();
+
     const response = axios.post("/api/question/short-answer", saq, {
       headers: { "Content-Type": "application/json" }
     })
@@ -39,6 +41,8 @@ async function insertShortAnswerQuestion(saq: ShortAnswerQuestion): Promise<any>
 
 async function updateShortAnswerQuestion(saq: ShortAnswerQuestion, id: number): Promise<any> {
   try {
+    saq.answerKey = saq.answerKey.trim();
+    
     const response = axios.put(`/api/question/short-answer/${id}`, saq, {
       headers: { "Content-Type": "application/json" }
     })

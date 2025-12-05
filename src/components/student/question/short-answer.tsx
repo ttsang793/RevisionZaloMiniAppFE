@@ -1,4 +1,4 @@
-import { Box, Input, Text } from "zmp-ui";
+import { Box, Input, Text, ImageViewer, Checkbox } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { CheckLg, XLg } from "react-bootstrap-icons";
 
@@ -41,6 +41,7 @@ const TraLoiNgan = ({i, question, answer, practice, updateAnswer}) => {
   const [cell, setCell] = useState(answer || ["", "", "", ""]);
   const { TextArea } = Input;
   const [checkCorrect, setCheckCorrect] = useState(false);
+  const [visible, setVisible] = useState(false);
   const handleCell = (j, value) => {
     const newCell = [...cell];
     newCell[j] = value;
@@ -54,6 +55,11 @@ const TraLoiNgan = ({i, question, answer, practice, updateAnswer}) => {
         <Text size="small" bold className="text-justify">
           Câu {i + 1}. {question.title}
         </Text>
+
+        <Box className="place-items-center">
+          <img src={question.imageUrl} className="max-h-44 max-w-72" onClick={() => setVisible(true)} />
+        </Box>
+
         <Box className="mt-1">
           {[0, 1, 2, 3].map((j) => (
             <input
@@ -67,6 +73,8 @@ const TraLoiNgan = ({i, question, answer, practice, updateAnswer}) => {
             />
           ))} { checkCorrect && showCorrect(question.answerKey === answer.join("")) }
         </Box>
+
+        <ImageViewer images={[{src: question.imageUrl}]} visible={visible} onClose={() => setVisible(false)} />
 
         {
           (practice && checkCorrect && question.answerKey !== answer.join("")) ? (
@@ -115,24 +123,32 @@ const TraLoiNgan = ({i, question, answer, practice, updateAnswer}) => {
 
 const TraLoiNganResult = ({i, answer}) => {
   const question = answer.question;
+  const [visible, setVisible] = useState(false);
 
   return (
     <Box className="border border-gray-300 py-1 px-2">
       <Text size="small" bold className="text-justify">
         Câu {i + 1}. {question.title}
       </Text>
+
+      <Box className="place-items-center">
+        <img src={question.imageUrl} className="max-h-44 max-w-72" onClick={() => setVisible(true)} />
+      </Box>
+      
       <Box className="mt-1">
         {[0, 1, 2, 3].map((j) => (
           <input
-            className={`size-8 text-center border border-gray-400 rounded-lg me-2 font-bold zaui-text-${answer.correct ? "green" : "red"}-70`}
+            className={`size-8 text-center border border-gray-400 rounded-lg me-2 font-bold zaui-text-${answer.correct[0] ? "green" : "red"}-70`}
             value={answer.studentAnswer[j]}
             maxLength={1} key={j} readOnly
           />
-        ))} { showCorrect(answer.correct) }
+        ))} { showCorrect(answer.correct[0]) }
       </Box>
 
+      <ImageViewer images={[{src: question.imageUrl}]} visible={visible} onClose={() => setVisible(false)} />
+
       {
-        (answer.correct) ? <></> : (
+        (answer.correct[0]) ? <></> : (
           <Box className="mt-2">
             <>
               {question.answerKey.split("").map((ak: string, i: number) => (
@@ -149,4 +165,53 @@ const TraLoiNganResult = ({i, answer}) => {
   )
 }
 
-export { TraLoiNgan, TraLoiNganResult }
+const TraLoiNganMarking = ({i, answer, updateQuestion}) => {
+  const question = answer.question;
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <Box className="border border-gray-300 py-1 px-2">
+      <Text size="small" bold className="text-justify">
+        Câu {i + 1}. {question.title}
+      </Text>
+
+      <Box className="place-items-center">
+        <img src={question.imageUrl} className="max-h-44 max-w-72" onClick={() => setVisible(true)} />
+      </Box>
+      
+      <Box className="mt-1">
+        {[0, 1, 2, 3].map((j) => (
+          <input
+            className="size-8 text-center border border-gray-400 rounded-lg me-2"
+            value={answer.studentAnswer[j]}
+            maxLength={1} key={j} readOnly
+          />
+        ))} { showCorrect(answer.correct[0]) }
+      </Box>
+
+      <Box className="mt-2">
+        <>
+          {question.answerKey.split("").map((ak: string, i: number) => (
+            <input
+              className="size-8 text-center font-bold border border-gray-400 rounded-lg me-2 zaui-text-green-70"
+              value={ak} readOnly
+            />
+          ))} <CheckLg size={24} className="zaui-text-green-70 inline" />
+        </>
+      </Box>
+
+      <ImageViewer images={[{src: question.imageUrl}]} visible={visible} onClose={() => setVisible(false)} />
+      <Checkbox
+        className="mt-2" value="" checked={answer.correct[0]}
+        onChange={e => {
+          updateQuestion("correct", [e.target.checked]);
+          updateQuestion("point", e.target.checked ? answer.correctPoint : 0);
+        }}
+      >
+        <Text>Đánh dấu chính xác.</Text>
+      </Checkbox>
+    </Box>
+  )
+}
+
+export { TraLoiNgan, TraLoiNganResult, TraLoiNganMarking }

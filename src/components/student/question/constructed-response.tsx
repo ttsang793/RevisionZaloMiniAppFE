@@ -1,4 +1,4 @@
-import { Box, Input, Text } from "zmp-ui";
+import { Box, Input, Text, ImageViewer, Checkbox } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { CheckLg, XLg } from "react-bootstrap-icons";
 
@@ -11,6 +11,14 @@ const showCorrect = (isCorrect: boolean | undefined) => {
 const TuLuan = ({i, question, answer, practice, updateAnswer}) => {
   const { TextArea } = Input;
   const [checkCorrect, setCheckCorrect] = useState(false);
+  const [visible, setVisible] = useState(false);
+
+  const lockEnter = (e: any) => {
+    if (!question.allowEnter && e.keyCode === 13) {
+      e.preventDefault();
+      return;
+    }
+  }
 
   return (
     <>
@@ -19,9 +27,13 @@ const TuLuan = ({i, question, answer, practice, updateAnswer}) => {
           Câu {i + 1}. {question.title}
         </Text>
 
+        <Box className="place-items-center">
+          <img src={question.imageUrl} className="max-h-44 max-w-72" onClick={() => setVisible(true)} />
+        </Box>
+
         <TextArea
           value={answer} onChange={e => updateAnswer(e.target.value)}
-          size="small" autoHeight readOnly={checkCorrect}
+          size="small" autoHeight readOnly={checkCorrect} onKeyDown={e => lockEnter(e)}
         />
 
         {
@@ -34,6 +46,8 @@ const TuLuan = ({i, question, answer, practice, updateAnswer}) => {
           )
         }
       </Box>
+
+      <ImageViewer images={[{src: question.imageUrl}]} visible={visible} onClose={() => setVisible(false)} />
 
       {
         !practice ? <></> : (
@@ -60,6 +74,7 @@ const TuLuan = ({i, question, answer, practice, updateAnswer}) => {
 
 const TuLuanResult = ({i, answer}) => {
   const question = answer.question;
+  const [visible, setVisible] = useState(false);
   const { TextArea } = Input;
 
   return (
@@ -69,12 +84,64 @@ const TuLuanResult = ({i, answer}) => {
           Câu {i + 1}. {question.title}
         </Text>
 
-        <TextArea value={answer} readOnly size="small" autoHeight />
+        <Box className="place-items-center">
+          <img src={question.imageUrl} className="max-h-44 max-w-72" onClick={() => setVisible(true)} />
+        </Box>
+
+        <TextArea value={answer.studentAnswer[0]} readOnly size="small" autoHeight />
       </Box>
 
-      <TextArea className="mt-2" label={<Text>Lời giải/Giải thích</Text>} value={question.explanation} readOnly />      
+      <TextArea className="mt-2" label={<Text>Lời giải/Giải thích</Text>} value={question.explanation} readOnly /> 
+
+      <ImageViewer images={[{src: question.imageUrl}]} visible={visible} onClose={() => setVisible(false)} />
     </>
   )
 }
 
-export { TuLuan, TuLuanResult }
+const TuLuanMarking = ({i, answer, updateQuestion}) => {
+  const question = answer.question;
+  const { TextArea } = Input;
+  const [visible, setVisible] = useState(false);
+  const [unchecked, setUnchecked] = useState(answer.correct[0] === -1);
+
+  return (
+    <Box className="border border-gray-300 py-1 px-2">
+      <Text size="small" bold className="text-justify">
+        Câu {i + 1}. {question.title}
+      </Text>
+
+      <Box className="place-items-center">
+        <img src={question.imageUrl} className="max-h-44 max-w-72" onClick={() => setVisible(true)} />
+      </Box>
+
+      <TextArea value={answer.studentAnswer[0]} size="small" readOnly />
+
+      <TextArea className="mt-2" label={<Text>Lời giải/Giải thích</Text>} value={question.explanation} readOnly />
+
+      <Box>
+        <Input
+          label={<Text>Điểm số (tối đa {answer.correctPoint} điểm)</Text>}
+          type="number" step={0.05} min={0} max={answer.correctPoint} value={answer.point}
+          onChange={e => {
+            updateQuestion("point", Number(e.target.value))
+            if (!unchecked) updateQuestion("correct", Number(e.target.value) === answer.correctPoint ? [1] : [0]);
+          }}
+        />
+      </Box>
+
+      <Checkbox
+        className="mt-2" value="" checked={answer.correct[0] !== -1}
+        onChange={e => {
+          setUnchecked(e.target.checked);
+          updateQuestion("correct", e.target.checked ? (answer.point === answer.correctPoint ? [1] : [0]) : [-1]);
+        }}
+      >
+        <Text>Xét tính chính xác của câu trả lời.</Text>
+      </Checkbox>   
+    
+      <ImageViewer images={[{src: question.imageUrl}]} visible={visible} onClose={() => setVisible(false)} />
+    </Box>
+  )
+}
+
+export { TuLuan, TuLuanResult, TuLuanMarking }

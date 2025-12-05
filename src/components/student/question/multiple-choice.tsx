@@ -1,4 +1,4 @@
-import { Box, Input, Radio, Text } from "zmp-ui";
+import { Box, Input, Radio, Text, ImageViewer } from "zmp-ui";
 import "./question.css"
 import { useState, useEffect } from "react";
 import { CheckLg, XLg } from "react-bootstrap-icons";
@@ -11,6 +11,7 @@ const showCorrect = (isCorrect: boolean | undefined) => {
 
 const TracNghiem = ({i, part, question, answer, practice, updateAnswer}) => {
   const [checkCorrect, setCheckCorrect] = useState(false);
+  const [visible, setVisible] = useState(false);
   const {TextArea} = Input;
 
   const handleCorrect = (a: string) => {
@@ -24,6 +25,10 @@ const TracNghiem = ({i, part, question, answer, practice, updateAnswer}) => {
         <Text size="small" bold className="text-justify">
           Câu {i + 1}. {question.title}
         </Text>
+
+        <Box className="place-items-center">
+          <img src={question.imageUrl} className="max-h-44 max-w-72" onClick={() => setVisible(true)} />
+        </Box>
 
         <Box>
           <Radio.Group
@@ -39,6 +44,8 @@ const TracNghiem = ({i, part, question, answer, practice, updateAnswer}) => {
           }
           </Radio.Group>
         </Box>
+
+        <ImageViewer images={[{src: question.imageUrl}]} visible={visible} onClose={() => setVisible(false)} />
       </Box>
 
       {
@@ -72,9 +79,10 @@ const TracNghiem = ({i, part, question, answer, practice, updateAnswer}) => {
 
 const TracNghiemResult = ({i, part, answer}) => {
   const question = answer.question;
+  const [visible, setVisible] = useState(false);
 
   const handleCorrect = (a: string) => {
-    if (answer.studentAnswer === a || a === question.correctAnswer) return showCorrect(a === question.correctAnswer);
+    if (a === answer.studentAnswer[0] || a === question.correctAnswer) return showCorrect(a === question.correctAnswer);
     return <></>
   }
 
@@ -83,6 +91,10 @@ const TracNghiemResult = ({i, part, answer}) => {
       <Text size="small" bold className="text-justify">
         Câu {i + 1}. {question.title}
       </Text>
+
+      <Box className="place-items-center">
+        <img src={question.imageUrl} className="max-h-44 max-w-72" onClick={() => setVisible(true)} />
+      </Box>
 
       <Box>
         <Radio.Group value={answer.studentAnswer}>
@@ -95,6 +107,8 @@ const TracNghiemResult = ({i, part, answer}) => {
         }
         </Radio.Group>
       </Box>
+
+      <ImageViewer images={[{src: question.imageUrl}]} visible={visible} onClose={() => setVisible(false)} />
     </Box>
   )
 }

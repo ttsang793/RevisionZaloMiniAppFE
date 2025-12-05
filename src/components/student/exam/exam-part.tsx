@@ -6,6 +6,7 @@ import { DienVaoChoTrong } from "../question/gap-fill";
 import { TuLuan } from "../question/constructed-response";
 import { SapXep } from "../question/sorting";
 import { DungSaiTHPT } from "../question/true-false-thpt";
+import { floatTwoDigits } from "@/script/util";
 
 function displayQuestion(question, partIndex, questionIndex, answer, practice, updateAnswer) {
   if (!question) {
@@ -51,14 +52,17 @@ const ExamPart = ({i, practice, partTitle, partQuestions, currentQuestion, setCu
   return (
     <>
       <Box className="zaui-bg-blue-70 zaui-text-blue-10 px-3 py-2 text-justify mb-2 font-bold">
-        Phần {i + 1}. {partTitle} ({parseFloat(partQuestions.reduce((sum, item) => sum + item.question.point, 0))} điểm)
+        Phần {i + 1}. {partTitle} ({floatTwoDigits(parseFloat(partQuestions.reduce((sum, item) => sum + item.question.point, 0)))} điểm)
       </Box>
       
       <Box className="mb-2 flex justify-center gap-2 flex-wrap overflow-y-auto">
       {
         partQuestions.map((_, j) =>
           <button
-            className={`rounded-full size-6 border ${currentQuestion === j ? "zaui-border-blue-70 zaui-bg-blue-70 zaui-text-blue-10" : "zaui-border-blue-70 zaui-bg-blue-10 zaui-text-blue-70"}`}
+            className={`rounded-full size-6 border
+              ${currentQuestion === j ? "zaui-border-blue-70 zaui-bg-blue-70 zaui-text-blue-10"
+                : (answerList[j] ? "zaui-border-orange-70 zaui-bg-orange-10 zaui-text-orange-70"
+                : "zaui-border-blue-70 zaui-bg-blue-10 zaui-text-blue-70")}`}
             onClick={() => setCurrentQuestion(j)} key={`btnQ-${i + 1}_${j + 1}`}
           >
             {j + 1}

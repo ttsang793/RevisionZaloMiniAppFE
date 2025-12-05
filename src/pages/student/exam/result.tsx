@@ -20,6 +20,14 @@ export default function ExamResultPage() {
     setCurrentQuestion(0);
   }
 
+  const partCorrectPoint = (partAnswer: any): string => {
+    return floatTwoDigits(parseFloat(partAnswer.reduce((sum, item) => sum + item.correctPoint, 0)));
+  }
+
+  const partPoint = (partAnswer: any): string => {
+    return floatTwoDigits(parseFloat(partAnswer.reduce((sum, item) => sum + item.point, 0)));
+  }
+
   useEffect(() => {
     if (loading) {
       getExamById(Number(id)).then(response => setExamInfo(response.data));
@@ -64,6 +72,8 @@ export default function ExamResultPage() {
           i={currentPart}
           partTitle={examAttempt.examParts[currentPart].partTitle}
           partAnswers={examAttempt.examParts[currentPart].examAttemptAnswers}
+          partPoint={partPoint(examAttempt.examParts[currentPart].examAttemptAnswers)}
+          partCorrectPoint={partCorrectPoint(examAttempt.examParts[currentPart].examAttemptAnswers)}
           currentQuestion={currentQuestion}
           setCurrentQuestion={setCurrentQuestion}
         />

@@ -18,7 +18,7 @@ class PdfExamAttempt {
 }
 
 function getPdfExamAttempt(examId: number) {
-  return axios.get(`/api/exam-attempt/pdf?studentId=1&examId=${examId}`);
+  return axios.get(`/api/exam-attempt/pdf?studentId=${studentId}&examId=${examId}`);
 }
 
 function handleTrueFalseTHPTQuestion(q: ExamCodeQuestionGet): number {

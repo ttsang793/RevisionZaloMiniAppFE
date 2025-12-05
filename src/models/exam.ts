@@ -33,10 +33,6 @@ class ExamAttemptsRecord {
   count: number = 0;
 }
 
-function getAllExams() {
-  return axios.get("/api/exam");
-}
-
 function getPublishExams() {
   return axios.get("/api/exam/publish");
 }
@@ -46,19 +42,19 @@ function getExamById(id: number) {
 }
 
 function getExamAttemptsRecordByExamId(id: number) {
-  return axios.get(`/api/exam-attempt/exam/${id}/record`);
+  return axios.get(`/api/exam/attempt/exam/${id}/record`);
 }
 
 function getExamTopicsByExamId(id: number) {
   return axios.get(`/api/exam/${id}/topic`);
 }
 
-function getPublishExamsByTeacher(tId = teacherId) {
-  return axios.get(`/api/exam/publish/teacher/${tId}`);
-}
-
 function getExamsByTeacher(tId = teacherId) {
   return axios.get(`/api/exam/teacher/${tId}`);
+}
+
+function getPublishExamsByTeacher(tId = teacherId) {
+  return axios.get(`/api/exam/teacher/${tId}/publish`);
 }
 
 async function insertExam(exam: Exam): Promise<any> {
@@ -105,7 +101,7 @@ async function publishExam(id: number): Promise<any> {
   }
 }
 
-export { Exam, ExamAttemptsRecord, getAllExams, getPublishExams, getExamById,
+export { Exam, ExamAttemptsRecord, getPublishExams, getExamById,
           getExamAttemptsRecordByExamId, getExamTopicsByExamId,
           getPublishExamsByTeacher, getExamsByTeacher,
           insertExam, updateExam, deleteExam, publishExam }

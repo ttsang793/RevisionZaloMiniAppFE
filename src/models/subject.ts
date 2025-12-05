@@ -32,6 +32,10 @@ const getSubjectById = async (id: string) => {
   return (response.status === 200) ? response.data : null;
 }
 
+const getSubjectGradesById = async (id: string) => {
+  return await axios.get(`/api/subject/${id}/grade`);
+}
+
 const insertSubject = async (subject: Subject): Promise<any> => {
   try {
     const response = await axios.post(`/api/subject`, subject);
@@ -62,4 +66,4 @@ const deleteSubject = async (id: string): Promise<any> => {
   }
 }
 
-export { Subject, getSubjects, getActiveSubjects, getSubjectsByGrade, getSubjectById, insertSubject, updateSubject, deleteSubject };
+export { Subject, getSubjects, getActiveSubjects, getSubjectsByGrade, getSubjectById, getSubjectGradesById, insertSubject, updateSubject, deleteSubject };

@@ -5,9 +5,10 @@ interface CountdownProps {
   timeLimit: number;
   earlyTurnIn?: number;
   setAllowEarlySubmit: (allowEarlySubmit: boolean) => void
+  setAutoTurnIn: (autoTurnIn: boolean) => void
 }
 
-const Countdown = ({timeLimit, earlyTurnIn, setAllowEarlySubmit}: CountdownProps) => {
+const Countdown = ({timeLimit, earlyTurnIn, setAllowEarlySubmit, setAutoTurnIn}: CountdownProps) => {
   const [timeLeft, setTimeLeft] = useState(timeLimit);
 
   useEffect(() => {
@@ -15,6 +16,7 @@ const Countdown = ({timeLimit, earlyTurnIn, setAllowEarlySubmit}: CountdownProps
       setTimeLeft((prevTime) => {
         if (prevTime <= 1) {
           clearInterval(interval);
+          setAutoTurnIn(true);
           return 0;
         }
         if (timeLimit - (prevTime - 1) === earlyTurnIn)

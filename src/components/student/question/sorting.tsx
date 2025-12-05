@@ -1,4 +1,4 @@
-import { Box, Input, Select, Text } from "zmp-ui";
+import { Box, ImageViewer, Select, Text } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { CheckLg, XLg } from "react-bootstrap-icons";
 
@@ -10,6 +10,7 @@ const showCorrect = (isCorrect: boolean | undefined) => {
 
 const SapXep = ({i, question, answer, practice, updateAnswer}) => {
   const [cell, setCell] = useState(answer);
+  const [visible, setVisible] = useState(false);
   const handleCell = (j, value) => {
     const newCell = [...cell];
     newCell[j] = value;
@@ -22,6 +23,12 @@ const SapXep = ({i, question, answer, practice, updateAnswer}) => {
       <Text size="small" bold className="text-justify">
         Câu {i + 1}. {question.title}
       </Text>
+
+      <Box className="place-items-center">
+        <img src={question.imageUrl} className="max-h-44 max-w-72" onClick={() => setVisible(true)} />
+      </Box>
+
+      <ImageViewer images={[{src: question.imageUrl}]} visible={visible} onClose={() => setVisible(false)} />
 
       {
         question.correctOrder.map((_, i) => (
@@ -40,12 +47,19 @@ const SapXep = ({i, question, answer, practice, updateAnswer}) => {
 
 const SapXepResult = ({i, answer}) => {
   const question = answer.question;
+  const [visible, setVisible] = useState(false);
 
   return (
     <Box className="border border-gray-300 py-1 px-2">
       <Text size="small" bold className="text-justify">
         Câu {i + 1}. {question.title}
       </Text>
+
+      <Box className="place-items-center">
+        <img src={question.imageUrl} className="max-h-44 max-w-72" onClick={() => setVisible(true)} />
+      </Box>
+
+      <ImageViewer images={[{src: question.imageUrl}]} visible={visible} onClose={() => setVisible(false)} />
 
       {
         question.corectOrder.map((od: string, j: number) => (

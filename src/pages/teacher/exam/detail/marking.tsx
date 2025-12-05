@@ -1,12 +1,12 @@
-import { Box, Page, Text, useParams, useNavigate } from "zmp-ui";
+import { Box, Page, Text, useParams, useNavigate, useSnackbar, Input } from "zmp-ui";
 import { useState, useEffect } from "react";
-import { ResultExamPart } from "@/components/student/exam/result-exam-part";
 import { Exam, getExamById } from "@/models/exam";
-import { ExamAttemptGet, getExamAttemptById } from "@/models/exam-attempt";
+import { ExamAttempt, ExamAttemptGet, getExamAttemptById, gradingAttempt } from "@/models/exam-attempt";
 import AppHeader from "@/components/header";
 import { floatTwoDigits } from "@/script/util";
+import { MarkingExamPart } from "@/components/teacher/exam/marking-exam-part";
 
-export default function Marking() {
+export default function ExamMarking() {
   const { examId, examAttemptId } = useParams();
   const navTo = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -14,10 +14,26 @@ export default function Marking() {
   const [examAttempt, setExamAttempt] = useState<ExamAttemptGet>(new ExamAttemptGet());
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [currentPart, setCurrentPart] = useState(0);
+  const { openSnackbar } = useSnackbar();
+  const { TextArea } = Input;
 
   const handleChangePart = (part: number) => {
     setCurrentPart(part);
     setCurrentQuestion(0);
+  }
+
+  function updateAttempt(i: number, j: number, prop: ("correct"|"point"), value: any) {
+    const newExamParts = [...examAttempt.examParts];
+    newExamParts[i].examAttemptAnswers[j][prop] = value;
+    setExamAttempt({...examAttempt, examParts: newExamParts})
+  }
+
+  const partCorrectPoint = (partAnswer: any): string => {
+    return floatTwoDigits(parseFloat(partAnswer.reduce((sum, item) => sum + item.correctPoint, 0)));
+  }
+
+  const partPoint = (partAnswer: any): string => {
+    return floatTwoDigits(parseFloat(partAnswer.reduce((sum, item) => sum + item.point, 0)));
   }
 
   useEffect(() => {
@@ -33,14 +49,6 @@ export default function Marking() {
   return loading ? <></> : (
     <Page className="page bg-white">
       <AppHeader title="Chấm điểm" showBackIcon />
-      {/* Tiêu đề và các phần */}
-      <Text.Title className="text-center uppercase">{examInfo.title}</Text.Title>
-      <Text.Title className="text-center">
-        Môn: {examInfo.subjectName} &minus; Thời gian: {examInfo.timeLimit / 60} phút
-      </Text.Title>
-
-      <hr />
-
       <Box className="mb-2 flex justify-between align-center">
         <Box>
           <Text bold className="inline">Phần:</Text>
@@ -60,22 +68,82 @@ export default function Marking() {
       </Box>
 
       {
-        <ResultExamPart
+        <MarkingExamPart
           i={currentPart}
           partTitle={examAttempt.examParts[currentPart].partTitle}
           partAnswers={examAttempt.examParts[currentPart].examAttemptAnswers}
+          partPoint={partPoint(examAttempt.examParts[currentPart].examAttemptAnswers)}
+          partCorrectPoint={partCorrectPoint(examAttempt.examParts[currentPart].examAttemptAnswers)}
           currentQuestion={currentQuestion}
           setCurrentQuestion={setCurrentQuestion}
+          updateAttempt={updateAttempt}
         />
       }
+
+      <TextArea
+        className="mt-4 mb-2"
+        label={<Text>Nhận xét bài làm</Text>}
+        value={examAttempt.comment}
+        onChange={e => setExamAttempt({...examAttempt, comment: e.target.value})}
+      />
       
       <footer className="fixed bottom-0 right-0 left-0 text-center bg-white py-2">
         <button
           className="rounded-full zaui-bg-blue-70 zaui-text-blue-10 py-2 px-8"
+          onClick={() => handleMarking()}
         >
           Chấm điểm
         </button>
       </footer>
     </Page>
   )
+
+  async function handleMarking(): Promise<void> {
+    const sendExamAttempt: ExamAttempt = new ExamAttempt(Number(examId), false);
+
+    let totalPoint = 0;
+    examAttempt.examParts.forEach(ea => {
+      ea.examAttemptAnswers.forEach(eaa => {
+        sendExamAttempt.examAttemptAnswers.push(eaa);
+        totalPoint += eaa.point
+      })
+    })
+
+    sendExamAttempt.id = Number(examAttemptId);
+    sendExamAttempt.comment = examAttempt.comment;
+    sendExamAttempt.totalPoint = totalPoint;
+
+    openSnackbar({
+      text: "Đang lưu điểm...",
+      type: "loading",
+      duration: 5000
+    })
+    console.log(sendExamAttempt);
+
+    try {
+      const response = await gradingAttempt(sendExamAttempt);
+      if (response.status === 200) {
+        openSnackbar({
+          text: "Chấm điểm thành công!",
+          type: "success",
+          duration: 1500
+        })
+        setTimeout(() => navTo(`/teacher/detail/${examId}/marking`), 1500);
+      }
+      else {
+        console.error(response);
+        openSnackbar({
+          text: "Chấm điểm thất bại!",
+          type: "error"
+        })
+      }
+    }
+    catch (err) {
+      console.error(err);
+      openSnackbar({
+        text: "Chấm điểm thất bại!",
+        type: "error"
+      })
+    }
+  }
 }

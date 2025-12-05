@@ -1,37 +1,38 @@
 import { Box } from "zmp-ui";
-import { TracNghiemResult } from "../question/multiple-choice";
-import { DungSaiResult } from "../question/true-false";
-import { TraLoiNganResult } from "../question/short-answer";
-import { DienVaoChoTrongResult } from "../question/gap-fill";
-import { TuLuanResult } from "../question/constructed-response";
-import { SapXepResult } from "../question/sorting";
-import { DungSaiTHPTResult } from "../question/true-false-thpt";
+import { TracNghiemResult } from "@/components/student/question/multiple-choice";
+import { DungSaiResult } from "@/components/student/question/true-false";
+import { TraLoiNganMarking } from "@/components/student/question/short-answer";
+import { DienVaoChoTrongMarking } from "@/components/student/question/gap-fill";
+import { TuLuanMarking } from "@/components/student/question/constructed-response";
+import { SapXepResult } from "@/components/student/question/sorting";
+import { DungSaiTHPTResult } from "@/components/student/question/true-false-thpt";
 
-function displayQuestion(answer, partIndex, questionIndex) {
+function displayQuestion(answer, partIndex, questionIndex, updateQuestion) {
   //console.log(answer.studentAnswer);
   switch (answer.question.type) {
     case "multiple-choice": return <TracNghiemResult i={questionIndex} part={partIndex} answer={answer} key={`question-${partIndex}_${questionIndex}`} />
     case "true-false": return <DungSaiResult i={questionIndex} answer={answer} />
-    case "short-answer": return <TraLoiNganResult i={questionIndex} answer={answer} />
-    case "gap-fill": return <DienVaoChoTrongResult i={questionIndex} answer={answer} />
-    case "constructed-response": return <TuLuanResult i={questionIndex} answer={answer} />
+    case "short-answer": return <TraLoiNganMarking i={questionIndex} answer={answer} updateQuestion={updateQuestion} />
+    case "gap-fill": return <DienVaoChoTrongMarking i={questionIndex} answer={answer} updateQuestion={updateQuestion} />
+    case "constructed-response": return <TuLuanMarking i={questionIndex} answer={answer} updateQuestion={updateQuestion} />
     //case "sorting": return <SapXepResult i={questionIndex} answer={answer} />
     case "true-false-thpt": return <DungSaiTHPTResult i={questionIndex} answer={answer} />
     default: return null;
   }
 }
 
-interface ResultExamPartProps {
+interface MarkingExamPartProps {
   i: number;
   partTitle: string;
   partAnswers: any[];
   partPoint: string;
   partCorrectPoint: string;
   currentQuestion: number;
-  setCurrentQuestion: (q: number) => void
+  setCurrentQuestion: (q: number) => void;
+  updateAttempt: (i: number, j: number, prop: string, value: any) => void;
 }
 
-const ResultExamPart = ({i, partTitle, partAnswers, currentQuestion, partPoint, partCorrectPoint, setCurrentQuestion}: ResultExamPartProps) => {
+const MarkingExamPart = ({i, partTitle, partAnswers, currentQuestion, partPoint, partCorrectPoint, setCurrentQuestion, updateAttempt}: MarkingExamPartProps) => {
   const questionClass = (partAnswer, index: number) => {
     if (currentQuestion === index) {
       if (partAnswer.correct[0] === -1) return "zaui-border-blue-70 zaui-bg-blue-70 zaui-text-blue-10";
@@ -45,6 +46,10 @@ const ResultExamPart = ({i, partTitle, partAnswers, currentQuestion, partPoint, 
       if (partAnswer.point < partAnswer.correctPoint) return "zaui-border-yellow-70 zaui-bg-yellow-10 zaui-text-yellow-70";
       return "zaui-border-green-70 zaui-bg-green-10 zaui-text-green-70";
     }
+  }
+
+  const updateQuestion = (prop: ("correct"|"point"), value: any) => {
+    updateAttempt(i, currentQuestion, prop, value);
   }
 
   return (
@@ -67,10 +72,10 @@ const ResultExamPart = ({i, partTitle, partAnswers, currentQuestion, partPoint, 
       </Box>
 
       <Box>
-        {displayQuestion(partAnswers[currentQuestion], i, currentQuestion)}
+        {displayQuestion(partAnswers[currentQuestion], i, currentQuestion, updateQuestion)}
       </Box>
     </>
   )
 }
 
-export { ResultExamPart }
+export { MarkingExamPart }
