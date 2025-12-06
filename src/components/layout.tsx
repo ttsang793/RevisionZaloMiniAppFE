@@ -32,8 +32,9 @@ import ExamMaker from "@/pages/teacher/exam/maker";
 import ExamQuestions from "@/pages/teacher/exam/maker/Exam";
 import PDFExamQuestions from "@/pages/teacher/exam/maker/PDF-exam";
 import ExamManagement from "@/pages/teacher/exam";
-import ExamDetail from "@/pages/teacher/exam/detail";
+import TeacherExamDetail from "@/pages/teacher/exam/detail";
 import ExamMarking from "@/pages/teacher/exam/detail/marking";
+import PDFExamMarking from "@/pages/teacher/exam/detail/pdf-marking";
 import TeacherSettingPage from "@/pages/teacher/setting";
 
 // Admin
@@ -118,8 +119,9 @@ const Layout = () => {
                 <Route path="maker/:type/:id" element={<ExamMaker />} />
                 <Route path="question/:id" element={<ExamQuestions />} />
                 <Route path="question/pdf/:id" element={<PDFExamQuestions />} />
-                <Route path="detail/:id/:type" element={<ExamDetail />} />
+                <Route path="detail/:id/:type" element={<TeacherExamDetail />} />
                 <Route path="marking/:examId/:examAttemptId" element={<ExamMarking />} />
+                <Route path="marking/pdf/:examId/:examAttemptId" element={<PDFExamMarking />} />
               </Route>
               <Route path="setting" element={<TeacherSettingPage />} />
               <Route path="*" element={<Navigate to="/teacher" />} />

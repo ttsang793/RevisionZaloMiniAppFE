@@ -2,20 +2,26 @@ import { HeartFill, XLg } from "react-bootstrap-icons";
 import { Box, useNavigate, useSnackbar } from "zmp-ui";
 import { Exam } from "@/models/exam";
 import { FavoriteIcon } from "./favorite";
-import { handleFavorite } from "@/models/student";
-import { deleteHistory } from "@/models/student";
+import { handleFavorite, deleteHistory } from "@/models/student";
+import { getLatestExamAttemptDate } from "@/models/exam-attempt";
+import { useState, useEffect } from "react";
+import { stringToDate } from "@/script/util";
 
 interface ExamHolderProps {
   exam: Exam,
-  latest?: string, // will delete soon
   id?: number
   page?: string,
-  fetchData: () => void
+  fetchData?: () => void
 }
 
-const ExamHolder = ({ exam, latest, id, page = "default", fetchData }: ExamHolderProps) => {
+const ExamHolder = ({ exam, id, page = "default", fetchData }: ExamHolderProps) => {
   const navTo = useNavigate();
   const { openSnackbar } = useSnackbar();
+  const [latest, setLatest] = useState("");
+
+  useEffect(() => {
+    getLatestExamAttemptDate(exam.id!).then(response => setLatest(response.data))
+  }, [])
   
   return (
     <Box className="bg-white rounded-md p-4 text-left inline-block w-full">
@@ -28,7 +34,7 @@ const ExamHolder = ({ exam, latest, id, page = "default", fetchData }: ExamHolde
             <li>Giáo viên: {exam.teacherName}</li>
             <li>Môn: {exam.subjectName} {exam.grade}</li>
             <li>Thời gian: {exam.timeLimit / 60} phút</li>
-            { (!latest) ? <></> : <li>Ngày làm bài gần nhất: {latest}</li> }
+            { (!latest) ? <></> : <li>Ngày làm bài gần nhất: {stringToDate(latest)}</li> }
           </ul>
         </Box>
         
@@ -67,7 +73,7 @@ const ExamHolder = ({ exam, latest, id, page = "default", fetchData }: ExamHolde
   )
 
   async function actionDelete(page) {
-    const response = page === "favorite" ? await handleFavorite(id) : await deleteHistory(id);
+    const response = page === "favorite" ? await handleFavorite(id!) : await deleteHistory(id!);
     if (response.status === 200) {
       openSnackbar({
         text: `${page === "favorite" ? "Bỏ yêu thích đề thi" : "Xóa đề thi ra khỏi lịch sử"} thành công!`,

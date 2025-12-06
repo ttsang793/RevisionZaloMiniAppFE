@@ -13,7 +13,7 @@ type Subject = {
 }
 
 const getSubjects = async () => {
-  const response = await axios.get("/api/subject", { withCredentials: true });
+  const response = await axios.get("/api/subject");
   return response.data;
 }
 

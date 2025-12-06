@@ -1,17 +1,18 @@
 import { ExamCodeQuestionGet } from "@/models/pdf-exam-code";
 import { Box } from "zmp-ui"
-import { PDFResultAnswer } from "./pdf-result-answer";
+import { PDFMarkingAnswer } from "./PDF-marking-answer";
 import { sumThenParseFloat } from "@/script/util";
 
-interface PDFResultExamPartProps {
+interface PDFMarkingExamPartProps {
   partIndex: number;
   question: ExamCodeQuestionGet[];
   answer: string[];
   point: number[];
   correct: boolean[][];
+  updateQuestion: (index: number, value: number, questionPoint: number) => void;
 }
 
-const PDFResultExamPart = ({partIndex, question, answer, point, correct}: PDFResultExamPartProps) => {
+const PDFMarkingExamPart = ({partIndex, question, answer, point, correct, updateQuestion}: PDFMarkingExamPartProps) => {
   return (
     <Box className="mb-4">
       <Box className="zaui-bg-blue-70 zaui-text-blue-10 py-2 px-4 rounded-md font-bold mb-1">
@@ -20,13 +21,14 @@ const PDFResultExamPart = ({partIndex, question, answer, point, correct}: PDFRes
       
       {
         question.map((q, i) =>
-          <PDFResultAnswer
+          <PDFMarkingAnswer
             partIndex={partIndex}
             question={q}
             answer={answer[i]}
             point={point[i]}
             correct={correct[i]}
             key={`question_${partIndex}_${q.questionIndex}`}
+            updateQuestion={updateQuestion}
           />
         )
       }
@@ -34,4 +36,4 @@ const PDFResultExamPart = ({partIndex, question, answer, point, correct}: PDFRes
   )
 }
 
-export { PDFResultExamPart };
+export { PDFMarkingExamPart };

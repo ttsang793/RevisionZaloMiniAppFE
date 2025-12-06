@@ -9,6 +9,7 @@ class PDFQuestionProps {
   answer: string;
   point: number;
   correct: boolean[];
+  updateQuestion: (index: number, value: number, questionPoint: number) => void;
 
   constructor(partIndex: number, question: ExamCodeQuestionGet, answer: string, point: number, correct: boolean[]) {
     this.partIndex = partIndex;
@@ -245,7 +246,7 @@ const components: Record<string, (prop: PDFQuestionProps) => JSX.Element> = {
   "true-false-thpt": prop => <DungSaiTHPT prop={prop} />,
 };
 
-const PDFResultAnswer = ({partIndex, question, answer, point, correct}: PDFQuestionProps) => {
+const PDFMarkingAnswer = ({partIndex, question, answer, point, correct, updateQuestion}: PDFQuestionProps) => {
   const renderComponent = components[question.type];
 
   return (
@@ -253,12 +254,25 @@ const PDFResultAnswer = ({partIndex, question, answer, point, correct}: PDFQuest
       {renderComponent(new PDFQuestionProps(partIndex, question, answer, point, correct))}
       <Text className="zaui-text-blue-70 text-right">
       {
-        point === question.point ? `(${floatTwoDigits(point)} đ)`
-        : `(${floatTwoDigits(point)} / ${floatTwoDigits(question.point)} đ)`
+        ["short-answer", "gap-fill", "constructed-response"].includes(question.type) ? (
+          <>
+            (
+            <input
+              type="number" min={0} max={question.point}
+              step={question.type === "short-answer" ? question.point : 0.05}
+              className="rounded-md border p-2 h-7 w-16"
+              value={point} onChange={e => updateQuestion(question.questionIndex - 1, Number(e.target.value), question.point)}
+            />
+            / {floatTwoDigits(question.point)} đ)
+          </>
+        ) : (
+          point === question.point ? `(${floatTwoDigits(point)} đ)`
+          : `(${floatTwoDigits(point)} / ${floatTwoDigits(question.point)} đ)`
+        )
       }
       </Text>
     </Box>
   )
 }
 
-export { PDFResultAnswer }
+export { PDFMarkingAnswer }

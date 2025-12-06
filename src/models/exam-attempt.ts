@@ -97,6 +97,10 @@ function getLatestExamAttempt(examId: number) {
   return axios.get(`/api/exam/attempt/${studentId}/${examId}/latest`);
 }
 
+function getLatestExamAttemptDate(examId: number) {
+  return axios.get(`/api/exam/attempt/${studentId}/${examId}/latest/date`);
+}
+
 function getExamAttemptById(examAttemptId: number) {
   return axios.get(`/api/exam/attempt/${examAttemptId}`);
 }
@@ -238,4 +242,4 @@ async function gradingAttempt(examAttempt: ExamAttempt): Promise<any> {
   }
 }
 
-export { ExamAttempt, ExamAttemptGet, getLatestExamAttempt, getExamAttemptById, getExamAttemptsByExamId, insertAttempt, gradingAttempt, checkAchievement };
+export { ExamAttempt, ExamAttemptGet, getLatestExamAttempt, getLatestExamAttemptDate, getExamAttemptById, getExamAttemptsByExamId, insertAttempt, gradingAttempt, checkAchievement };

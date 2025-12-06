@@ -27,10 +27,16 @@ class Exam {
   historyId?: number;
 }
 
-class ExamAttemptsRecord {
-  maxTotalPoint?: number;
-  duration?: number;
-  count: number = 0;
+class ExamDetail {
+  partCount!: number;
+  questionCount!: number;
+  topics!: string[];
+}
+
+class ExamRecord {
+  maxTotalPoint!: number;
+  duration!: number;
+  count!: number;
 }
 
 function getPublishExams() {
@@ -41,12 +47,12 @@ function getExamById(id: number) {
   return axios.get(`/api/exam/${id}`);
 }
 
-function getExamAttemptsRecordByExamId(id: number) {
-  return axios.get(`/api/exam/attempt/exam/${id}/record`);
+function getExamDetailById(id: number) {
+  return axios.get(`/api/exam/${id}/detail`);
 }
 
-function getExamTopicsByExamId(id: number) {
-  return axios.get(`/api/exam/${id}/topic`);
+function getExamRecordById(id: number) {
+  return axios.get(`/api/exam/${id}/record`);
 }
 
 function getExamsByTeacher(tId = teacherId) {
@@ -101,7 +107,7 @@ async function publishExam(id: number): Promise<any> {
   }
 }
 
-export { Exam, ExamAttemptsRecord, getPublishExams, getExamById,
-          getExamAttemptsRecordByExamId, getExamTopicsByExamId,
+export { Exam, ExamDetail, ExamRecord, getPublishExams, getExamById,
+          getExamDetailById, getExamRecordById,
           getPublishExamsByTeacher, getExamsByTeacher,
           insertExam, updateExam, deleteExam, publishExam }

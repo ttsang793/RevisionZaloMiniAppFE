@@ -57,6 +57,10 @@ hr {
   }
 }
 
+.no-resize-textarea {
+  resize: none;
+}
+
 /* Steelblue */
 .zaui-text-steelblue-10 { color: var(--colors-steelblue-10); }
 .zaui-bg-steelblue-10 { background-color: var(--colors-steelblue-10); }

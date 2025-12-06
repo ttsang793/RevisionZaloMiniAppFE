@@ -56,7 +56,7 @@ export default function InfoTopicModal({visible = false, setVisible, editId = ""
         </Text>
 
         <Select
-          label="Môn học" closeOnSelect defaultValue="-1"
+          closeOnSelect defaultValue="-1"
           label={<Text size="small" className="mt-4">Môn học <span className="required">*</span></Text>}
           onChange={(e: string) => { setErrors({...errors, subject: ""}); setTopic({...topic, subjectId: e})} }
           errorText={errors.subject} status={!errors.subject ? "" : "error"}

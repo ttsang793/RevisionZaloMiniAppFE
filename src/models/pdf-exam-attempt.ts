@@ -4,9 +4,13 @@ import { ExamCodeQuestionGet } from "./pdf-exam-code";
 const studentId = Number(sessionStorage.getItem("id"));
 
 class PdfExamAttempt {
+  id?: number;
   examId: number;
   studentId: number = studentId;
+  taskPdf: string = "";
+  answerPdf: string = "";
   totalPoint: number = 0;
+  comment?: string;
   startedAt: Date = new Date();
   pdfExamCodeId: number = -1;
   studentAnswer: string[] = [];
@@ -19,7 +23,11 @@ class PdfExamAttempt {
 }
 
 function getPdfExamAttempt(examId: number) {
-  return axios.get(`/api/exam-attempt/pdf?studentId=${studentId}&examId=${examId}`);
+  return axios.get(`/api/exam/attempt/pdf/${studentId}/${examId}`);
+}
+
+function getPdfExamAttemptById(examAttemptId: number) {
+  return axios.get(`/api/exam/attempt/pdf/${examAttemptId}`);
 }
 
 function handleTrueFalseTHPTQuestion(q: ExamCodeQuestionGet): { point: number, correct: boolean[] } {
@@ -92,8 +100,15 @@ async function insertPdfExamAttempt(examAnswer: ExamCodeQuestionGet[], pdfExamAt
   }
 }
 
-async function checkAchievement() {
-  axios.post(`/api/exam/attempt/achievement/${studentId}`);
+async function gradingPdfAttempt(pdfExamAttempt: PdfExamAttempt): Promise<any> {
+  try {
+    const response = await axios.put(`/api/exam/attempt/pdf/grading/${pdfExamAttempt.id}`, pdfExamAttempt, { headers: { "Content-Type": "application/json" } });
+    return response;
+  }
+  catch (err) {
+    console.log(err);
+    return err;
+  }
 }
 
-export { PdfExamAttempt, getPdfExamAttempt, insertPdfExamAttempt, checkAchievement }
+export { PdfExamAttempt, getPdfExamAttempt, getPdfExamAttemptById, insertPdfExamAttempt, gradingPdfAttempt }

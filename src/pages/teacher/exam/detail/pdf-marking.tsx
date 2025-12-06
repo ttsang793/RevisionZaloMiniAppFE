@@ -1,12 +1,13 @@
-import { Box, Page, Text, useParams, useNavigate } from "zmp-ui";
+import { Box, Page, Text, useParams, useNavigate, useSnackbar, Input } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { Exam, getExamById } from "@/models/exam";
 import { ExamCodeGet, ExamCodeQuestionGet, getExamCodeByExamId } from "@/models/pdf-exam-code";
 import { openDocument } from "zmp-sdk";
-import { getPdfExamAttempt, PdfExamAttempt } from "@/models/pdf-exam-attempt";
-import { PDFResultExamPart } from "@/components/student/pdf-exam/pdf-result-exam-part";
+import { getPdfExamAttemptById, gradingPdfAttempt, PdfExamAttempt } from "@/models/pdf-exam-attempt";
+import { PDFMarkingExamPart } from "@/components/teacher/exam/maker/PDF-marking-exam-part";
 import AppHeader from "@/components/header";
 import { floatTwoDigits } from "@/script/util";
+import { checkAchievement } from "@/models/exam-attempt";
 
 class PDFPart {
   question: ExamCodeQuestionGet[];
@@ -19,15 +20,16 @@ class PDFPart {
   }
 };
 
-export default function PDFExamResultPage() {
-  const { id } = useParams();
+export default function PDFExamMarking() {
+  const { examId, examAttemptId } = useParams();
   const navTo = useNavigate();
   const [loading, setLoading] = useState(true);
-
+  const { TextArea } = Input;
+  const { openSnackbar } = useSnackbar();
   const [examInfo, setExamInfo] = useState<Exam>(new Exam());
   const [code, setCode] = useState("");
   const [currentPart, setCurrentPart] = useState(0);
-  const [examAttempt, setExamAttempt] = useState<PdfExamAttempt>(new PdfExamAttempt(Number(id)));
+  const [examAttempt, setExamAttempt] = useState<PdfExamAttempt>(new PdfExamAttempt(Number(examId)));
   const [examParts, setExamParts] = useState<PDFPart[]>([]);
 
   useEffect(() => {
@@ -36,14 +38,14 @@ export default function PDFExamResultPage() {
         const parts: PDFPart[] = [];
         setExamParts([]);
 
-        const examInfoResponse = await getExamById(Number(id));
+        const examInfoResponse = await getExamById(Number(examId));
         setExamInfo(examInfoResponse.data);
 
-        const examPartResponse = await getPdfExamAttempt(Number(id));
+        const examPartResponse = await getPdfExamAttemptById(Number(examAttemptId));
         const attempt: PdfExamAttempt = examPartResponse.data;
         setExamAttempt(attempt);
 
-        const examCodeResponse = await getExamCodeByExamId(Number(id), attempt.pdfExamCodeId);
+        const examCodeResponse = await getExamCodeByExamId(Number(examId), attempt.pdfExamCodeId);
         const examCode: ExamCodeGet = examCodeResponse.data;
         setCode(examCode.code);
         for (let i = 0; i < examCode.numPart; i++)
@@ -56,6 +58,9 @@ export default function PDFExamResultPage() {
           parts[i].point = attempt.pointBoard.slice(j, k);
           j = k;
         }
+        console.log(attempt);
+        console.log(parts);
+
         setExamParts(parts);
         setLoading(false);
       }
@@ -63,6 +68,13 @@ export default function PDFExamResultPage() {
 
     fetchExam();
   }, []);
+
+  const updatePart = (i: number, value: number, questionPoint: number) => {
+    const newPart = [...examParts];
+    newPart[currentPart].point[i] = value;
+    newPart[currentPart].correct[i] = [value === questionPoint];
+    setExamParts(newPart);
+  }
 
   return loading ? <></> : (
     <Page className="page bg-white">
@@ -105,24 +117,85 @@ export default function PDFExamResultPage() {
 
         <Text>Điểm: <b><span className="zaui-text-red-50">{floatTwoDigits(examAttempt.totalPoint)}</span> / 10</b></Text>
       </Box>
-
       
-      <PDFResultExamPart
+      <PDFMarkingExamPart
         partIndex={currentPart + 1}
         question={examParts[currentPart].question}
         answer={examParts[currentPart].answer}
         point={examParts[currentPart].point}
         correct={examParts[currentPart].correct}
+        updateQuestion={updatePart}
+      />
+
+      <TextArea
+        className="mt-4 mb-2"
+        label={<Text>Nhận xét bài làm</Text>}
+        value={examAttempt.comment}
+        onChange={e => setExamAttempt({...examAttempt, comment: e.target.value})}
       />
       
       <footer className="fixed bottom-0 right-0 left-0 text-center bg-white py-2">
         <button
           className="rounded-full zaui-bg-blue-70 zaui-text-blue-10 py-2 px-8"
-          onClick={() => navTo(`/student/exam/preview/${id}`)}
+          onClick={() => handleMarking()}
         >
-          Làm lại bài
+          Chấm điểm
         </button>
       </footer>
     </Page>
   )
+
+  async function handleMarking(): Promise<void> {
+    console.log(examParts);
+    const pointBoard: number[] = [];
+    const correctBoard: boolean[][] = [];
+    let totalPoint = 0;
+
+    examParts.forEach(examPart => {
+      examPart.point.forEach(p => {
+        pointBoard.push(p);
+        totalPoint += p;
+      });
+      examPart.correct.forEach(c => correctBoard.push(c));
+    })
+
+    examAttempt.id = Number(examAttemptId);
+    examAttempt.pointBoard = pointBoard;
+    examAttempt.correctBoard = correctBoard;
+    examAttempt.totalPoint = totalPoint;
+
+    openSnackbar({
+      text: "Đang lưu điểm...",
+      type: "loading",
+      duration: 5000
+    })
+
+    try {
+      const response = await gradingPdfAttempt(examAttempt);
+      if (response.status === 200) {
+        openSnackbar({
+          text: "Chấm điểm thành công!",
+          type: "success",
+          duration: 1500
+        })
+
+        await checkAchievement(examAttempt.studentId);
+        setTimeout(() => navTo(`/teacher/exam/detail/${examId}/marking`), 1500);
+      }
+      else {
+        console.error(response);
+        openSnackbar({
+          text: "Chấm điểm thất bại!",
+          type: "error"
+        })
+      }
+    }
+    catch (err) {
+      console.error(err);
+      openSnackbar({
+        text: "Chấm điểm thất bại!",
+        type: "error"
+      })
+    }
+  }
 }

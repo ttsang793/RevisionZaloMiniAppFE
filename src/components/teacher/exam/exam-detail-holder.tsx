@@ -2,7 +2,7 @@ import { Box, useNavigate } from "zmp-ui"
 import { parseMinutesAndSeconds, floatTwoDigits, stringToDate } from "@/script/util";
 import { ExamAttemptGet } from "@/models/exam-attempt";
 
-const ExamDetailHolder = ({examId, examAttempt}: {examId: string, examAttempt: ExamAttemptGet}) => {
+const ExamDetailHolder = ({examId, examType, examAttempt}: {examId: string, examType: string, examAttempt: ExamAttemptGet}) => {
   const navTo = useNavigate();
 
   console.log(examAttempt);
@@ -20,15 +20,17 @@ const ExamDetailHolder = ({examId, examAttempt}: {examId: string, examAttempt: E
       </ul>
 
       <Box className="text-center">
-        <button
-          className="zaui-bg-blue-80 text-white rounded-full py-1 px-2 text-sm"
-          onClick={() => navTo(`/teacher/exam/marking/${examId}/${examAttempt.id}`)}
-        >
+        <button className="zaui-bg-blue-80 text-white rounded-full py-1 px-2 text-sm" onClick={routing}>
           Chấm điểm
         </button>
       </Box>
     </Box>
   )
+
+  function routing() {
+    if (examType === "pdf") navTo(`/teacher/exam/marking/pdf/${examId}/${examAttempt.id}`);
+    else navTo(`/teacher/exam/marking/${examId}/${examAttempt.id}`);
+  }
 }
 
 export { ExamDetailHolder }

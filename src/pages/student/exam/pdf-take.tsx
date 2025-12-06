@@ -5,7 +5,8 @@ import { ExamCodeGet, ExamCodeQuestionGet, getExamCodeByExamId } from "@/models/
 import { openDocument } from "zmp-sdk";
 import { Countdown } from "@/components/student/exam/countdown";
 import { PDFExamPart } from "@/components/student/pdf-exam/pdf-exam-part";
-import { insertPdfExamAttempt, PdfExamAttempt, checkAchievement } from "@/models/pdf-exam-attempt";
+import { insertPdfExamAttempt, PdfExamAttempt } from "@/models/pdf-exam-attempt";
+import { checkAchievement } from "@/models/exam-attempt";
 
 export default function TakePDFExamPage({practice}: {practice: boolean}) {
   const { id } = useParams();
@@ -147,6 +148,11 @@ export default function TakePDFExamPage({practice}: {practice: boolean}) {
 
   async function turnIn(): Promise<void> {
     setEarlySubmitVisible(false);
+    openSnackbar({
+      text: "Đang nộp bài...",
+      type: "loading"
+    })
+    
     const response = await insertPdfExamAttempt(examAnswer.questions, pdfExamAttempt);
     if (response.status === 201) {      
       openSnackbar({

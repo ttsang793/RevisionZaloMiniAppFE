@@ -31,7 +31,7 @@ export default function FavoritePage() {
       <Box className="flex gap-5 flex-wrap justify-center">
       {
         loading ? <>Đang tải đề, chờ chút nhé!</>
-                : examList.map((exam: Exam) => <ExamHolder exam={exam} latest="21/10/2025" id={exam.id} page="favorite" fetchData={fetchData} key={`exam-${exam.id}`} />)
+                : examList.map((exam: Exam) => <ExamHolder exam={exam} id={exam.id} page="favorite" fetchData={fetchData} key={`exam-${exam.id}`} />)
       }
       </Box>
     </Page>

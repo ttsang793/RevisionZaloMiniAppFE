@@ -4,16 +4,16 @@ import { useParams } from "react-router-dom";
 import { Text, Page, Tabs } from "zmp-ui";
 import { useState, useEffect } from "react";
 import AppHeader from "@/components/header";
-import { Exam, ExamAttemptsRecord, getExamById, getExamAttemptsRecordByExamId, getExamTopicsByExamId } from "@/models/exam";
+import { Exam, ExamDetail, ExamRecord, getExamById, getExamDetailById, getExamRecordById } from "@/models/exam";
 import { stringToDate, floatTwoDigits, parseMinutesAndSeconds } from "@/script/util";
 import ExamMarking from "./marking-list";
 
-export default function ExamDetail() {
+export default function TeacherExamDetail() {
   const { id, type } = useParams();
   const [examInfo, setExamInfo] = useState<Exam>(new Exam());
+  const [record, setRecord] = useState<ExamRecord>(new ExamRecord());
+  const [detail, setDetail] = useState<ExamDetail>(new ExamDetail());
   const [loading, setLoading] = useState(true);
-  const [examAttemptsRecord, setExamAttemptsRecord] = useState<ExamAttemptsRecord>(new ExamAttemptsRecord());
-  const [topic, setTopic] = useState([]);
 
   useEffect(() => {
     fetchData();
@@ -31,22 +31,22 @@ export default function ExamDetail() {
           <Calendar3 /><span><b>Ngày xuất bản: {stringToDate(examInfo.publishedAt.toString())}</b></span>
         </li>
         <li className="grid grid-cols-[16px_1fr] gap-x-2 text-justify py-0.5">
-          <PersonFill /><span><b>Lượt làm bài:</b> {examAttemptsRecord.count} lượt</span>
+          <PersonFill /><span><b>Lượt làm bài:</b> {record.count} lượt</span>
         </li>
         <li className="grid grid-cols-[16px_1fr] gap-x-2 text-justify py-0.5">
-          <ClockFill /><span><b>Thời gian:</b> {examInfo.timeLimit / 60} phút | 3 phần | 22 câu hỏi</span>
+          <ClockFill /><span><b>Thời gian:</b> {examInfo.timeLimit / 60} phút | {detail.partCount} phần | {detail.questionCount} câu hỏi</span>
         </li>
         {
-          (!examAttemptsRecord.maxTotalPoint) ? <></> : (
+          (!record.maxTotalPoint) ? <></> : (
             <li className="grid grid-cols-[16px_1fr] gap-x-2 text-justify py-0.5">
-              <TrophyFill /><span><b>Điểm cao nhất:</b> {floatTwoDigits(examAttemptsRecord.maxTotalPoint)} ({parseMinutesAndSeconds(examAttemptsRecord.duration!)})</span>
+              <TrophyFill /><span><b>Điểm cao nhất:</b> {floatTwoDigits(record.maxTotalPoint)} ({parseMinutesAndSeconds(record.duration)})</span>
             </li>
           )
         }
         {
-          (topic.length === 0) ? <></> : (
+          (!detail.topics) ? <></> : (
             <li className="grid grid-cols-[16px_1fr] gap-x-2 text-justify py-0.5">
-              <ChatTextFill /><span><b>Chủ đề:</b> {topic.join(";")}</span>
+              <ChatTextFill /><span><b>Chủ đề:</b> {detail.topics.join("; ")}</span>
             </li>
           )
         }
@@ -57,7 +57,7 @@ export default function ExamDetail() {
           <CommentBlock id={id} />
         </Tabs.Tab>
         <Tabs.Tab label="Chấm điểm" key="marking">
-          <ExamMarking id={id} />
+          <ExamMarking id={id} type={examInfo.displayType} />
         </Tabs.Tab>
       </Tabs>
     </Page>
@@ -70,11 +70,11 @@ export default function ExamDetail() {
       const examResponse = await getExamById(examId);
       setExamInfo(examResponse.data);
       
-      const topicResponse = await getExamTopicsByExamId(examId);
-      setTopic(topicResponse.data);
+      const detailResponse = await getExamDetailById(examId);
+      setDetail(detailResponse.data);
 
-      const earResponse = await getExamAttemptsRecordByExamId(examId);
-      setExamAttemptsRecord(earResponse.data);
+      const recordResponse = await getExamRecordById(examId);
+      setRecord(recordResponse.data);
     }
     setLoading(false);
   }

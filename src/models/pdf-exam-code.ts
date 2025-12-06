@@ -62,8 +62,9 @@ class ExamCodeQuestionGet {
 }
 
 function getExamCodeByExamId(examId: number, id?: number) {
-  if (id === undefined) return axios.get(`/api/pdf-exam-code/${examId}`);
-  return axios.get(`/api/pdf-exam-code/${examId}?pdfExamCodeId=${id}`);
+  console.log(id);
+  if (!id) return axios.get(`/api/pdf-exam-code/${examId}`);
+  return axios.get(`/api/pdf-exam-code/${examId}/${id}`);
 }
 
 function insertCode(examCodes: ExamCode[]) {
