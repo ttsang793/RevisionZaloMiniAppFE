@@ -91,10 +91,10 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
         <Box>
           <Text bold className="inline">Phần:</Text>
           {
-            examQuestions.partTitles.map((e, i) =>
+            examQuestions.partTitles.map((_, i) =>
               <button
                 className={`rounded-full size-6 ms-1 border ${currentPart === i ? "zaui-border-blue-70 zaui-bg-blue-70 zaui-text-blue-10" : "zaui-border-blue-70 zaui-bg-blue-10 zaui-text-blue-70"}`}
-                onClick={() => handleChangePart(i)} key={e}
+                onClick={() => handleChangePart(i)} key={`part-${i + 1}`}
               >
                 {i + 1}
               </button>
@@ -111,16 +111,14 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
       </Box>
 
       {/* Danh sách câu hỏi của phần */}
-      {
-        <ExamPart
-          i={currentPart} practice={practice}
-          currentQuestion={currentQuestion} setCurrentQuestion={setCurrentQuestion}
-          partTitle={examQuestions.partTitles[currentPart]}
-          partQuestions={examQuestionList[currentPart]}
-          answerList={examAnswerList[currentPart]}
-          updateAnswerList={(newList: any[]) => updateExamAnswerList(currentPart, newList)}
-        />
-      }
+      <ExamPart
+        i={currentPart} practice={practice}
+        currentQuestion={currentQuestion} setCurrentQuestion={setCurrentQuestion}
+        partTitle={examQuestions.partTitles[currentPart]}
+        partQuestions={examQuestionList[currentPart]}
+        answerList={examAnswerList[currentPart]}
+        updateAnswerList={(newList: any[]) => updateExamAnswerList(currentPart, newList)}
+      />
 
       <footer
         className={allowEarlySubmit ? "fixed bottom-4 right-0 left-0 text-center bg-white" : "hidden"}
@@ -170,11 +168,10 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
         duration: 1500
       })
 
+      await checkAchievement();
       setTimeout(() => {
         navTo(`/student/exam/result/${id}`, { replace: true })
       }, 1500);
-
-      //await checkAchievement().then(() => navTo(`/student/exam/result/${id}`));
     }
   }
 }

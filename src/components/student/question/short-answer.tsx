@@ -204,7 +204,7 @@ const TraLoiNganMarking = ({i, answer, updateQuestion}) => {
       <Checkbox
         className="mt-2" value="" checked={answer.correct[0]}
         onChange={e => {
-          updateQuestion("correct", [e.target.checked]);
+          updateQuestion("correct", [e.target.checked ? 1 : 0]);
           updateQuestion("point", e.target.checked ? answer.correctPoint : 0);
         }}
       >

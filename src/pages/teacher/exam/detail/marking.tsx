@@ -1,7 +1,7 @@
 import { Box, Page, Text, useParams, useNavigate, useSnackbar, Input } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { Exam, getExamById } from "@/models/exam";
-import { ExamAttempt, ExamAttemptGet, getExamAttemptById, gradingAttempt } from "@/models/exam-attempt";
+import { checkAchievement, ExamAttempt, ExamAttemptGet, getExamAttemptById, gradingAttempt } from "@/models/exam-attempt";
 import AppHeader from "@/components/header";
 import { floatTwoDigits } from "@/script/util";
 import { MarkingExamPart } from "@/components/teacher/exam/marking-exam-part";
@@ -110,6 +110,7 @@ export default function ExamMarking() {
     })
 
     sendExamAttempt.id = Number(examAttemptId);
+    sendExamAttempt.studentId = examAttempt.studentId!;
     sendExamAttempt.comment = examAttempt.comment;
     sendExamAttempt.totalPoint = totalPoint;
 
@@ -118,7 +119,6 @@ export default function ExamMarking() {
       type: "loading",
       duration: 5000
     })
-    console.log(sendExamAttempt);
 
     try {
       const response = await gradingAttempt(sendExamAttempt);
@@ -128,7 +128,9 @@ export default function ExamMarking() {
           type: "success",
           duration: 1500
         })
-        setTimeout(() => navTo(`/teacher/detail/${examId}/marking`), 1500);
+
+        await checkAchievement(examAttempt.studentId);
+        setTimeout(() => navTo(`/teacher/exam/detail/${examId}/marking`), 1500);
       }
       else {
         console.error(response);

@@ -163,7 +163,7 @@ const TuLuan = ({prop}: {prop: PDFQuestionProps}) => {
 
       <Box className="flex gap-x-1 gap-y-1.5 flex-wrap">
         <textarea
-          className="h-7 rounded-md border zaui-border-blue-80 w-full p-2 h-20"
+          className="rounded-md border zaui-border-blue-80 w-full p-2 h-20"
           onChange={e => updateAnswer("studentAnswer", e.target.value)}
         />
       </Box>

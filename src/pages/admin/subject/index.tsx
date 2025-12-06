@@ -10,19 +10,19 @@ export default function SubjectManagement() {
   const { openSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(true);
   const [subjectList, setSubjectList] = useState([]);
-  const role = sessionStorage.getItem("role");
+  //const role = sessionStorage.getItem("role");
   let [visible, setVisible] = useState(false);
   let [editId, setEditId] = useState("");
 
   useEffect(() => {
-    if (role !== "AD") {
-      navTo("/admin", { replace: true });
-      return; 
-    }
+    // if (role !== "AD") {
+    //   navTo("/admin", { replace: true });
+    //   return; 
+    // }
     fetchData();
   }, [])
 
-  return (role !== "AD") ? <></> : (
+  return /*(role !== "AD") ? <></> :*/ (
     <Page className="page-admin">
       <Text.Title
         className="text-center uppercase text-3xl mb-3 font-bold"

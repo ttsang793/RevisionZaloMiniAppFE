@@ -8,9 +8,10 @@ class PdfExamAttempt {
   studentId: number = studentId;
   totalPoint: number = 0;
   startedAt: Date = new Date();
-  codeId: number = -1;
+  pdfExamCodeId: number = -1;
   studentAnswer: string[] = [];
-  scoreBoard: number[] = [];
+  pointBoard: number[] = [];
+  correctBoard: boolean[][] = [];
 
   constructor(examId: number) {
     this.examId = examId;
@@ -21,68 +22,78 @@ function getPdfExamAttempt(examId: number) {
   return axios.get(`/api/exam-attempt/pdf?studentId=${studentId}&examId=${examId}`);
 }
 
-function handleTrueFalseTHPTQuestion(q: ExamCodeQuestionGet): number {
-  let defaultCorrect = 0b0000;
+function handleTrueFalseTHPTQuestion(q: ExamCodeQuestionGet): { point: number, correct: boolean[] } {
+  let correctBoard = [false, false, false, false];
   let count = 0;
   for (let i = 0; i < 4; i++)
     if (q.studentAnswers[i] === q.answerKey[i]) {
       count++;
-      defaultCorrect = defaultCorrect | 1 << i;
+      correctBoard[i] = true;
     }
   
   switch (count) {
-    case 1: return 0.1;
-    case 2: return 0.25;
-    case 3: return 0.5;
-    case 4: return 1;
-    default: return 0;
+    case 1: return { point: 0.1, correct: correctBoard };
+    case 2: return { point: 0.25, correct: correctBoard };
+    case 3: return { point: 0.5, correct: correctBoard };
+    case 4: return { point: 1, correct: correctBoard };
+    default: return { point: 0, correct: correctBoard };
   }
 }
 
-async function insertPdfExamAttempt(examAnswer: ExamCodeQuestionGet[], pdfExamAttempt: PdfExamAttempt): Promise<number> {
+async function insertPdfExamAttempt(examAnswer: ExamCodeQuestionGet[], pdfExamAttempt: PdfExamAttempt): Promise<any> {
   let totalPoint = 0;
-  const scoreBoard: number[] = [];
+  const pointBoard: number[] = [];
+  const correctBoard: boolean[][] = [];
   pdfExamAttempt.studentAnswer = [];
   examAnswer.forEach(ea => {
+    let compare: boolean;
+
     switch (ea.type) {
       case "multiple-choice": case "true-false":
         pdfExamAttempt.studentAnswer.push(ea.studentAnswer || "");
-        if (ea.answerKey === ea.studentAnswer!) { scoreBoard.push(ea.point); score += ea.point; }
-        else scoreBoard.push(0);
+        compare = ea.answerKey === ea.studentAnswer;
+        correctBoard.push([compare]);
+        if (compare) { pointBoard.push(ea.point); totalPoint += ea.point; }
+        else pointBoard.push(0);
         break;
       case "short-answer":
         pdfExamAttempt.studentAnswer.push(ea.studentAnswers.join("") || "");
-        if (ea.answerKey === ea.studentAnswers.join("")) { scoreBoard.push(ea.point); score += ea.point }
-        else scoreBoard.push(0);
+        compare = ea.answerKey === ea.studentAnswers.join("");
+        correctBoard.push([compare]);
+        if (ea.answerKey === ea.studentAnswers.join("")) { pointBoard.push(ea.point); totalPoint += ea.point }
+        else pointBoard.push(0);
         break;
       case "gap-fill": case "constructed-response":
+        correctBoard.push([false]);
         pdfExamAttempt.studentAnswer.push(ea.studentAnswer || "");
-        scoreBoard.push(-1);
+        pointBoard.push(0);
         break;
       case "true-false-thpt":
         pdfExamAttempt.studentAnswer.push(ea.studentAnswers.join("") || "");
-        const point = handleTrueFalseTHPTQuestion(ea);
-        scoreBoard.push(point);
-        totalPoint += point;
+        const result = handleTrueFalseTHPTQuestion(ea);
+        pointBoard.push(result.point);
+        correctBoard.push(result.correct);
+        totalPoint += result.point;
         break;
     }
   })
 
   pdfExamAttempt.totalPoint = Math.round(totalPoint * 100) / 100;
-  pdfExamAttempt.scoreBoard = scoreBoard;
+  pdfExamAttempt.pointBoard = pointBoard;
+  pdfExamAttempt.correctBoard = correctBoard;
 
   try {
-    const response = await axios.post("/api/exam-attempt/pdf", pdfExamAttempt, { headers: { "Content-Type": "application/json" } });
-    return response.status;
+    const response = await axios.post("/api/exam/attempt/pdf", pdfExamAttempt, { headers: { "Content-Type": "application/json" } });
+    return response;
   }
   catch (err) {
-    console.error(err);
-    return 500;
+    console.log(err);
+    return err;
   }
 }
 
 async function checkAchievement() {
-  axios.post(`/api/exam-attempt/achievement/${studentId}`);
+  axios.post(`/api/exam/attempt/achievement/${studentId}`);
 }
 
 export { PdfExamAttempt, getPdfExamAttempt, insertPdfExamAttempt, checkAchievement }

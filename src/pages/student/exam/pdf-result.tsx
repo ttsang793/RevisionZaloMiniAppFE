@@ -40,7 +40,7 @@ export default function PDFExamResultPage() {
         const attempt: PdfExamAttempt = examPartResponse.data;
         setExamAttempt(attempt);
 
-        const examCodeResponse = await getExamCodeByExamId(Number(id), attempt.codeId);
+        const examCodeResponse = await getExamCodeByExamId(Number(id), attempt.pdfExamCodeId);
         const examCode: ExamCodeGet = examCodeResponse.data;
         setCode(examCode.code);
         for (let i = 0; i < examCode.numPart; i++)
@@ -49,7 +49,7 @@ export default function PDFExamResultPage() {
         for (let i = 0, j = 0; j < attempt.studentAnswer.length; i++) {
           const k = j + parts[i].question.length;
           parts[i].answer = attempt.studentAnswer.slice(j, k);
-          parts[i].score = attempt.scoreBoard.slice(j, k);
+          parts[i].score = attempt.pointBoard.slice(j, k);
           j = k;
         }
         setExamParts(parts);

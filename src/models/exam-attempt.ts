@@ -217,18 +217,23 @@ async function postAttempt(examAttempt: ExamAttempt): Promise<number> {
   }
 }
 
-async function checkAchievement() {
-  await axios.post(`/api/exam/attempt/achievement/${studentId}`);
+async function checkAchievement(sId = studentId) {
+  await axios.post(`/api/exam/attempt/achievement/${sId}`);
 }
 
 async function gradingAttempt(examAttempt: ExamAttempt): Promise<any> {
-  console.log(examAttempt);
   try {
-    const response = await axios.put(`/api/exam/attempt/grading/${examAttempt.id}`, examAttempt,
-                            { headers: { "Content-Type": "application/json" } });
+    const response = axios.put(`/api/exam/attempt/grading/${examAttempt.id}`, examAttempt,
+                      { headers: { "Content-Type": "application/json" } });
+
     return response;
   }
-  catch (err) {
+  catch (err: any) {
+    if (err.response) {
+      console.error("Backend returned error:", err.response.status, err.response.data);
+    } else {
+      console.error("Network error:", err.message);
+    }
     return err;
   }
 }

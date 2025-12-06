@@ -1,4 +1,4 @@
-import { Box, Page, Text, Modal, useParams, useNavigate } from "zmp-ui";
+import { Box, Page, Text, Modal, useParams, useNavigate, useSnackbar } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { Exam, getExamById } from "@/models/exam";
 import { ExamCodeGet, ExamCodeQuestionGet, getExamCodeByExamId } from "@/models/pdf-exam-code";
@@ -10,10 +10,13 @@ import { insertPdfExamAttempt, PdfExamAttempt, checkAchievement } from "@/models
 export default function TakePDFExamPage({practice}: {practice: boolean}) {
   const { id } = useParams();
   const navTo = useNavigate();
-  const [allowEarlySubmit, setAllowEarlySubmit] = useState(false);
+  const [allowEarlySubmit, setAllowEarlySubmit] = useState(true);
   const [allowShowScore, setAllowShowScore] = useState(false);
   const [earlySubmitVisible, setEarlySubmitVisible] = useState(false);
+  const [autoTurnIn, setAutoTurnIn] = useState(false);
   const [loading, setLoading] = useState(true);
+  const { openSnackbar } = useSnackbar();
+  const [currentPart, setCurrentPart] = useState(1);
 
   const [examParts, setExamParts] = useState<number[]>([]);
   const [examInfo, setExamInfo] = useState<Exam>(new Exam());
@@ -39,7 +42,7 @@ export default function TakePDFExamPage({practice}: {practice: boolean}) {
             setExamAnswer(newExamAnswer);
             for (let i = 1; i <= response.data.numPart; i++) setExamParts(prev =>  [...prev, i]);
             
-            setPdfExamAttempt({...pdfExamAttempt, startedAt: new Date(), codeId: newExamAnswer.id})
+            setPdfExamAttempt({...pdfExamAttempt, startedAt: new Date(), pdfExamCodeId: newExamAnswer.id})
           });
         }
         finally {
@@ -50,6 +53,8 @@ export default function TakePDFExamPage({practice}: {practice: boolean}) {
 
     fetchExam();
   }, []);
+
+  useEffect(() => { if (autoTurnIn) turnIn() }, [autoTurnIn]);
 
   const updateExamAnswer = (pIndex: number, qIndex: number, question: ExamCodeQuestionGet): void => {
     const newQuestions = [...examAnswer.questions];
@@ -71,7 +76,7 @@ export default function TakePDFExamPage({practice}: {practice: boolean}) {
       <Box className="my-2 text-center">
         <button
           className="zaui-bg-blue-70 zaui-text-blue-10 py-2 px-6 rounded-full"
-          onClick={() => openDocument({url: "https://pdfobject.com/pdf/sample.pdf"})}
+          onClick={() => openDocument({url: examAnswer?.taskPDF})}
         >
           Xem đề thi
         </button>
@@ -81,12 +86,12 @@ export default function TakePDFExamPage({practice}: {practice: boolean}) {
         <Box>
           <Text bold className="inline">Phần:</Text>
           {
-            examParts.map((e: number) =>
+            examParts.map((i: number) =>
               <button
-                key={`part-${e}`}
-                className="rounded-full size-6 ms-1 border zaui-border-blue-70 zaui-bg-blue-10 zaui-text-blue-70"
+                className={`rounded-full size-6 ms-1 border ${currentPart === i ? "zaui-border-blue-70 zaui-bg-blue-70 zaui-text-blue-10" : "zaui-border-blue-70 zaui-bg-blue-10 zaui-text-blue-70"}`}
+                key={`part-${i}`} onClick={() => setCurrentPart(i)}
               >
-                {e}
+                {i}
               </button>
             )
           }
@@ -96,19 +101,16 @@ export default function TakePDFExamPage({practice}: {practice: boolean}) {
           timeLimit={examInfo.timeLimit}
           earlyTurnIn={examInfo.earlyTurnIn}
           setAllowEarlySubmit={setAllowEarlySubmit}
+          setAutoTurnIn={setAutoTurnIn}
         />
       </Box>
 
-      {
-        examParts.map((e: number) =>
-          <PDFExamPart
-            partIndex={e} key={`Part_${e}`}
-            question={examAnswer!.questions.filter(q => q.partIndex === e)}
-            updateExamAnswer={updateExamAnswer}
-            allowShowScore={allowShowScore}
-          />
-        )
-      }
+      <PDFExamPart
+        partIndex={currentPart}
+        question={examAnswer!.questions.filter(q => q.partIndex === currentPart)}
+        updateExamAnswer={updateExamAnswer}
+        allowShowScore={allowShowScore}
+      />
 
       <footer
         className={allowEarlySubmit ? "fixed bottom-4 right-0 left-0 text-center bg-white" : "hidden"}
@@ -143,12 +145,19 @@ export default function TakePDFExamPage({practice}: {practice: boolean}) {
     </Page>
   )
 
-  async function turnIn() {
+  async function turnIn(): Promise<void> {
     setEarlySubmitVisible(false);
-    const submitStatus = await insertPdfExamAttempt(examAnswer.questions, pdfExamAttempt);
-    if (submitStatus === 201) {
-      checkAchievement();
-      navTo(`/student/exam/pdf/result/${id}`);
+    const response = await insertPdfExamAttempt(examAnswer.questions, pdfExamAttempt);
+    if (response.status === 201) {      
+      openSnackbar({
+        text: "Nộp bài thành công!",
+        type: "success",
+        duration: 1500
+      })
+
+      setTimeout(() => {
+        navTo(`/student/exam/pdf/result/${id}`, { replace: true })
+      }, 1500);
     }
   }
 }
