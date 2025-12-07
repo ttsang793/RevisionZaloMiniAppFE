@@ -25,7 +25,7 @@ function HomePage() {
   ) : (
     <Page className="page-x-0">
       <StudentHeader />
-      <Box className="flex gap-5 flex-wrap justify-center">
+      <Box className="flex gap-5 flex-wrap justify-center px-4">
       {
         examList.map((exam: Exam) => <ExamHolder exam={exam} key={`exam-${exam.id}`} />)
       }

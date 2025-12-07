@@ -5,6 +5,7 @@ import { checkAchievement, ExamAttempt, ExamAttemptGet, getExamAttemptById, grad
 import AppHeader from "@/components/header";
 import { floatTwoDigits } from "@/script/util";
 import { MarkingExamPart } from "@/components/teacher/exam/marking-exam-part";
+import { notifyWhenFinishGrading } from "@/models/email";
 
 export default function ExamMarking() {
   const { examId, examAttemptId } = useParams();
@@ -122,14 +123,15 @@ export default function ExamMarking() {
 
     try {
       const response = await gradingAttempt(sendExamAttempt);
-      if (response.status === 200) {
+      if (response.status === 200) {        
+        await checkAchievement(examAttempt.studentId);
+        await notifyWhenFinishGrading(examAttempt.studentId!, `${examInfo.title} (${examInfo.subjectName} ${examInfo.grade}) của giáo viên ${examInfo.teacherName}`);
+
         openSnackbar({
           text: "Chấm điểm thành công!",
           type: "success",
           duration: 1500
         })
-
-        await checkAchievement(examAttempt.studentId);
         setTimeout(() => navTo(`/teacher/exam/detail/${examId}/marking`), 1500);
       }
       else {

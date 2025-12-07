@@ -1,8 +1,10 @@
 import { Exam, deleteExam, publishExam } from "@/models/exam";
-import { useNavigate, Sheet } from "zmp-ui";
+import { useNavigate, Sheet, useSnackbar } from "zmp-ui";
+import { notifyWhenNewExam } from "@/models/email";
 
 const ExamListAction = ({exam, visible, setVisible}: {exam: Exam, visible: boolean, setVisible: any}) => {
   const navTo = useNavigate();
+  const { openSnackbar } = useSnackbar();
 
   const showMenu = (status: number) => {
     switch (status) {
@@ -10,15 +12,15 @@ const ExamListAction = ({exam, visible, setVisible}: {exam: Exam, visible: boole
         <>
           <li className="p-4" onClick={() => navTo(`question/${exam.displayType === "pdf" ? "pdf/" : ""}${exam.id}`)}>Chỉnh sửa danh sách câu hỏi</li>
           <li className="p-4" onClick={() => navTo(`maker/${exam.displayType === "pdf" ? "pdf/" : ""}${exam.id}`)}>Cập nhật đề thi</li>
-          <li className="p-4" onClick={() => deleteExam(exam.id!)}>Xóa đề thi</li>
+          <li className="p-4" onClick={handleDelete}>Xóa đề thi</li>
         </>
       )
       case 1: return (
         <>
           <li className="p-4" onClick={() => navTo(`question/${exam.displayType === "pdf" ? "pdf/" : ""}${exam.id}`)}>Chỉnh sửa danh sách câu hỏi</li>
-          <li className="p-4" onClick={() => publishExam(exam.id!)}>Xuất bản đề thi</li>
+          <li className="p-4" onClick={handlePublish}>Xuất bản đề thi</li>
           <li className="p-4" onClick={() => navTo(`maker/${exam.displayType === "pdf" ? "pdf/" : ""}${exam.id}`)}>Cập nhật đề thi</li>
-          <li className="p-4" onClick={() => deleteExam(exam.id!)}>Xóa đề thi</li>
+          <li className="p-4" onClick={handleDelete}>Xóa đề thi</li>
         </>
       )
       case 3: return (
@@ -43,6 +45,43 @@ const ExamListAction = ({exam, visible, setVisible}: {exam: Exam, visible: boole
       </ul>
     </Sheet>
   )
+
+  async function handleDelete(): Promise<void> {
+    const response = await deleteExam(exam.id!);
+    if (response.status === 200) {
+      openSnackbar({
+        text: "Xóa đề thi thành công!",
+        type: "success",
+        duration: 1500,
+      })
+      setTimeout(() => navTo(0), 1000);
+    }
+    else {
+      openSnackbar({
+        text: "Xóa đề thi thất bại!",
+        type: "success"
+      })
+    }
+  }
+
+  async function handlePublish(): Promise<void> {
+    const response = await publishExam(exam.id!);
+    if (response.status === 200) {
+      openSnackbar({
+        text: "Xuất bản đề thi thành công!",
+        type: "success",
+        duration: 1500,
+      })
+      await notifyWhenNewExam(exam.teacherId, exam.teacherName!)
+      setTimeout(() => navTo(0), 1000);
+    }
+    else {
+      openSnackbar({
+        text: "Xuất bản đề thi thất bại!",
+        type: "success"
+      })
+    }
+  }
 }
 
 export default ExamListAction;

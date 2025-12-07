@@ -6,6 +6,7 @@ import { Exam, getExamById } from "@/models/exam";
 import { ExamAttempt, insertAttempt, checkAchievement } from "@/models/exam-attempt";
 import { fisherYatesShuffle } from "@/script/util";
 import { Countdown } from "@/components/student/exam/countdown";
+import { notifyWhenNewTurnIn } from "@/models/email";
 
 export default function TakeExamPage({practice}: {practice: boolean}) {
   const { id } = useParams();
@@ -161,14 +162,16 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
     })
 
     const submitStatus = await insertAttempt(examAttempt, examQuestionList, examAnswerList);
-    if (submitStatus === 201) {      
+    if (submitStatus === 201) {
+      await checkAchievement();
+      await notifyWhenNewTurnIn(examInfo.teacherId, `${examInfo.title} (${examInfo.subjectName} ${examInfo.grade})`);
+
       openSnackbar({
         text: "Nộp bài thành công!",
         type: "success",
         duration: 1500
       })
 
-      await checkAchievement();
       setTimeout(() => {
         navTo(`/student/exam/result/${id}`, { replace: true })
       }, 1500);

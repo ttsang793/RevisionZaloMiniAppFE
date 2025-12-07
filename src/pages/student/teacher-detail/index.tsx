@@ -39,10 +39,11 @@ export default function TeacherDetailPage() {
       </Box>
 
       
-      <Box className="flex gap-5 flex-wrap justify-center">
-      {
-        loading ? <>Cho 1 chut</> : examList.map((exam: Exam) => <ExamHolder exam={exam} key={`exam-${exam.id}`} />)
-      }
+      <Box className="flex gap-5 flex-wrap p-4 bg-white">
+        <Text.Title className="zaui-text-blue-80 border-b w-full zaui-border-blue-80">Danh sách đề thi</Text.Title>
+        {
+          loading ? <>Cho 1 chut</> : examList.map((exam: Exam) => <ExamHolder exam={exam} key={`exam-${exam.id}`} />)
+        }
       </Box>
     </Page>
   )

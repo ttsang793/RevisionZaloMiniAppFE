@@ -83,7 +83,7 @@ export default function TestPreviewPage() {
         }
       </ul>
       
-      <CommentBlock id={id} />
+      <CommentBlock id={id} title={examInfo.title} />
 
       <Modal
         actions = {[

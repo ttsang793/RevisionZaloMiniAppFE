@@ -28,7 +28,7 @@ export default function FavoritePage() {
   ) : (
     <Page className="page-x-0">
       <StudentHeader title="Đề thi yêu thích" />
-      <Box className="flex gap-5 flex-wrap justify-center">
+      <Box className="flex gap-5 flex-wrap justify-center px-4">
       {
         loading ? <>Đang tải đề, chờ chút nhé!</>
                 : examList.map((exam: Exam) => <ExamHolder exam={exam} id={exam.id} page="favorite" fetchData={fetchData} key={`exam-${exam.id}`} />)

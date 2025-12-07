@@ -6,13 +6,14 @@ import QuestionList from "@/components/teacher/question/question-list";
 import ChooseQuestionType from "@/components/teacher/question/choose-question-type";
 
 import { Question, getQuestionsByTeacher } from "@/models/question";
+import { getSubjectById, Subject } from "@/models/subject";
 
 export default function QuestionManagement() {
   const [questionList, setQuestionList] = useState([]);
+  const [subject, setSubject] = useState<Subject>();
   const [loading, setLoading] = useState(true);
   const [openChoose, setOpenChoose] = useState(false);
   const navTo = useNavigate();
-  const { openSnackbar } = useSnackbar();
 
   useEffect(() => {
     fetchData();
@@ -30,7 +31,7 @@ export default function QuestionManagement() {
             Chọn loại câu
           </button>
           <button className="flex flex-col items-center w-full">
-            <img src="/avatar/default.jpg" alt="" className="size-12 rounded-lg mb-1" />
+            <img src="/icon/icon_download.png" alt="" className="size-12 rounded-lg mb-1" />
             Tải file Word mẫu
           </button>
           <button className="flex flex-col items-center w-full" onClick={() => navTo("word")}>
@@ -54,7 +55,7 @@ export default function QuestionManagement() {
         }
       </Box>
 
-      <ChooseQuestionType visible={openChoose} setVisible={setOpenChoose} />
+      <ChooseQuestionType visible={openChoose} setVisible={setOpenChoose} subject={subject} />
     </Page>
   )
 
@@ -62,7 +63,11 @@ export default function QuestionManagement() {
     setLoading(true);
 
     try {
-      getQuestionsByTeacher().then(response => setQuestionList(response.data))
+      const questionResponse = await getQuestionsByTeacher();
+      setQuestionList(questionResponse.data)
+
+      const subjectResponse = await getSubjectById(sessionStorage.getItem("subjectId")!);
+      setSubject(subjectResponse);
     }
     finally {
       setLoading(false)

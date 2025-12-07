@@ -59,10 +59,14 @@ export default function ChooseRolePage() {
 
       if (curUserData.role === "GV") {
         const response = await getTeacherSubjectById(curUserData.id);
-        console.log(response);
 
         sessionStorage.setItem("subjectId", response.data.id);
         sessionStorage.setItem("subjectName", response.data.name);
+        sessionStorage.setItem("questionMC", response.data.questionMC);
+        sessionStorage.setItem("questionTF", response.data.questionTF);
+        sessionStorage.setItem("questionSA", response.data.questionSA);
+        sessionStorage.setItem("questionGF", response.data.questionGF);
+        sessionStorage.setItem("questionST", response.data.questionST);
         navTo("/teacher");
       }
       else if (curUserData.role === "HS") navTo("/student");

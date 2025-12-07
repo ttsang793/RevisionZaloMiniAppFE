@@ -21,6 +21,7 @@ import { GapFillQuestion, validateGapFillInput, getGapFillQuestionById, insertGa
 import { ConstructedResponseQuestion, validateConstructedResponseInput, getConstructedResponseQuestionById, insertConstructedResponseQuestion, updateConstructedResponseQuestion, ConstructedResponseError } from "@/models/constructed-response-question";
 import { SortingQuestion, validateSortingInput, getSortingQuestionById, insertSortingQuestion, updateSortingQuestion, SortingError } from "@/models/sorting-question";
 import { TrueFalseTHPTQuestion, validateTrueFalseTHPTInput, getTrueFalseTHPTQuestionById, insertTrueFalseTHPTQuestion, updateTrueFalseTHPTQuestion, TrueFalseTHPTError } from "@/models/true-false-thpt-question";
+import { XLg } from "react-bootstrap-icons";
 
 function renderQuestionMaker(type: string, question, setQuestion, error, setError) {
   switch (type) {
@@ -156,7 +157,6 @@ export default function QuestionMaker() {
   const handleImageUpload = (e) => {
     try {
       setImage(e.target.files[0]);
-      console.log(e.target.files[0]);
 
       const reader = new FileReader();
       reader.onload = e => document.querySelector('#question-image').src = e.target.result;
@@ -169,6 +169,12 @@ export default function QuestionMaker() {
         type: "error"
       })
     }
+  }
+
+  const deselectImage = () => {
+    setImage(null);
+    document.querySelector('#image-file').value = null;
+    if (!question.imageUrl) document.querySelector('#question-image').src = question.imageUrl;
   }
 
   if (loading) return <></>
@@ -195,8 +201,18 @@ export default function QuestionMaker() {
               onChange={handleImageUpload}
               className="p-4 border zaui-border-gray-30 rounded-lg w-full text-center mt-2"
               accept="image/png, image/jpeg"
+              id="image-file"
             />
-            <img id="question-image" src={image} alt="Hình câu hỏi" className={!image ? "h-0" : "h-52"} />
+
+            <Box className="relative w-fit">
+              <button
+                className={!image ? "hidden" : "absolute right-2 top-2 bg-black text-white p-2 rounded-full text-2xl"}
+                onClick={deselectImage}
+              >
+                <XLg size={16} />
+              </button>
+              <img id="question-image" src={!image ? question.imageUrl : image} alt="Hình câu hỏi" className={`pt-2 ${(!image && !question.imageUrl) ? "h-0" : "h-52"}`} />
+            </Box>
           </Box>
           
           { loading ? <></> : renderQuestionMaker(type, question, setQuestion, error, setError) }
@@ -312,7 +328,7 @@ export default function QuestionMaker() {
       formData.append("file", image);
       
       try {
-        response = await axios.post(`/api/upload/image/${response.data.id}/question`,
+        response = await axios.post(`/api/upload/image/${id ? id : response.data.id}/question`,
           formData, { headers: { "Content-Type": "multipart/form-data" } });
 
         if (response.status === 200) {

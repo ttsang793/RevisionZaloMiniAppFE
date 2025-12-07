@@ -8,6 +8,7 @@ import { PDFMarkingExamPart } from "@/components/teacher/exam/maker/PDF-marking-
 import AppHeader from "@/components/header";
 import { floatTwoDigits } from "@/script/util";
 import { checkAchievement } from "@/models/exam-attempt";
+import { notifyWhenFinishGrading } from "@/models/email";
 
 class PDFPart {
   question: ExamCodeQuestionGet[];
@@ -173,13 +174,15 @@ export default function PDFExamMarking() {
     try {
       const response = await gradingPdfAttempt(examAttempt);
       if (response.status === 200) {
+        await checkAchievement(examAttempt.studentId);
+        await notifyWhenFinishGrading(examAttempt.studentId!, `${examInfo.title} (${examInfo.subjectName} ${examInfo.grade}) của giáo viên ${examInfo.teacherName}`);
+
         openSnackbar({
           text: "Chấm điểm thành công!",
           type: "success",
           duration: 1500
         })
 
-        await checkAchievement(examAttempt.studentId);
         setTimeout(() => navTo(`/teacher/exam/detail/${examId}/marking`), 1500);
       }
       else {

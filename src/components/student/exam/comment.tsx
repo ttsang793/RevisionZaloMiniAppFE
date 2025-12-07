@@ -1,16 +1,18 @@
 import CommentFirst from "./comment-first";
 import CommentReply from "./comment-reply";
-import { Text, Input, Box } from "zmp-ui"
+import { Text, Input, Box, useSnackbar } from "zmp-ui"
 import { useState, useEffect, FormEvent, Fragment } from "react";
 import { Comment, getCommentsByExamId, insertComment, deleteComment } from "@/models/comment";
 import { Send } from "react-bootstrap-icons";
+import { notifyWhenComment } from "@/models/email";
 
-const CommentBlock = ({id}) => {
+const CommentBlock = ({id, title}: {id: number, title?: string}) => {
   const { TextArea } = Input;
   const [commentList, setCommentList] = useState([]);
   const [commentContent, setCommentContent] = useState("");
   const userId = Number(sessionStorage.getItem("id"));
-  const avatar = sessionStorage.getItem("avatar");
+  const avatar = sessionStorage.getItem("avatar") || "/avatar/default.jpg";
+  const { openSnackbar } = useSnackbar();
 
   useEffect(() => {
     loadData();
@@ -51,12 +53,27 @@ const CommentBlock = ({id}) => {
     
     const comment: Comment = { examId: id, userId, content: commentContent }    
     const insertStatus = await insertComment(comment);    
-    if (insertStatus == 201) loadData();
+    if (insertStatus == 201) {
+      loadData();
+      if (title) await notifyWhenComment(id, title);
+    }
+    else {
+      openSnackbar({
+        text: "Lỗi hệ thống, bình luận thất bại!",
+        type: "error"
+      })
+    }
   }
 
   async function handleDelete(id: number) {
     const deleteStatus = await deleteComment(id);
     if (deleteStatus == 200) loadData();
+    else {
+      openSnackbar({
+        text: "Lỗi hệ thống, xóa bình luận thất bại!",
+        type: "error"
+      })
+    }
   }
 }
 

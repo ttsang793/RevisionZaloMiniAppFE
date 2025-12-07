@@ -24,7 +24,7 @@ const ExamHolder = ({ exam, id, page = "default", fetchData }: ExamHolderProps) 
   }, [])
   
   return (
-    <Box className="bg-white rounded-md p-4 text-left inline-block w-full">
+    <Box className="bg-white rounded-md p-4 text-left inline-block w-full border border-gray-300">
       <h1 className="font-bold">{exam.title}</h1>
       <Box className="grid grid-cols-[1fr_24px] gap-5 ">
         <Box className="grid grid-cols-[48px_1fr] gap-x-2">
@@ -39,8 +39,8 @@ const ExamHolder = ({ exam, id, page = "default", fetchData }: ExamHolderProps) 
         </Box>
         
         {
-          (page === "favorite") ? <HeartFill size={24} color="#00378A" onClick={() => actionDelete(page)} /> : (
-            (page === "history") ? <XLg size={24} color="#00378A" onClick={() => actionDelete(page)} /> : <FavoriteIcon examId={exam.id!} />
+          (page === "favorite") ? <HeartFill size={32} color="#00378A" onClick={() => actionDelete(page)} /> : (
+            (page === "history") ? <XLg size={32} color="#00378A" onClick={() => actionDelete(page)} /> : <FavoriteIcon examId={exam.id!} />
           )
         }
       </Box>
@@ -80,7 +80,7 @@ const ExamHolder = ({ exam, id, page = "default", fetchData }: ExamHolderProps) 
         type: "success",
         duration: 1500
       });
-      fetchData();
+      fetchData!();
     }
     else {
       openSnackbar({

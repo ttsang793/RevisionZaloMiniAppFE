@@ -3,7 +3,7 @@ import { HeartFill, Heart } from "react-bootstrap-icons";
 import { isFavorite, handleFavorite } from "@/models/student";
 import { useSnackbar } from "zmp-ui";
 
-const FavoriteIcon = ({examId, size = 24}: {examId: number, size?: number}) => {
+const FavoriteIcon = ({examId, size = 32}: {examId: number, size?: number}) => {
   const [favorite, setFavorite] = useState(false);
   const {openSnackbar} = useSnackbar();
 

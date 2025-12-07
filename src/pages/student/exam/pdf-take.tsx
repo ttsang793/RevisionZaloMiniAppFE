@@ -7,6 +7,7 @@ import { Countdown } from "@/components/student/exam/countdown";
 import { PDFExamPart } from "@/components/student/pdf-exam/pdf-exam-part";
 import { insertPdfExamAttempt, PdfExamAttempt } from "@/models/pdf-exam-attempt";
 import { checkAchievement } from "@/models/exam-attempt";
+import { notifyWhenNewTurnIn } from "@/models/email";
 
 export default function TakePDFExamPage({practice}: {practice: boolean}) {
   const { id } = useParams();
@@ -155,12 +156,15 @@ export default function TakePDFExamPage({practice}: {practice: boolean}) {
     
     const response = await insertPdfExamAttempt(examAnswer.questions, pdfExamAttempt);
     if (response.status === 201) {      
+      await checkAchievement();      
+      await notifyWhenNewTurnIn(examInfo.teacherId, `${examInfo.title} (${examInfo.subjectName} ${examInfo.grade})`);
+
       openSnackbar({
         text: "Nộp bài thành công!",
         type: "success",
         duration: 1500
       })
-
+      
       setTimeout(() => {
         navTo(`/student/exam/pdf/result/${id}`, { replace: true })
       }, 1500);

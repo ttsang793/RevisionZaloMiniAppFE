@@ -8,7 +8,7 @@ const ExamDetailHolder = ({examId, examType, examAttempt}: {examId: string, exam
   console.log(examAttempt);
 
   return (
-    <Box className="rounded-md p-3 w-full border border-gray-400">
+    <Box className="rounded-md p-3 w-full border border-gray-300 mb-4">
       <h1 className="font-bold mb-2">Lượt làm bài #{examAttempt.id}</h1>
 
       <ul className="text-xs mb-3">

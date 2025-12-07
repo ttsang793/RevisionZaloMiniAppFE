@@ -41,7 +41,7 @@ export default function HistoryPage() {
       </Box>
 
 
-      <Box className="flex gap-5 flex-wrap justify-center">
+      <Box className="flex gap-5 flex-wrap justify-center p-4">
       {
         loading ? <>Đang tải đề, chờ chút nhé!</>
                 : examList.map((exam: Exam) => <ExamHolder exam={exam} id={exam.historyId} page="history" fetchData={fetchData} key={`exam-${exam.historyId}`} />)

@@ -14,7 +14,7 @@ export default function ExamMarking({id, type}) {
   }, [])
 
   return loading ? <Text>Chờ chút</Text> : (
-    <Box className="bg-white p-4">
+    <Box className="bg-white px-4 pt-4 pb-2">
     {
       examAttempts.map(ea => <ExamDetailHolder examId={id} examType={type} examAttempt={ea} key={`attempt-${ea.id}`} />)
     }
