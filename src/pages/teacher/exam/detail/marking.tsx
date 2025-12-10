@@ -82,8 +82,8 @@ export default function ExamMarking() {
       }
 
       <TextArea
-        className="mt-4 mb-2"
-        label={<Text>Nhận xét bài làm</Text>}
+        className="mt-4"
+        label={<Text className="mt-2 font-bold italic">Nhận xét bài làm:</Text>}
         value={examAttempt.comment}
         onChange={e => setExamAttempt({...examAttempt, comment: e.target.value})}
       />

@@ -4,9 +4,10 @@ import AppHeader from "@/components/header";
 import { useState, useEffect } from "react";
 import { getActiveSubjects, Subject } from "@/models/subject";
 import { getUserInfo } from "zmp-sdk";
+import axios from "axios";
 import "./setting.css";
 
-import { deleteTeacher, getTeacherById, Teacher, updateTeacher } from "@/models/user";
+import { deleteTeacher, getTeacherById, getTeacherSubjectById, getUserByZaloId, Teacher, updateTeacher } from "@/models/user";
 import { updateTeacherStatus } from "@/models/notification";
 
 export default function TeacherSettingPage() {
@@ -14,6 +15,7 @@ export default function TeacherSettingPage() {
   const navTo = useNavigate();
   const { openSnackbar } = useSnackbar();
   const [teacher, setTeacher] = useState<Teacher>(new Teacher());
+  const [image, setImage] = useState<any>(null);
   const [level, setLevel] = useState("-1");
   const [loading, setLoading] = useState(true);
 
@@ -46,6 +48,28 @@ export default function TeacherSettingPage() {
     }
   };
 
+  const handleAvatarUpload = (e) => {
+    try {
+      setImage(e.target.files[0]);
+
+      const reader = new FileReader();
+      reader.onload = e => document.querySelector('#avatar-image').src = e.target.result;
+      reader.readAsDataURL(e.target.files[0]);
+    }
+    catch (err) {
+      console.log(err);
+      openSnackbar({
+        text: "Không tải được hình ảnh!",
+        type: "error"
+      })
+    }
+  }
+
+  const handleGetAvatarFromZalo = async () => {
+    const userInfo = await getUserInfo({ autoRequestPermission: false });
+    setImage(userInfo.userInfo.avatar)
+  }
+
   return loading ? <></> : (
     <Page className="page-x-0">
       <AppHeader title="Cài đặt" />
@@ -69,10 +93,22 @@ export default function TeacherSettingPage() {
       <Box className="section-container">
         <Box className="grid grid-cols-[80px_1fr] w-full gap-x-4">
           <Box className="relative mb-2">
-            <img src="/avatar/default.jpg" alt="Avatar" className="h-25 rounded-full border-1 border-zinc-300" />
-            <button className="absolute top-14 -right-2 border border-gray-200 rounded-full size-10 bg-zinc-300">
+            <img
+              src={!image ? teacher.avatar : image}
+              alt="Avatar"
+              id="avatar-image"
+              className="h-20 rounded-full border-1 border-zinc-300 object-cover"
+            />
+            <button
+              className="absolute top-14 -right-2 border border-gray-200 rounded-full size-10 bg-zinc-300"
+              onClick={() => document.getElementById("avatar-uploader")?.click()}
+            >
               <CameraFill size={24} className="inline" />
             </button>
+            <input
+              type="file" id="avatar-uploader" accept="image/png, image/jpeg" hidden
+              onChange={handleAvatarUpload}
+            />
           </Box>
 
           <form onSubmit={e => e.preventDefault()}>
@@ -125,8 +161,9 @@ export default function TeacherSettingPage() {
             </Text>
 
             <Box className="flex gap-x-2 justify-center mt-4">
-              <input type="submit" value="Lưu" className="zaui-bg-blue-80 text-white rounded-full py-2 px-8" onClick={() => handleSubmit()} />
-              <input type="reset" value="Hủy" className="zaui-bg-blue-20 zaui-text-blue-80 rounded-full py-2 px-8" onClick={() => fetchData()} />
+              <input type="submit" value="Lưu" className="zaui-bg-blue-80 text-white rounded-full py-2 px-8" onClick={handleSubmit} />
+              <input type="reset" value="Hủy" className="zaui-bg-blue-20 zaui-text-blue-80 rounded-full py-2 px-8" onClick={handleCancel} />
+              <input type="button" value="Lấy avatar từ Zalo" className="zaui-bg-blue-60 zaui-text-blue-10 rounded-full py-2 px-8" onClick={handleGetAvatarFromZalo} />
             </Box>
           </form>
         </Box>
@@ -168,13 +205,44 @@ export default function TeacherSettingPage() {
     }
 
     teacher.grades = (level === "THCS") ? [6,7,8,9] : [10,11,12];
-    const response = await updateTeacher(teacher);
+    if (typeof(image) === "string") teacher.avatar = image;
+    
+    let response = await updateTeacher(teacher);
     if (response.status === 200) {
-      openSnackbar({
-        text: "Cập nhật thông tin thành công!",
-        type: "success",
-        duration: 1500
-      })
+      if (typeof(image) !== "string" && image !== null) {
+        const formData: FormData = new FormData();
+        formData.append("file", image);
+
+        try {
+          response = await axios.post(`/api/upload/image/${teacher.id}/avatar`,
+            formData, { headers: { "Content-Type": "multipart/form-data" } });
+
+          if (response.status === 200) {
+            openSnackbar({
+              text: "Cập nhật thông tin và avatar thành công!",
+              type: "success",
+              duration: 1500
+            })
+          }
+          else throw new Error();
+        }
+        catch (err) {
+          console.error(err);
+          openSnackbar({
+            text: "Cập nhật thông tin thành công, nhưng tải hình thất bại!",
+            type: "warning",
+            duration: 1500
+          });
+        }
+      }
+      else {
+        openSnackbar({
+          text: "Cập nhật thông tin thành công!",
+          type: "success",
+          duration: 1500
+        })
+      }
+      resetSessionStorage();
     }
     else {
       openSnackbar({
@@ -183,6 +251,13 @@ export default function TeacherSettingPage() {
       })
       console.error(response);
     }
+  }
+
+  async function handleCancel() {
+    setImage(null);
+    document.querySelector('#avatar-uploader').value = null;
+    document.querySelector('#avatar-image').src = teacher.avatar;
+    fetchData();
   }
   
   async function fetchData() {
@@ -223,5 +298,29 @@ export default function TeacherSettingPage() {
       openSnackbar({ text: "Lỗi hệ thống! Vui lòng thử lại sau!" })
       console.error(response);
     }
+  }
+
+  async function resetSessionStorage() {
+    sessionStorage.removeItem("avatar");
+    sessionStorage.removeItem("subjectId");
+    sessionStorage.removeItem("subjectName");
+    sessionStorage.removeItem("questionMC");
+    sessionStorage.removeItem("questionTF");
+    sessionStorage.removeItem("questionSA");
+    sessionStorage.removeItem("questionGF");
+    sessionStorage.removeItem("questionST");
+
+    let response = await getTeacherById();
+    sessionStorage.setItem("avatar", response.data.avatar);
+
+    response = await getTeacherSubjectById();      
+
+    sessionStorage.setItem("subjectId", response.data.id);
+    sessionStorage.setItem("subjectName", response.data.name);
+    sessionStorage.setItem("questionMC", response.data.questionMC);
+    sessionStorage.setItem("questionTF", response.data.questionTF);
+    sessionStorage.setItem("questionSA", response.data.questionSA);
+    sessionStorage.setItem("questionGF", response.data.questionGF);
+    sessionStorage.setItem("questionST", response.data.questionST);
   }
 }

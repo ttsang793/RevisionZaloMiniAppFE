@@ -11,7 +11,7 @@ const ExamListAction = ({exam, visible, setVisible}: {exam: Exam, visible: boole
       case 0: return (
         <>
           <li className="p-4" onClick={() => navTo(`question/${exam.displayType === "pdf" ? "pdf/" : ""}${exam.id}`)}>Chỉnh sửa danh sách câu hỏi</li>
-          <li className="p-4" onClick={() => navTo(`maker/${exam.displayType === "pdf" ? "pdf/" : ""}${exam.id}`)}>Cập nhật đề thi</li>
+          <li className="p-4" onClick={() => navTo(`maker/${exam.displayType === "pdf" ? "pdf/" : "normal/"}${exam.id}`)}>Cập nhật đề thi</li>
           <li className="p-4" onClick={handleDelete}>Xóa đề thi</li>
         </>
       )
@@ -19,7 +19,7 @@ const ExamListAction = ({exam, visible, setVisible}: {exam: Exam, visible: boole
         <>
           <li className="p-4" onClick={() => navTo(`question/${exam.displayType === "pdf" ? "pdf/" : ""}${exam.id}`)}>Chỉnh sửa danh sách câu hỏi</li>
           <li className="p-4" onClick={handlePublish}>Xuất bản đề thi</li>
-          <li className="p-4" onClick={() => navTo(`maker/${exam.displayType === "pdf" ? "pdf/" : ""}${exam.id}`)}>Cập nhật đề thi</li>
+          <li className="p-4" onClick={() => navTo(`maker/${exam.displayType === "pdf" ? "pdf/" : "normal/"}${exam.id}`)}>Cập nhật đề thi</li>
           <li className="p-4" onClick={handleDelete}>Xóa đề thi</li>
         </>
       )

@@ -62,13 +62,16 @@ const checkSorting = (question, answer): {point: number, correct: number[]} => {
   let correct: number[] = [];
   let numCorrect: number = 0;
   for (let i: number = 0; i < correctOrder.length; i++) {
-    if(answer[i] !== correctOrder[i]) {
+    console.log(answer[i] + "-" + correctOrder[i])
+    if(answer[i] === correctOrder[i]) {
       correct.push(1);
       numCorrect++;
     }
     else correct.push(0);
   }
-  return { point: question.point * numCorrect / correctOrder.length, correct };
+  console.log(question.point * numCorrect * 1.0 / correctOrder.length);
+
+  return { point: question.point * numCorrect * 1.0 / correctOrder.length, correct };
 }
 
 function checkTrueFalseTHPT(question, answer): {numCorrect: number, point: number, correct: number[]} {
@@ -177,10 +180,7 @@ async function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], an
           else answer.correct[0] = -1;
           break;
         }
-        case "sorting": {
-          //answer.studentAnswer = answerList[i][j];
-          //temp
-          answerList[i][j].forEach(o => answer.studentAnswer.push(o + ""));          
+        case "sorting": {       
           const result = checkSorting(currentQuestion, answerList[i][j]);
           answer.correct = result.correct;
           answer.point = result.point;

@@ -6,6 +6,7 @@ import { questionType } from "@/models/question";
 
 interface ExamPartProps {
   i: number;
+  grade: number;
   partTitle: string;
   questionList: any[];
   updatePartTitle: (i: number, value: string) => void;
@@ -15,6 +16,7 @@ interface ExamPartProps {
 
 const ExamPart = ({
   i,
+  grade,
   partTitle,
   questionList,
   updatePartTitle,
@@ -25,7 +27,9 @@ const ExamPart = ({
   const [selectModal, setSelectModal] = useState(false);
 
   function addQuestion(type) {
-    const newList = [...questionList, { point: 0, id: [], type }];
+    let newList;
+    if (type === "true-false-thpt") newList = [...questionList, { point: 1, id: [], type }];
+    else newList = [...questionList, { point: 0, id: [], type }];
     updateQuestionList(i, newList);
   }
 
@@ -70,6 +74,7 @@ const ExamPart = ({
           questionList.map((q, index) => (
             <ExamGroupQuestion
               key={index}
+              grade={grade}
               numQuestion={index}
               data={q}
               updateQuestion={updated => updateQuestion(index, updated)}

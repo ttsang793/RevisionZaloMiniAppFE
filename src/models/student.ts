@@ -2,6 +2,13 @@ import axios from "axios";
 
 const studentId = Number(sessionStorage.getItem("id"));
 
+class StudentReminder {
+  id!: number;
+  date: boolean[] = [false, false, false, false, false, false, false];
+  hour: string = "00:00";
+  isActive: boolean = true;
+}
+
 async function getFavorite() {
   return axios.get(`/api/student/favorite/${studentId}`);
 }
@@ -78,6 +85,43 @@ async function following(teacherId: number): Promise<any> {
   }
 }
 
+async function getReminder() {
+  return axios.get(`/api/student/reminder/${studentId}`);
+}
+
+async function addReminder(): Promise<any> {
+  try {
+    const response = axios.post(`/api/student/reminder/${studentId}`);
+    return response;
+  }
+  catch(err) {
+    return err;
+  }
+}
+
+async function updateReminder(id: Number, reminder: StudentReminder): Promise<any> {
+  try {
+    const response = axios.put(`/api/student/reminder/${id}`, reminder, {
+      headers: { "Content-Type": "application/json" }
+    });
+    return response;
+  }
+  catch(err) {
+    return err;
+  }
+}
+
+async function deleteReminder(id: Number): Promise<any> {
+  try {
+    const response = axios.delete(`/api/student/reminder/${id}`);
+    return response;
+  }
+  catch(err) {
+    return err;
+  }
+}
+
 export { getFavorite, isFavorite, handleFavorite,
           getHistory, handleHistory, updateAllowingSaveHistory, deleteHistory, deleteAllHistories,
-          getFollowing, following }
+          getFollowing, following,
+          StudentReminder, getReminder, addReminder, updateReminder, deleteReminder }

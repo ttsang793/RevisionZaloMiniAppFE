@@ -43,8 +43,8 @@ function getQuestionsByTeacher() {
   return axios.get(`/api/question/teacher/${teacherId}`);
 }
 
-function getQuestionsFilterByTeacher(title?: string, type?: string) {
-  if (!title) return axios.get(`/api/question/teacher/filter/${teacherId}?type=${type}`);
+function getQuestionsFilterByTeacher(title?: string, type?: string, grade?: number) {
+  if (!title) return axios.get(`/api/question/teacher/filter/${teacherId}?type=${type}&grade=${grade}`);
   return axios.get(`/api/question/teacher/filter/${teacherId}?type=${type}&title=${title}`);
 }
 

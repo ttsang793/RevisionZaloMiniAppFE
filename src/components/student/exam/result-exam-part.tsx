@@ -15,7 +15,7 @@ function displayQuestion(answer, partIndex, questionIndex) {
     case "short-answer": return <TraLoiNganResult i={questionIndex} answer={answer} />
     case "gap-fill": return <DienVaoChoTrongResult i={questionIndex} answer={answer} />
     case "constructed-response": return <TuLuanResult i={questionIndex} answer={answer} />
-    //case "sorting": return <SapXepResult i={questionIndex} answer={answer} />
+    case "sorting": return <SapXepResult i={questionIndex} answer={answer} />
     case "true-false-thpt": return <DungSaiTHPTResult i={questionIndex} answer={answer} />
     default: return null;
   }

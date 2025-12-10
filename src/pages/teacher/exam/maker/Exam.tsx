@@ -1,17 +1,20 @@
 import { useState, useEffect } from "react";
-import { Box, Page, useNavigate, useParams } from "zmp-ui";
+import { Box, Page, useNavigate, useParams, useSnackbar } from "zmp-ui";
 import { ChevronUp } from "react-bootstrap-icons";
 import AppHeader from "@/components/header";
 import { ExamPart } from "@/components/teacher/exam/maker/exam-part";
 import { backToTop } from "@/script/util";
 import { ExamQuestion, getExamQuestion, updateExam } from "@/models/exam-question";
+import { getExamById } from "@/models/exam";
 
 export default function ExamQuestions() {
   const { id } = useParams();
   const navTo = useNavigate();
   const [examQuestions, setExamQuestions] = useState<ExamQuestion>(new ExamQuestion(Number(id)));
+  const [grade, setGrade] = useState();
   const [examQuestionList, setExamQuestionList] = useState<any[][]>([]);
   const [loading, setLoading] = useState(true);
+  const { openSnackbar } = useSnackbar();
 
   function addPart() {
     const newPartTitles = [...examQuestions.partTitles, ""];
@@ -42,6 +45,8 @@ export default function ExamQuestions() {
 
   useEffect(() => {
     if (loading) {
+      getExamById(Number(id)).then(response => setGrade(response.data.grade));
+
       getExamQuestion(Number(id)).then(response => {
         const partTitles: any[] = [];
         console.log(response.data);
@@ -70,7 +75,7 @@ export default function ExamQuestions() {
             type="submit"
             value="Lưu"
             className="zaui-bg-blue-80 text-white rounded-full py-2 px-6"
-            onClick={() => updateExam(examQuestions, examQuestionList)}
+            onClick={handleSave}
           />
           <input
             type="button"
@@ -85,6 +90,7 @@ export default function ExamQuestions() {
         <ExamPart
           key={i}
           i={i}
+          grade={grade}
           partTitle={p}
           questionList={examQuestionList[i] || []}
           updatePartTitle={updatePartTitle}
@@ -108,4 +114,27 @@ export default function ExamQuestions() {
       </button>
     </Page>
   );
+
+  async function handleSave(): Promise<void> {
+    try {
+      const response = await updateExam(examQuestions, examQuestionList);
+
+      if (response.status === 200) {
+        openSnackbar({ text: "Lưu danh sách câu hỏi thành công!", type: "success", duration: 1500 });
+        navTo("/teacher/exam")
+      }
+      else {
+        console.error(response);
+        openSnackbar({ text: "Lưu danh sách câu hỏi thất bại!", type: "error" });
+      }
+    }
+    catch (err: any) {
+      if (err.message === "Tổng điểm không được vượt quá 10!")
+        openSnackbar({ text: err.message, type: "error" });
+      else {
+        console.error(err);
+        openSnackbar({ text: "Lưu danh sách câu hỏi thất bại!", type: "error" });
+      }
+    }
+  }
 }

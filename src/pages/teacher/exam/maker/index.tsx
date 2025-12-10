@@ -13,6 +13,7 @@ type ExamMakerError = {
 
 export default function ExamMaker() {
   const navTo = useNavigate();
+  console.log(useParams());
   const { type, id } = useParams();
   const { openSnackbar } = useSnackbar();
 
@@ -26,6 +27,8 @@ export default function ExamMaker() {
     setLoading(true);
     if (id !== undefined) {
       getExamById(Number(id)).then(response => {
+        console.log(response);
+
         setExamInfo(response.data);
         setTimeLimit(`${response.data.timeLimit/60}`);
         setEarlyTurnIn(`${response.data.earlyTurnIn/60}`);

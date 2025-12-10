@@ -42,8 +42,8 @@ function getUserByZaloId(zaloId: string) {
   return axios.get(`/api/user/${zaloId}`);
 }
 
-function getStudentById() {
-  return axios.get(`/api/student/${id}`);
+function getStudentById(studentId = id) {
+  return axios.get(`/api/student/${studentId}`);
 }
 
 async function addStudent(student: Student): Promise<any> {
@@ -66,6 +66,7 @@ async function updateStudent(student: Student): Promise<any> {
     return response;
   }
   catch (err) {
+    console.error(err);
     return err;
   }
 }
@@ -85,8 +86,8 @@ function getTeacherById(teacherId = id) {
   return axios.get(`/api/teacher/${teacherId}`);
 }
 
-async function getTeacherSubjectById(id) {
-  return await axios.get(`/api/teacher/${id}/subject`);
+async function getTeacherSubjectById(teacherId = id) {
+  return await axios.get(`/api/teacher/${teacherId}/subject`);
 }
 
 async function addTeacher(teacher: Teacher): Promise<any> {

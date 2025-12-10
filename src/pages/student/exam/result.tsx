@@ -1,4 +1,4 @@
-import { Box, Page, Text, useParams, useNavigate } from "zmp-ui";
+import { Box, Input, Page, Text, useParams, useNavigate } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { ResultExamPart } from "@/components/student/exam/result-exam-part";
 import { Exam, getExamById } from "@/models/exam";
@@ -14,6 +14,7 @@ export default function ExamResultPage() {
   const [examAttempt, setExamAttempt] = useState<ExamAttemptGet>(new ExamAttemptGet());
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [currentPart, setCurrentPart] = useState(0);
+  const { TextArea } = Input;
 
   const handleChangePart = (part: number) => {
     setCurrentPart(part);
@@ -39,7 +40,7 @@ export default function ExamResultPage() {
   }, [])
 
   return loading ? <></> : (
-    <Page className="page bg-white">
+    <Page className="page-result bg-white">
       <AppHeader title="Kết quả" showBackIcon />
       {/* Tiêu đề và các phần */}
       <Text.Title className="text-center uppercase">{examInfo.title}</Text.Title>
@@ -77,6 +78,14 @@ export default function ExamResultPage() {
           currentQuestion={currentQuestion}
           setCurrentQuestion={setCurrentQuestion}
         />
+      }
+
+      {
+        !examAttempt.comment ? <></> :
+          <TextArea
+            className="my-4" value={examAttempt.comment} readOnly
+            label={<Text className="font-bold italic mt-2">Nhận xét bài làm:</Text>}
+          />
       }
       
       <footer className="fixed bottom-0 right-0 left-0 text-center bg-white py-2">

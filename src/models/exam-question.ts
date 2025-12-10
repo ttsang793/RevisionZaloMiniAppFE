@@ -28,7 +28,7 @@ function getExamQuestionWithQuestions(id: number) {
   return axios.get(`/api/exam/${id}/question/attempt`);
 }
 
-function updateExam(exam: ExamQuestion, list: any[][]) {
+async function updateExam(exam: ExamQuestion, list: any[][]): Promise<any> {
   exam.examQuestions = [];
   exam.questionTypes = [];
 
@@ -44,20 +44,17 @@ function updateExam(exam: ExamQuestion, list: any[][]) {
     }
   }
 
-  if (total > 10) {
-    console.warn("Tổng điểm không được vượt quá 10!")
-    return;
-  }
+  if (total > 10) throw new Error("Tổng điểm không được vượt quá 10!");
   else if (total === 10) exam.examStatus = 1;
+  else exam.examStatus = 0;
 
-  axios.post(`/api/exam/question/${exam.examId}`, exam, {
-    headers: { "Content-Type": "application/json" }
-  }).then(response => {
-      console.log(response.status);
-    })
-    .catch(err => {
-      console.error(err);
-    })
+  try {
+    const response = axios.post(`/api/exam/question/${exam.examId}`, exam);
+    return response;
+  }
+  catch (err) {
+    return err;
+  }
 }
 
 export { ExamQuestion, getExamQuestion, getExamQuestionWithQuestions, updateExam }

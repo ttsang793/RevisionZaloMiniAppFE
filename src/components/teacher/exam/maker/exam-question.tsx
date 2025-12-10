@@ -7,6 +7,7 @@ import { getQuestionsFilterByTeacher } from "@/models/question";
 
 interface ExamGroupQuestionProps {
   numQuestion: number;
+  grade: number;
   data: { point: number; id: number[]; type: string };
   updateQuestion: (updated: any) => void;
   deleteQuestion: (i: number) => void;
@@ -14,6 +15,7 @@ interface ExamGroupQuestionProps {
 
 const ExamGroupQuestion = ({
   numQuestion,
+  grade,
   data,
   updateQuestion,
   deleteQuestion
@@ -22,7 +24,7 @@ const ExamGroupQuestion = ({
   const [availableQuestions, setAvailableQuestions] = useState<Question[]>([]);
 
   useEffect(() => {
-    getQuestionsFilterByTeacher("", data.type).then(res => setAvailableQuestions(res.data));
+    getQuestionsFilterByTeacher("", data.type, grade).then(res => setAvailableQuestions(res.data));
   }, []);
 
   function handlePointChange(value: number) {
@@ -46,6 +48,7 @@ const ExamGroupQuestion = ({
         <input
           className="px-2 bg-white w-16 me-1 py-1 rounded-lg"
           type="number"
+          readOnly={data.type === "true-false-thpt"}
           step="0.05"
           min={0} max={10}
           value={data.point}

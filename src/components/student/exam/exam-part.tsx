@@ -16,7 +16,7 @@ function displayQuestion(question, partIndex, questionIndex, answer, practice, u
   try {
     switch (question.type) {
       case "multiple-choice": return <TracNghiem i={questionIndex} part={partIndex} question={question} answer={answer} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
-      case "true-false": return <DungSai i={questionIndex} question={question} answer={answer}practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
+      case "true-false": return <DungSai i={questionIndex} question={question} answer={answer} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
       case "short-answer": return <TraLoiNgan i={questionIndex} question={question} answer={answer} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
       case "gap-fill": return <DienVaoChoTrong i={questionIndex} question={question} answer={answer} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
       case "constructed-response": return <TuLuan i={questionIndex} question={question} answer={answer} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
