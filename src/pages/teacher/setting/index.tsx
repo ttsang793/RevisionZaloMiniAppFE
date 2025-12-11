@@ -1,5 +1,5 @@
 import { CameraFill, ChevronRight } from "react-bootstrap-icons";
-import { Box, Switch, Input, Text, Page, Select, useNavigate, useSnackbar } from "zmp-ui";
+import { Box, Switch, Input, Text, Page, Select, useNavigate, useSnackbar, Spinner } from "zmp-ui";
 import AppHeader from "@/components/header";
 import { useState, useEffect } from "react";
 import { getActiveSubjects, Subject } from "@/models/subject";
@@ -70,7 +70,18 @@ export default function TeacherSettingPage() {
     setImage(userInfo.userInfo.avatar)
   }
 
-  return loading ? <></> : (
+  if (loading) return (
+    <Page className="page page-wo-footer">
+      <AppHeader title="Cài đặt" />
+
+      <Box className="section-container text-center place-items-center">
+        <Spinner />
+        <Text className="mt-2 italic">Đang tải...</Text>
+      </Box>
+    </Page>
+  )
+
+  return (
     <Page className="page-x-0">
       <AppHeader title="Cài đặt" />
       <Box className="section-container">

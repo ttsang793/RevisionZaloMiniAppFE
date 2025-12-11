@@ -33,6 +33,7 @@ const CommentBlock = ({id, title}: {id: number, title?: string}) => {
       </form>
 
       {
+        commentList.length === 0 ? <Text className="text-center text-sm italic mt-2 text-gray-400">Chưa có bình luận!</Text> :
         commentList.map((c: Comment) => 
           <Fragment key={`comment-${c.id}`}>
             <CommentFirst comment={c} examId={id} userId={userId} handleDelete={handleDelete} loadData={loadData} />

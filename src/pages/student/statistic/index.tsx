@@ -1,7 +1,7 @@
 import axios from "axios";
 import AchievementRow from "@/components/student/statistic/achievement";
 import AppHeader from "@/components/header";
-import { Tabs, Box, Text, Page, Select } from "zmp-ui";
+import { Tabs, Box, Text, Page, Spinner, Select } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { BestExamsList, WorstExamsList } from "@/components/student/statistic/best-worst-exam-list";
 import { CorrectRate } from "@/components/student/statistic/correct-rate";
@@ -30,7 +30,14 @@ export default function StatisticPage() {
   }, []);
 
   if (loading) return (
-    <>Chờ chút!</>
+    <Page className="page page-wo-footer">
+      <AppHeader title="Danh hiệu" />
+
+      <Box className="section-container text-center place-items-center">
+        <Spinner />
+        <Text className="mt-2 italic">Đang tải thông tin...</Text>
+      </Box>
+    </Page>
   )
 
   return (
@@ -58,31 +65,27 @@ export default function StatisticPage() {
 
 
               {/* Biểu đồ điểm số */}
-              <Text.Title>Biểu đồ điểm số</Text.Title>
+              <Text.Title className="border-b pb-1 w-full zaui-border-blue-80 mt-4 mb-3">Biểu đồ điểm số</Text.Title>
               <PointChart pointData={statisticData[0]} />
-              <hr />
-
               {/* Số câu đúng sai */}
-              <Text.Title>Tỉ lệ đúng sai</Text.Title>
+              <Text.Title className="border-b pb-1 w-full zaui-border-blue-80 mt-4 mb-3">Tỉ lệ đúng sai</Text.Title>
               <Box className="divide-y divide-gray-200">
               {
                 [1,2,3,4].map(i => 
                   <CorrectRate
-                    difficulty={i - 1}
+                    difficulty={i - 1} key={`difficulty_${i}`}
                     ratingList={statisticData.length === 0 ? [] : statisticData[1][i - 1]}
                   />
                 )
               }
               </Box>
-              <hr />
 
               {/* Bài kiểm tra điểm tốt nhất */}
-              <Text.Title>Bài kiểm tra tốt nhất</Text.Title>
+              <Text.Title className="border-b pb-1 w-full zaui-border-blue-80 mt-4 mb-3">Bài kiểm tra tốt nhất</Text.Title>
               <BestExamsList examList={statisticData[2]} />
-              <hr />
 
               {/* Bài kiểm tra điểm tệ nhất */}
-              <Text.Title>Bài kiểm tra có điểm thấp nhất</Text.Title>
+              <Text.Title className="border-b pb-1 w-full zaui-border-blue-80 mt-4 mb-3">Bài kiểm tra có điểm thấp nhất</Text.Title>
               <WorstExamsList examList={statisticData[2]} />
             </Box>
           </Box>

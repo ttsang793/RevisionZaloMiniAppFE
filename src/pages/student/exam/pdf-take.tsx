@@ -1,4 +1,4 @@
-import { Box, Page, Text, Modal, useParams, useNavigate, useSnackbar } from "zmp-ui";
+import { Box, Page, Text, Modal, useParams, useNavigate, useSnackbar, Spinner } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { Exam, getExamById } from "@/models/exam";
 import { ExamCodeGet, ExamCodeQuestionGet, getExamCodeByExamId } from "@/models/pdf-exam-code";
@@ -65,7 +65,16 @@ export default function TakePDFExamPage({practice}: {practice: boolean}) {
     setExamAnswer({...examAnswer, questions: newQuestions});
   }
 
-  return loading ? <></> : (
+  if (loading) return (
+    <Page className="page-test flex justify-center items-center">
+      <Box className="place-items-center text-center">
+        <Spinner />
+        <Text className="mt-2 italic">Đang tải đề thi...</Text>
+      </Box>
+    </Page>
+  )
+
+  return (
     <Page className="page-test">
       {/* Tiêu đề và các phần */}
       <Text.Title className="text-center uppercase mb-1">{examInfo.title}</Text.Title>

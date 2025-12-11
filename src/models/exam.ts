@@ -39,8 +39,41 @@ class ExamRecord {
   count!: number;
 }
 
-function getPublishExams() {
-  return axios.get("/api/exam/publish");
+class HomeFilter {
+  search: string = "";
+  subject: string = "";
+  grade: number = -1;
+  type: string = "";
+}
+
+function getPublishExams(filter: HomeFilter | null) {
+  let url = "/api/exam/publish"
+  if (filter) {
+    let questionMark = false;
+
+    if (filter.search) {
+      questionMark = true;
+      url += `?search=${filter.search}`;
+    }
+
+    if (filter.subject) {
+      if (!questionMark) {
+        questionMark = true;
+        url += `?subject=${filter.subject}`;
+      }
+      else url += `&subject=${filter.subject}`;
+    }
+
+    if (!questionMark) {
+      questionMark = true;
+      url += `?grade=${filter.grade}`;
+    }
+    else url += `&grade=${filter.grade}`;
+
+    if (filter.type) url += `&type=${filter.type}`;
+  }
+
+  return axios.get(url);
 }
 
 function getExamById(id: number) {
@@ -107,7 +140,7 @@ async function publishExam(id: number): Promise<any> {
   }
 }
 
-export { Exam, ExamDetail, ExamRecord, getPublishExams, getExamById,
+export { Exam, ExamDetail, ExamRecord, HomeFilter, getPublishExams, getExamById,
           getExamDetailById, getExamRecordById,
           getPublishExamsByTeacher, getExamsByTeacher,
           insertExam, updateExam, deleteExam, publishExam }

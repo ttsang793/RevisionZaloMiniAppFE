@@ -1,4 +1,4 @@
-import { Text } from "zmp-ui";
+import { Text, Box } from "zmp-ui";
 import { Exam } from "@/models/exam";
 import ExamHolder from "@/components/student/exam/exam-holder";
 
@@ -8,7 +8,9 @@ const BestExamsList = ({examList}) => {
   )
 
   return (
-    examList.map((exam: Exam) => <ExamHolder exam={exam} key={`best-${exam.id}`} />)
+    <Box className="flex flex-col gap-3">
+     { examList.map((exam: Exam) => <ExamHolder exam={exam} key={`best-${exam.id}`} />) }
+    </Box>
   )
 }
 
@@ -18,7 +20,9 @@ const WorstExamsList = ({examList}) => {
   )
 
   return (
-    examList.map((exam: Exam) => <ExamHolder exam={exam} key={`worst-${exam.id}`} />)
+    <Box className="flex flex-col gap-3">
+     { examList.map((exam: Exam) => <ExamHolder exam={exam} key={`worst-${exam.id}`} />) }
+    </Box>
   )
 }
 

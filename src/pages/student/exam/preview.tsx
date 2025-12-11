@@ -1,6 +1,6 @@
 import { Calendar3, PersonFill, ClockFill, TrophyFill, ChatTextFill } from "react-bootstrap-icons"
 import CommentBlock from "@/components/student/exam/comment";
-import { Avatar, Box, Text, Page, Modal, useNavigate, useParams } from "zmp-ui";
+import { Avatar, Box, Text, Page, Modal, useNavigate, useParams, Spinner } from "zmp-ui";
 import { useState, useEffect } from "react";
 import AppHeader from "@/components/header";
 import { Exam, ExamDetail, ExamRecord, getExamById, getExamRecordById, getExamDetailById } from "@/models/exam";
@@ -23,14 +23,26 @@ export default function TestPreviewPage() {
     fetchData();
   }, []);
 
-  return loading ? <></> : (
+  if (loading) return (
     <Page className="page page-wo-footer">
       <AppHeader title="Thông tin bài kiểm tra" showBackIcon />
+
+      <Box className="section-container text-center place-items-center">
+        <Spinner />
+        <Text className="mt-2 italic">Đang tải thông tin...</Text>
+      </Box>
+    </Page>
+  )
+
+  return (
+    <Page className="page page-wo-footer">
+      <AppHeader title="Thông tin bài kiểm tra" showBackIcon />
+
       <Box className="section-container">        
         <Box className="flex gap-x-2">
           <Box className="flex-1">             
             <Text.Title size="large">{examInfo.title} &minus; {examInfo.subjectName} {examInfo.grade}</Text.Title>
-            <Box>
+            <Box className="mt-1">
               <Box
                 onClick={() => navTo(`/student/teacher/${examInfo.teacherId}`)}
                 className="me-2 inline-block"

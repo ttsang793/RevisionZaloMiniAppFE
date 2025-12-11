@@ -1,4 +1,4 @@
-import { Box, Page, Text, Modal, useParams, useNavigate, useSnackbar } from "zmp-ui";
+import { Box, Page, Text, Modal, useParams, useNavigate, useSnackbar, Spinner } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { ExamQuestion, getExamQuestionWithQuestions } from "@/models/exam-question";
 import { ExamPart } from "@/components/student/exam/exam-part";
@@ -80,7 +80,16 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
 
   useEffect(() => { if (autoTurnIn) turnIn() }, [autoTurnIn]);
 
-  return loading ? <></> : (
+  if (loading) return (
+    <Page className="page-test flex justify-center items-center">
+      <Box className="place-items-center text-center">
+        <Spinner />
+        <Text className="mt-2 italic">Đang tải đề thi...</Text>
+      </Box>
+    </Page>
+  )
+  
+  return (
     <Page className="page-test">
       {/* Tiêu đề và các phần */}
       <Text.Title className="text-center uppercase">{examInfo.title}</Text.Title>

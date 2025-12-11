@@ -1,10 +1,11 @@
 import AppHeader from "@/components/header";
 import ExamHolder from "@/components/student/exam/exam-holder"
-import { Text, Page, Box, useParams } from "zmp-ui";
+import { Text, Page, Box, Spinner, useParams } from "zmp-ui";
 import { useState, useEffect } from 'react';
 import { Teacher, getTeacherById } from "@/models/user";
 import { Exam, getPublishExamsByTeacher } from "@/models/exam";
 import { FollowButton } from "@/components/student/follow/follow-button";
+import { Clipboard2X } from "react-bootstrap-icons";
 
 export default function TeacherDetailPage() {
   const [examList, setExamList] = useState([]);
@@ -23,8 +24,19 @@ export default function TeacherDetailPage() {
     })
   }, []);
 
+  if (loading) return (
+    <Page className="page page-wo-footer">
+      <AppHeader title="Thông tin giáo viên" showBackIcon />
+
+      <Box className="section-container text-center place-items-center">
+        <Spinner />
+        <Text className="mt-2 italic">Đang tải thông tin...</Text>
+      </Box>
+    </Page>
+  )
+
   return (
-    <Page className="page-x-0">
+    <Page className="page">
       <AppHeader title={teacher.name} showBackIcon />
       <Box className="flex gap-2 section-container">
         <img src={teacher.avatar} className="size-[64px] rounded-full" />
@@ -37,12 +49,17 @@ export default function TeacherDetailPage() {
           </Box>
         </Box>
       </Box>
-
       
-      <Box className="flex gap-5 flex-wrap p-4 bg-white">
-        <Text.Title className="zaui-text-blue-80 border-b w-full zaui-border-blue-80">Danh sách đề thi</Text.Title>
+      <Box className="flex gap-3 flex-wrap p-4 bg-white">
+        <Text.Title className="zaui-text-blue-80 border-b pb-1 w-full zaui-border-blue-80">Danh sách đề thi</Text.Title>
         {
-          loading ? <>Cho 1 chut</> : examList.map((exam: Exam) => <ExamHolder exam={exam} key={`exam-${exam.id}`} />)
+          examList.length === 0 ? (
+            <Box className="text-center bg-white p-4 italic place-items-center">
+              <Clipboard2X size={54} className="text-gray-400" />
+              <Text className="mt-2 italic">Hiện tại chưa có đề, hãy quay lại khi giáo viên xuất bản đề nhé!</Text>
+            </Box>
+          ) :
+          examList.map((exam: Exam) => <ExamHolder exam={exam} key={`exam-${exam.id}`} />)
         }
       </Box>
     </Page>

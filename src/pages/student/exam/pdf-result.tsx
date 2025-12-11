@@ -1,4 +1,4 @@
-import { Box, Input, Page, Text, useParams, useNavigate } from "zmp-ui";
+import { Box, Input, Page, Text, useParams, useNavigate, Spinner } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { Exam, getExamById } from "@/models/exam";
 import { ExamCodeGet, ExamCodeQuestionGet, getExamCodeByExamId } from "@/models/pdf-exam-code";
@@ -65,9 +65,20 @@ export default function PDFExamResultPage() {
     fetchExam();
   }, []);
 
-  return loading ? <></> : (
+  if (loading) return (
+    <Page className="page-result">
+      <AppHeader title="Kết quả" showBackIcon />
+
+      <Box className="place-items-center text-center mt-2">
+        <Spinner />
+        <Text className="mt-2 italic">Đang tải kết quả...</Text>
+      </Box>
+    </Page>
+  )
+
+  return (
     <Page className="page-result bg-white">
-      <AppHeader title="Bài làm" showBackIcon />
+      <AppHeader title="Kết quả" showBackIcon />
       {/* Tiêu đề và các phần */}
       <Text.Title className="text-center uppercase mb-1">{examInfo.title}</Text.Title>
       <Text.Title className="text-center mb-1">
