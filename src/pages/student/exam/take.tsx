@@ -129,6 +129,7 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
         partTitle={examQuestions.partTitles[currentPart]}
         partQuestions={examQuestionList[currentPart]}
         answerList={examAnswerList[currentPart]}
+        allowShowScore={examInfo.allowShowScore}
         updateAnswerList={(newList: any[]) => updateExamAnswerList(currentPart, newList)}
       />
 
@@ -174,8 +175,10 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
 
     const submitStatus = await insertAttempt(examAttempt, examQuestionList, examAnswerList);
     if (submitStatus === 201) {
-      await checkAchievement();
-      await notifyWhenNewTurnIn(examInfo.teacherId, `${examInfo.title} (${examInfo.subjectName} ${examInfo.grade})`);
+      if (!practice) {
+        await checkAchievement();
+        await notifyWhenNewTurnIn(examInfo.teacherId, `${examInfo.title} (${examInfo.subjectName} ${examInfo.grade})`);
+      }
 
       openSnackbar({
         text: "Nộp bài thành công!",

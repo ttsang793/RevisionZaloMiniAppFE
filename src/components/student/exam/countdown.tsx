@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Text } from 'zmp-ui';
+import { Text, useSnackbar } from 'zmp-ui';
 
 interface CountdownProps {
   timeLimit: number;
@@ -10,6 +10,8 @@ interface CountdownProps {
 
 const Countdown = ({timeLimit, earlyTurnIn, setAllowEarlySubmit, setAutoTurnIn}: CountdownProps) => {
   const [timeLeft, setTimeLeft] = useState(timeLimit);
+  const aThird = Math.round(timeLimit * 2 / 3 / 60 / 5) * 5 * 60;
+  const { openSnackbar } = useSnackbar();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -19,6 +21,15 @@ const Countdown = ({timeLimit, earlyTurnIn, setAllowEarlySubmit, setAutoTurnIn}:
           setAutoTurnIn(true);
           return 0;
         }
+        
+        if (prevTime === aThird) {
+          openSnackbar({ text: `Còn ${aThird / 60} phút nữa là hết giờ làm bài!`, type: "warning" })
+        }
+
+        if (prevTime === 300) {
+          openSnackbar({ text: "Còn 5 phút nữa là hết giờ làm bài!", type: "warning" })
+        }
+
         if (timeLimit - (prevTime - 1) === earlyTurnIn)
           setAllowEarlySubmit(true);
         return prevTime - 1;

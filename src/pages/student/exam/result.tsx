@@ -2,12 +2,12 @@ import { Box, Input, Page, Text, Spinner, useParams, useNavigate } from "zmp-ui"
 import { useState, useEffect } from "react";
 import { ResultExamPart } from "@/components/student/exam/result-exam-part";
 import { Exam, getExamById } from "@/models/exam";
-import { ExamAttemptGet, getLatestExamAttempt } from "@/models/exam-attempt";
+import { ExamAttemptGet, getExamAttemptById, getLatestExamAttempt } from "@/models/exam-attempt";
 import { floatTwoDigits } from "@/script/util";
 import AppHeader from "@/components/header";
 
 export default function ExamResultPage() {
-  const { id } = useParams();
+  const { id, attemptId } = useParams();
   const navTo = useNavigate();
   const [loading, setLoading] = useState(true);
   const [examInfo, setExamInfo] = useState<Exam>(new Exam());
@@ -30,13 +30,7 @@ export default function ExamResultPage() {
   }
 
   useEffect(() => {
-    if (loading) {
-      getExamById(Number(id)).then(response => setExamInfo(response.data));
-      getLatestExamAttempt(Number(id)).then(response => {
-        setExamAttempt(response.data);
-        setLoading(false);
-      });
-    }
+    if (loading) fetchData();
   }, [])
 
   if (loading) return (
@@ -109,4 +103,16 @@ export default function ExamResultPage() {
       </footer>
     </Page>
   )
+
+  async function fetchData() {
+    const examResponse = await getExamById(Number(id));
+    setExamInfo(examResponse.data);
+
+    let attemptResponse: any;
+    if (!attemptId) attemptResponse = await getLatestExamAttempt(Number(id))
+    else attemptResponse = await getExamAttemptById(Number(attemptId));
+
+    setExamAttempt(attemptResponse.data);
+    setLoading(false);
+  }
 }

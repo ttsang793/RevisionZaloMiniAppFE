@@ -23,7 +23,7 @@ export default function TakePDFExamPage({practice}: {practice: boolean}) {
   const [examParts, setExamParts] = useState<number[]>([]);
   const [examInfo, setExamInfo] = useState<Exam>(new Exam());
   const [examAnswer, setExamAnswer] = useState<ExamCodeGet>(new ExamCodeGet());
-  const [pdfExamAttempt, setPdfExamAttempt] = useState<PdfExamAttempt>(new PdfExamAttempt(Number(id)));
+  const [pdfExamAttempt, setPdfExamAttempt] = useState<PdfExamAttempt>(new PdfExamAttempt(Number(id), practice));
 
   useEffect(() => {
     const fetchExam = async() => {
@@ -164,10 +164,12 @@ export default function TakePDFExamPage({practice}: {practice: boolean}) {
     })
     
     const response = await insertPdfExamAttempt(examAnswer.questions, pdfExamAttempt);
-    if (response.status === 201) {      
-      await checkAchievement();      
-      await notifyWhenNewTurnIn(examInfo.teacherId, `${examInfo.title} (${examInfo.subjectName} ${examInfo.grade})`);
-
+    if (response.status === 201) {
+      if (!practice) {
+        await checkAchievement();
+        await notifyWhenNewTurnIn(examInfo.teacherId, `${examInfo.title} (${examInfo.subjectName} ${examInfo.grade})`);
+      }
+      
       openSnackbar({
         text: "Nộp bài thành công!",
         type: "success",

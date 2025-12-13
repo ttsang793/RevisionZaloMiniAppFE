@@ -2,7 +2,7 @@ import { Book, Mortarboard } from "react-bootstrap-icons";
 import { Text, Page } from "zmp-ui";
 import { useNavigate } from "react-router-dom";
 import { getUserInfo } from "zmp-sdk";
-import { getTeacherSubjectById, getUserByZaloId } from "@/models/user";
+import { getStudentById, getTeacherSubjectById, getUserByZaloId } from "@/models/user";
 import { useState, useEffect } from "react";
 
 export default function ChooseRolePage() {
@@ -58,18 +58,22 @@ export default function ChooseRolePage() {
       sessionStorage.setItem("avatar", curUserData.avatar);      
 
       if (curUserData.role === "GV") {
-        const response = await getTeacherSubjectById(curUserData.id);
+        const teacherResponse = await getTeacherSubjectById(curUserData.id);
 
-        sessionStorage.setItem("subjectId", response.data.id);
-        sessionStorage.setItem("subjectName", response.data.name);
-        sessionStorage.setItem("questionMC", response.data.questionMC);
-        sessionStorage.setItem("questionTF", response.data.questionTF);
-        sessionStorage.setItem("questionSA", response.data.questionSA);
-        sessionStorage.setItem("questionGF", response.data.questionGF);
-        sessionStorage.setItem("questionST", response.data.questionST);
-        navTo("/teacher");
+        sessionStorage.setItem("subjectId", teacherResponse.data.id);
+        sessionStorage.setItem("subjectName", teacherResponse.data.name);
+        sessionStorage.setItem("questionMC", teacherResponse.data.questionMC);
+        sessionStorage.setItem("questionTF", teacherResponse.data.questionTF);
+        sessionStorage.setItem("questionSA", teacherResponse.data.questionSA);
+        sessionStorage.setItem("questionGF", teacherResponse.data.questionGF);
+        sessionStorage.setItem("questionST", teacherResponse.data.questionST);
+        location.href = ("/teacher");
       }
-      else if (curUserData.role === "HS") navTo("/student");
+      else if (curUserData.role === "HS") {
+        const studentResponse = await getStudentById(curUserData.id);
+        sessionStorage.setItem("grade", studentResponse.data.grade);
+        location.href = ("/student");
+      }
       else throw new Error();
     }
     catch (err) {

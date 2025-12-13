@@ -8,20 +8,20 @@ import { SapXep } from "../question/sorting";
 import { DungSaiTHPT } from "../question/true-false-thpt";
 import { floatTwoDigits } from "@/script/util";
 
-function displayQuestion(question, partIndex, questionIndex, answer, practice, updateAnswer) {
+function displayQuestion(question, partIndex, questionIndex, answer, updateAnswer, practice, point, allowShowScore) {
   if (!question) {
     console.error(`Cannot read question ${partIndex}-${questionIndex}`);
     return;
   }
   try {
     switch (question.type) {
-      case "multiple-choice": return <TracNghiem i={questionIndex} part={partIndex} question={question} answer={answer} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
-      case "true-false": return <DungSai i={questionIndex} question={question} answer={answer} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
-      case "short-answer": return <TraLoiNgan i={questionIndex} question={question} answer={answer} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
-      case "gap-fill": return <DienVaoChoTrong i={questionIndex} question={question} answer={answer} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
-      case "constructed-response": return <TuLuan i={questionIndex} question={question} answer={answer} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
-      case "sorting": return <SapXep i={questionIndex} question={question} answer={answer} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
-      case "true-false-thpt": return <DungSaiTHPT i={questionIndex} question={question} answer={answer} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
+      case "multiple-choice": return <TracNghiem i={questionIndex} part={partIndex} question={question} answer={answer} point={point} allowShowScore={allowShowScore} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
+      case "true-false": return <DungSai i={questionIndex} question={question} answer={answer} point={point} allowShowScore={allowShowScore} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
+      case "short-answer": return <TraLoiNgan i={questionIndex} question={question} answer={answer} point={point} allowShowScore={allowShowScore} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
+      case "gap-fill": return <DienVaoChoTrong i={questionIndex} question={question} answer={answer} point={point} allowShowScore={allowShowScore} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
+      case "constructed-response": return <TuLuan i={questionIndex} question={question} answer={answer} point={point} allowShowScore={allowShowScore} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
+      case "sorting": return <SapXep i={questionIndex} question={question} answer={answer} point={point} allowShowScore={allowShowScore} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
+      case "true-false-thpt": return <DungSaiTHPT i={questionIndex} question={question} answer={answer} point={point} allowShowScore={allowShowScore} practice={practice} updateAnswer={updated => updateAnswer(questionIndex, updated)} key={`question-${partIndex}_${questionIndex}`} />
       default: return null;
     }
   }
@@ -40,9 +40,10 @@ interface ExamPartProps {
   setCurrentQuestion: (q: number) => void,
   answerList: any[],
   updateAnswerList: (list: any[]) => void;
+  allowShowScore: boolean;
 }
 
-const ExamPart = ({i, practice, partTitle, partQuestions, currentQuestion, setCurrentQuestion, answerList, updateAnswerList}: ExamPartProps) => {
+const ExamPart = ({i, practice, partTitle, partQuestions, currentQuestion, setCurrentQuestion, answerList, updateAnswerList, allowShowScore}: ExamPartProps) => {
   const updateAnswer = (j: number, updated: any) => {
     const newList = [...answerList];
     newList[j] = updated;
@@ -61,7 +62,7 @@ const ExamPart = ({i, practice, partTitle, partQuestions, currentQuestion, setCu
           <button
             className={`rounded-full size-6 border
               ${currentQuestion === j ? "zaui-border-blue-70 zaui-bg-blue-70 zaui-text-blue-10"
-                : (answerList[j] ? "zaui-border-orange-70 zaui-bg-orange-10 zaui-text-orange-70"
+                : (answerList[j][0].length > 0 ? "zaui-border-orange-70 zaui-bg-orange-10 zaui-text-orange-70"
                 : "zaui-border-blue-70 zaui-bg-blue-10 zaui-text-blue-70")}`}
             onClick={() => setCurrentQuestion(j)} key={`btnQ-${i + 1}_${j + 1}`}
           >
@@ -78,8 +79,10 @@ const ExamPart = ({i, practice, partTitle, partQuestions, currentQuestion, setCu
             i,
             currentQuestion,
             answerList[currentQuestion],
+            updateAnswer,
             practice,
-            updateAnswer
+            partQuestions[currentQuestion].question.point,
+            allowShowScore
           )
         }
       </Box>

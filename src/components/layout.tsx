@@ -144,9 +144,11 @@ const Layout = () => {
               <Route path="take/:id" element={<TakeExamPage practice={false} />} />
               <Route path="practice/:id" element={<TakeExamPage practice />} />
               <Route path="result/:id" element={<ExamResultPage />} />
+              <Route path="result/:id/:attemptId" element={<ExamResultPage />} />
               <Route path="pdf/take/:id" element={<TakePDFExamPage practice={false} />} />
               <Route path="pdf/practice/:id" element={<TakePDFExamPage practice />} />
               <Route path="pdf/result/:id" element={<PDFExamResultPage />} />
+              <Route path="pdf/result/:id/:attemptId" element={<PDFExamResultPage />} />
               <Route path="*" element={<Navigate to="/student" />} />
             </Route>
 

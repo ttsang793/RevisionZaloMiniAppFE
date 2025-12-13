@@ -10,6 +10,7 @@ class PdfExamAttempt {
   taskPdf: string = "";
   answerPdf: string = "";
   totalPoint: number = 0;
+  isPractice: boolean = false;
   comment?: string;
   startedAt: Date = new Date();
   pdfExamCodeId: number = -1;
@@ -17,8 +18,9 @@ class PdfExamAttempt {
   pointBoard: number[] = [];
   correctBoard: boolean[][] = [];
 
-  constructor(examId: number) {
+  constructor(examId: number, isPractice: boolean) {
     this.examId = examId;
+    this.isPractice = isPractice
   }
 }
 

@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { BestExamsList, WorstExamsList } from "@/components/student/statistic/best-worst-exam-list";
 import { CorrectRate } from "@/components/student/statistic/correct-rate";
 import { PointChart } from "@/components/student/statistic/point-chart";
+import { getSubjectsByGrade, Subject } from "@/models/subject";
 
 type Achievement = {
   id: number,
@@ -18,16 +19,19 @@ type Achievement = {
 export default function StatisticPage() {
   const [title, setTitle] = useState("Danh hiệu");
   const [achievementList, setAchievementList] = useState([]);
+  const [subjectList, setSubjectList] = useState<Subject[]>([]);
   const [statisticData, setStatisticData] = useState([]);
   const [subjectId, setSubjectId] = useState("TOAN");
   const [loading, setLoading] = useState(true);
   const studentId = Number(sessionStorage.getItem("id"));
 
   useEffect(() => {
-    axios.get(`/api/achievement/${studentId}`).then(response => setAchievementList(response.data)).catch(() => setAchievementList([]));
-    axios.get(`/api/statistic/student/${studentId}/${subjectId}`).then(response => setStatisticData(response.data));
-    setLoading(false);
+    fetchData();
   }, []);
+
+  useEffect(() => {
+    fetchStatistic();
+  }, [subjectId]);
 
   if (loading) return (
     <Page className="page page-wo-footer">
@@ -43,7 +47,7 @@ export default function StatisticPage() {
   return (
     <Page className="page-x-0">
       <AppHeader title={title} />
-      <Tabs onTabClick={e => setTitle(e === "analyze" ? "Thông số" : "Danh hiệu")}>
+      <Tabs onTabClick={e => setTitle(e === "statistic" ? "Thông số" : "Danh hiệu")}>
         <Tabs.Tab label="Danh hiệu" key="achievement">
           <Box className="bg-white" p={4}>
             {
@@ -57,10 +61,13 @@ export default function StatisticPage() {
           <Box>
             <Box className="bg-white" p={4}>
               <Select
-                value={subjectId}
-                onChange={(e: string) => setSubjectId(e)} 
+                value={subjectId} label="Môn học"
+                onChange={(e: string) => setSubjectId(e)}
+                closeOnSelect
               >
-                <Select.Option value="TOAN" title="Toán" />
+              {
+                subjectList.map((s: Subject) => <Select.Option value={s.id} title={s.name} key={`sub-${s.id}`} />)
+              }                
               </Select>
 
 
@@ -71,9 +78,9 @@ export default function StatisticPage() {
               <Text.Title className="border-b pb-1 w-full zaui-border-blue-80 mt-4 mb-3">Tỉ lệ đúng sai</Text.Title>
               <Box className="divide-y divide-gray-200">
               {
-                [1,2,3,4].map(i => 
+                [1,2,3,4].map((i: number) => 
                   <CorrectRate
-                    difficulty={i - 1} key={`difficulty_${i}`}
+                    key={`difficulty_${i}`}
                     ratingList={statisticData.length === 0 ? [] : statisticData[1][i - 1]}
                   />
                 )
@@ -86,11 +93,27 @@ export default function StatisticPage() {
 
               {/* Bài kiểm tra điểm tệ nhất */}
               <Text.Title className="border-b pb-1 w-full zaui-border-blue-80 mt-4 mb-3">Bài kiểm tra có điểm thấp nhất</Text.Title>
-              <WorstExamsList examList={statisticData[2]} />
+              <WorstExamsList examList={statisticData[3]} />
             </Box>
           </Box>
         </Tabs.Tab>
       </Tabs>
     </Page>
   )
+
+  async function fetchData() {
+    const achievementResponse = await axios.get(`/api/achievement/${studentId}`);
+    setAchievementList(achievementResponse.data || []);
+    
+    const subjectResponse = await getSubjectsByGrade(Number(sessionStorage.getItem("grade")));
+    setSubjectList(subjectResponse || []);
+
+    await fetchStatistic();
+    setLoading(false);
+  }
+
+  async function fetchStatistic() {
+    const statisticResponse = await axios.get(`/api/statistic/student/${studentId}/${subjectId}`);
+    setStatisticData(statisticResponse.data);
+  }
 }

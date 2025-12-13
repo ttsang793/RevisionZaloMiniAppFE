@@ -2,6 +2,7 @@ import { Box, Input, Radio, Text, ImageViewer } from "zmp-ui";
 import "./question.css"
 import { useState, useEffect } from "react";
 import { CheckLg, XLg } from "react-bootstrap-icons";
+import { floatTwoDigits } from "@/script/util";
 
 const showCorrect = (isCorrect: boolean | undefined) => {
   if (isCorrect === null) return <></>
@@ -9,7 +10,7 @@ const showCorrect = (isCorrect: boolean | undefined) => {
   return <XLg size={24} className="inline zaui-text-red-70" />
 }
 
-const DungSai = ({i, question, answer, practice, updateAnswer}) => {
+const DungSai = ({i, question, answer, practice, updateAnswer, point, allowShowScore}) => {
   const [checkCorrect, setCheckCorrect] = useState(false);
   const { TextArea } = Input;
   const [visible, setVisible] = useState(false);
@@ -27,8 +28,8 @@ const DungSai = ({i, question, answer, practice, updateAnswer}) => {
   return (
     <>
       <Box className="border border-gray-300 py-1 px-2">
-        <Text size="small" bold className="text-justify">
-          Câu {i + 1}. {question.title}
+        <Text bold className="text-justify">
+          Câu {i + 1}. {question.title} {allowShowScore ? `(${floatTwoDigits(point)} đ)` : ""}
         </Text>
 
         <Box className="place-items-center">
@@ -95,7 +96,7 @@ const DungSaiResult = ({i, answer}) => {
   return (
     <>
       <Box className="border border-gray-300 py-1 px-2 mb-2">
-        <Text size="small" bold className="text-justify">
+        <Text bold className="text-justify">
           Câu {i + 1}. {question.title}
         </Text>
 

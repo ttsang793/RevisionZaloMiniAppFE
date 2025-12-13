@@ -1,6 +1,7 @@
 import { Box, Input, Text, ImageViewer, Checkbox } from "zmp-ui";
 import { useState, useEffect } from "react";
 import { CheckLg, XLg } from "react-bootstrap-icons";
+import { floatTwoDigits } from "@/script/util";
 
 const showCorrect = (isCorrect: boolean | undefined) => {
   if (isCorrect === null) return <></>
@@ -8,7 +9,7 @@ const showCorrect = (isCorrect: boolean | undefined) => {
   return <XLg size={24} className="inline zaui-text-red-70" />
 }
 
-const TuLuan = ({i, question, answer, practice, updateAnswer}) => {
+const TuLuan = ({i, question, answer, practice, updateAnswer, point, allowShowScore}) => {
   const { TextArea } = Input;
   const [checkCorrect, setCheckCorrect] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -23,8 +24,8 @@ const TuLuan = ({i, question, answer, practice, updateAnswer}) => {
   return (
     <>
       <Box className="border border-gray-300 py-1 px-2">
-        <Text size="small" bold className="text-justify">
-          Câu {i + 1}. {question.title}
+        <Text bold className="text-justify">
+          Câu {i + 1}. {question.title} {allowShowScore ? `(${floatTwoDigits(point)} đ)` : ""}
         </Text>
 
         <Box className="place-items-center">
@@ -80,7 +81,7 @@ const TuLuanResult = ({i, answer}) => {
   return (
     <>
       <Box className="border border-gray-300 py-1 px-2 mb-2">
-        <Text size="small" bold className="text-justify">
+        <Text bold className="text-justify">
           Câu {i + 1}. {question.title}
         </Text>
 
@@ -106,7 +107,7 @@ const TuLuanMarking = ({i, answer, updateQuestion}) => {
 
   return (
     <Box className="border border-gray-300 py-1 px-2">
-      <Text size="small" bold className="text-justify">
+      <Text bold className="text-justify">
         Câu {i + 1}. {question.title}
       </Text>
 
