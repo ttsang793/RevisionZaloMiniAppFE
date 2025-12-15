@@ -1,8 +1,5 @@
 import { render_api } from "@/script/util";
-
-const teacherId = Number(sessionStorage.getItem("id"));
-const subjectId = sessionStorage.getItem("subjectId");
-const subjectName = sessionStorage.getItem("subjectName");
+import { UserStorage } from "./user";
 
 class Question {
   id?: number;
@@ -12,13 +9,16 @@ class Question {
   type: string = "";
   difficulty?: number = -1;
   topicId: string | null = null;
-  subjectId: string = subjectId!;
-  subjectName: string = subjectName!;
-  teacherId: number = teacherId;
+  subjectId: string;
+  subjectName: string;
+  teacherId: number;
   explanation?: string;
 
   constructor(type?: string) {
     this.type = type || "";
+    this.teacherId = UserStorage.getId();
+    this.subjectId = UserStorage.getSubjectId().toString();
+    this.subjectName = UserStorage.getSubjectName();
   }
 }
 
@@ -39,11 +39,13 @@ const questionType = [
  { title: "Trắc nghiệm Đúng – Sai THPT", type: "true-false-thpt" },
 ];
 
-function getQuestionsByTeacher() {
+function getQuestionsByTeacher(id?: number) {
+  const teacherId = UserStorage.getId();
   return render_api.get(`/api/question/teacher/${teacherId}`);
 }
 
 function getQuestionsFilterByTeacher(title?: string, type?: string, grade?: number) {
+  const teacherId = UserStorage.getId();
   if (!title) return render_api.get(`/api/question/teacher/filter/${teacherId}?type=${type}&grade=${grade}`);
   return render_api.get(`/api/question/teacher/filter/${teacherId}?type=${type}&title=${title}`);
 }

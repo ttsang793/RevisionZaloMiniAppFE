@@ -1,7 +1,5 @@
 import { render_api } from "@/script/util";
-
-const teacherId = Number(sessionStorage.getItem("id"));
-const subjectId = sessionStorage.getItem("subjectId")!;
+import { UserStorage } from "./user";
 
 class Exam {
   id?: number;
@@ -15,16 +13,21 @@ class Exam {
   allowPartSwap: boolean = false;
   allowQuestionSwap: boolean = false;
   allowAnswerSwap: boolean = false;
-  teacherId: number = teacherId;
+  teacherId: number;
   teacherName?: string;
   teacherAvatar?: string;
-  subjectId: string = subjectId;
+  subjectId: string;
   subjectName?: string;
   updatedAt: Date = new Date();
   publishedAt: Date = new Date();
   status: number = 0;
   latest?: Date;
   historyId?: number;
+
+  constructor() {
+    this.teacherId = UserStorage.getId();
+    this.subjectId = UserStorage.getSubjectId();
+  }
 }
 
 class ExamDetail {
@@ -88,11 +91,11 @@ function getExamRecordById(id: number) {
   return render_api.get(`/api/exam/${id}/record`);
 }
 
-function getExamsByTeacher(tId = teacherId) {
+function getExamsByTeacher(tId = UserStorage.getId()) {
   return render_api.get(`/api/exam/teacher/${tId}`);
 }
 
-function getPublishExamsByTeacher(tId = teacherId) {
+function getPublishExamsByTeacher(tId = UserStorage.getId()) {
   return render_api.get(`/api/exam/teacher/${tId}/publish`);
 }
 

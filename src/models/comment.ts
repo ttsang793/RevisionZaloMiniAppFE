@@ -1,16 +1,19 @@
 import { render_api } from "@/script/util";
-
-const userId = Number(sessionStorage.getItem("id"));
+import { UserStorage } from "./user";
 
 class Comment {
   id?: number;
   examId?: number;
-  userId: number = userId;
+  userId: number;
   userName?: string;
   userAvatar?: string;
   replyTo?: number;
   content: string = "";
   replies?: Comment[];
+
+  constructor() {
+    this.userId = UserStorage.getId();
+  }
 }
 
 function getCommentsByExamId(examId: number) {

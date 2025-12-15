@@ -1,6 +1,55 @@
 import { render_api } from "@/script/util";
 
-const id = Number(sessionStorage.getItem("id"));
+const UserStorage = {
+  getId: () => Number(sessionStorage.getItem("id")) || 0,
+  getRole: () => sessionStorage.getItem("role") || "",
+  getAvatar: () => sessionStorage.getItem("avatar") || "",
+  getSubjectId: () => sessionStorage.getItem("subjectId") || "",
+  getSubjectName: () => sessionStorage.getItem("subjectName") || "",
+  getQuestionMC: () => sessionStorage.getItem("questionMC") || "",
+  getQuestionTF: () => sessionStorage.getItem("questionTF") || "",
+  getQuestionSA: () => sessionStorage.getItem("questionSA") || "",
+  getQuestionGF: () => sessionStorage.getItem("questionGF") || "",
+  getQuestionST: () => sessionStorage.getItem("questionST") || "",
+  getGrade: () => Number(sessionStorage.getItem("grade")) || -1,
+  
+  setUserData: (data: any) => {
+    sessionStorage.setItem("id", data.id);
+    sessionStorage.setItem("role", data.role);
+    sessionStorage.setItem("avatar", data.avatar);
+  },
+
+  clearStudentData: () => {
+    sessionStorage.removeItem("grade");
+  },
+
+  setStudentData: (data: any) => {
+    sessionStorage.setItem("grade", data.grade);
+  },
+
+  clearTeacherData: () => {
+    sessionStorage.removeItem("avatar");
+    sessionStorage.removeItem("subjectId");
+    sessionStorage.removeItem("subjectName");
+    sessionStorage.removeItem("questionMC");
+    sessionStorage.removeItem("questionTF");
+    sessionStorage.removeItem("questionSA");
+    sessionStorage.removeItem("questionGF");
+    sessionStorage.removeItem("questionST");
+  },
+
+  setTeacherData: (data: any) => {
+    sessionStorage.setItem("subjectId", data.id);
+    sessionStorage.setItem("subjectName", data.name);
+    sessionStorage.setItem("questionMC", data.questionMC);
+    sessionStorage.setItem("questionTF", data.questionTF);
+    sessionStorage.setItem("questionSA", data.questionSA);
+    sessionStorage.setItem("questionGF", data.questionGF);
+    sessionStorage.setItem("questionST", data.questionST);
+  },
+  
+  clear: () => sessionStorage.clear()
+};
 
 class User {
   id?: number;
@@ -42,7 +91,7 @@ function getUserByZaloId(zaloId: string) {
   return render_api.get(`/api/user/${zaloId}`);
 }
 
-function getStudentById(studentId = id) {
+function getStudentById(studentId = UserStorage.getId()) {
   return render_api.get(`/api/student/${studentId}`);
 }
 
@@ -73,7 +122,8 @@ async function updateStudent(student: Student): Promise<any> {
 
 async function deleteStudent(): Promise<any> {
   try {
-    const response = await render_api.delete(`/api/student/${id}`);
+    const studentId = UserStorage.getId();
+    const response = await render_api.delete(`/api/student/${studentId}`);
     return response;
   }
   catch (err) {
@@ -82,11 +132,11 @@ async function deleteStudent(): Promise<any> {
   }
 }
 
-function getTeacherById(teacherId = id) {
+function getTeacherById(teacherId = UserStorage.getId()) {
   return render_api.get(`/api/teacher/${teacherId}`);
 }
 
-async function getTeacherSubjectById(teacherId = id) {
+async function getTeacherSubjectById(teacherId = UserStorage.getId()) {
   return await render_api.get(`/api/teacher/${teacherId}/subject`);
 }
 
@@ -116,7 +166,8 @@ async function updateTeacher(teacher: Teacher): Promise<any> {
 
 async function deleteTeacher(): Promise<any> {
   try {
-    const response = await render_api.delete(`/api/teacher/${id}`);
+    const teacherId = UserStorage.getId();
+    const response = await render_api.delete(`/api/teacher/${teacherId}`);
     return response;
   }
   catch (err) {
@@ -148,7 +199,7 @@ async function resetPassword(admin: AdminResetPassword): Promise<any> {
   }
 }
 
-export { getUserByZaloId,
+export { UserStorage, getUserByZaloId,
           Student, getStudentById, addStudent, updateStudent, deleteStudent,
           Teacher, getTeacherById, getTeacherSubjectById, addTeacher, updateTeacher, deleteTeacher,
           Admin, AdminLogin, AdminResetPassword, vertifyAdmin, resetPassword }

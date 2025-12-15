@@ -2,7 +2,7 @@ import { Book, Mortarboard } from "react-bootstrap-icons";
 import { Text, Page } from "zmp-ui";
 import { useNavigate } from "react-router-dom";
 import { getUserInfo } from "zmp-sdk";
-import { getStudentById, getTeacherSubjectById, getUserByZaloId } from "@/models/user";
+import { UserStorage, getStudentById, getTeacherSubjectById, getUserByZaloId } from "@/models/user";
 import { useState, useEffect } from "react";
 
 export default function ChooseRolePage() {
@@ -53,32 +53,27 @@ export default function ChooseRolePage() {
       const curUser = await getUserByZaloId(user.id);
       const curUserData = curUser.data;
       
-      sessionStorage.setItem("id", curUserData.id);
-      sessionStorage.setItem("role", curUserData.role);
-      sessionStorage.setItem("avatar", curUserData.avatar);      
+      UserStorage.setUserData({
+        id: curUserData.id,
+        role: curUserData.role,
+        avatar: curUserData.avatar
+      });  
 
       if (curUserData.role === "GV") {
         const teacherResponse = await getTeacherSubjectById(curUserData.id);
-
-        sessionStorage.setItem("subjectId", teacherResponse.data.id);
-        sessionStorage.setItem("subjectName", teacherResponse.data.name);
-        sessionStorage.setItem("questionMC", teacherResponse.data.questionMC);
-        sessionStorage.setItem("questionTF", teacherResponse.data.questionTF);
-        sessionStorage.setItem("questionSA", teacherResponse.data.questionSA);
-        sessionStorage.setItem("questionGF", teacherResponse.data.questionGF);
-        sessionStorage.setItem("questionST", teacherResponse.data.questionST);
-        navTo("/teacher", { replace: true });
+        UserStorage.setTeacherData(teacherResponse.data);
+        navTo("/teacher/question");
       }
       else if (curUserData.role === "HS") {
         const studentResponse = await getStudentById(curUserData.id);
-        sessionStorage.setItem("grade", studentResponse.data.grade);
-        navTo("/student", { replace: true });
+        UserStorage.setStudentData(studentResponse.data);
+        navTo("/student");
       }
       else throw new Error();
     }
     catch (err) {
       console.error(err);
-      sessionStorage.removeItem("avatar");
+      UserStorage.clear();
       setLoading(false);
     }
   }

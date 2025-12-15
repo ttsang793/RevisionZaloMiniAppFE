@@ -1,6 +1,5 @@
 import { render_api } from "@/script/util";
-
-const studentId = Number(sessionStorage.getItem("id"));
+import { UserStorage } from "./user";
 
 class StudentReminder {
   id!: number;
@@ -10,15 +9,18 @@ class StudentReminder {
 }
 
 async function getFavorite() {
+  const studentId = UserStorage.getId();
   return render_api.get(`/api/student/favorite/${studentId}`);
 }
 
 async function isFavorite(examId: number) {
+  const studentId = UserStorage.getId();
   return render_api.get(`/api/student/favorite/${studentId}/${examId}`);
 }
 
 async function handleFavorite(examId: number): Promise<any> {
   try {
+    const studentId = UserStorage.getId();
     const response = await render_api.put(`/api/student/favorite/${studentId}/${examId}`);
     return response;
   }
@@ -28,11 +30,13 @@ async function handleFavorite(examId: number): Promise<any> {
 }
 
 async function getHistory() {
+  const studentId = UserStorage.getId();
   return render_api.get(`/api/student/history/${studentId}`);
 }
 
 async function handleHistory(examId: number): Promise<any> {
   try {
+    const studentId = UserStorage.getId();
     const response = await render_api.put(`/api/student/history/${studentId}/${examId}`);
     return response;
   }
@@ -43,6 +47,7 @@ async function handleHistory(examId: number): Promise<any> {
 
 async function updateAllowingSaveHistory(): Promise<any> {
   try {
+    const studentId = UserStorage.getId();
     const response = await render_api.put(`/api/student/history/${studentId}/allow-save`);
     return response;
   }
@@ -63,6 +68,7 @@ async function deleteHistory(historyId: number): Promise<any> {
 
 async function deleteAllHistories(): Promise<any> {
   try {
+    const studentId = UserStorage.getId();
     const response = await render_api.delete(`/api/student/history/${studentId}/all`);
     return response;
   }
@@ -72,11 +78,13 @@ async function deleteAllHistories(): Promise<any> {
 }
 
 async function getFollowing(teacherId: number) {
+  const studentId = UserStorage.getId();
   return render_api.get(`/api/student/follow/${studentId}/${teacherId}`);
 }
 
 async function following(teacherId: number): Promise<any> {
   try {
+    const studentId = UserStorage.getId();
     const response = await render_api.put(`/api/student/follow/${studentId}/${teacherId}`)
     return response;
   }
@@ -86,11 +94,13 @@ async function following(teacherId: number): Promise<any> {
 }
 
 async function getReminder() {
+  const studentId = UserStorage.getId();
   return render_api.get(`/api/student/reminder/${studentId}`);
 }
 
 async function addReminder(): Promise<any> {
   try {
+    const studentId = UserStorage.getId();
     const response = render_api.post(`/api/student/reminder/${studentId}`);
     return response;
   }

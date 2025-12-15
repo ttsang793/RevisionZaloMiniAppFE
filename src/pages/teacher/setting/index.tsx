@@ -6,7 +6,7 @@ import { getActiveSubjects, Subject } from "@/models/subject";
 import { getUserInfo } from "zmp-sdk";
 import { render_api } from "@/script/util";
 
-import { deleteTeacher, getTeacherById, getTeacherSubjectById, getUserByZaloId, Teacher, updateTeacher } from "@/models/user";
+import { deleteTeacher, getTeacherById, getTeacherSubjectById, Teacher, updateTeacher, UserStorage } from "@/models/user";
 import { updateTeacherStatus } from "@/models/notification";
 
 export default function TeacherSettingPage() {
@@ -66,6 +66,7 @@ export default function TeacherSettingPage() {
 
   const handleGetAvatarFromZalo = async () => {
     const userInfo = await getUserInfo({ autoRequestPermission: false });
+    console.log(userInfo);
     setImage(userInfo.userInfo.avatar)
   }
 
@@ -107,7 +108,7 @@ export default function TeacherSettingPage() {
               src={!image ? teacher.avatar : image}
               alt="Avatar"
               id="avatar-image"
-              className="h-20 rounded-full border-1 border-zinc-300 object-cover"
+              className="size-20 rounded-full border-1 border-zinc-300 object-cover"
             />
             <button
               className="absolute top-14 -right-2 border border-gray-200 rounded-full size-10 bg-zinc-300"
@@ -311,26 +312,10 @@ export default function TeacherSettingPage() {
   }
 
   async function resetSessionStorage() {
-    sessionStorage.removeItem("avatar");
-    sessionStorage.removeItem("subjectId");
-    sessionStorage.removeItem("subjectName");
-    sessionStorage.removeItem("questionMC");
-    sessionStorage.removeItem("questionTF");
-    sessionStorage.removeItem("questionSA");
-    sessionStorage.removeItem("questionGF");
-    sessionStorage.removeItem("questionST");
-
+    UserStorage.clearTeacherData();
     let response = await getTeacherById();
     sessionStorage.setItem("avatar", response.data.avatar);
-
-    response = await getTeacherSubjectById();      
-
-    sessionStorage.setItem("subjectId", response.data.id);
-    sessionStorage.setItem("subjectName", response.data.name);
-    sessionStorage.setItem("questionMC", response.data.questionMC);
-    sessionStorage.setItem("questionTF", response.data.questionTF);
-    sessionStorage.setItem("questionSA", response.data.questionSA);
-    sessionStorage.setItem("questionGF", response.data.questionGF);
-    sessionStorage.setItem("questionST", response.data.questionST);
+    response = await getTeacherSubjectById();
+    UserStorage.setTeacherData(response);
   }
 }

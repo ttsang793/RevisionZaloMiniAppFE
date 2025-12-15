@@ -108,7 +108,7 @@ export default function StudentSettingPage() {
               src={!image ? student.avatar : image}
               alt="Avatar"
               id="avatar-image"
-              className="h-20 rounded-full border-1 border-zinc-300 object-cover"
+              className="size-20 rounded-full border-1 border-zinc-300 object-cover"
             />
             <button
               className="absolute top-14 -right-2 border border-gray-200 rounded-full size-10 bg-zinc-300"

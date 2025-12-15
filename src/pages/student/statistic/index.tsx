@@ -7,6 +7,7 @@ import { BestExamsList, WorstExamsList } from "@/components/student/statistic/be
 import { CorrectRate } from "@/components/student/statistic/correct-rate";
 import { PointChart } from "@/components/student/statistic/point-chart";
 import { getSubjectsByGrade, Subject } from "@/models/subject";
+import { UserStorage } from "@/models/user";
 
 type Achievement = {
   id: number,
@@ -23,7 +24,7 @@ export default function StatisticPage() {
   const [statisticData, setStatisticData] = useState([]);
   const [subjectId, setSubjectId] = useState("TOAN");
   const [loading, setLoading] = useState(true);
-  const studentId = Number(sessionStorage.getItem("id"));
+  const studentId = UserStorage.getId();
 
   useEffect(() => {
     fetchData();
@@ -105,7 +106,7 @@ export default function StatisticPage() {
     const achievementResponse = await render_api.get(`/api/achievement/${studentId}`);
     setAchievementList(achievementResponse.data || []);
     
-    const subjectResponse = await getSubjectsByGrade(Number(sessionStorage.getItem("grade")));
+    const subjectResponse = await getSubjectsByGrade(UserStorage.getGrade());
     setSubjectList(subjectResponse || []);
 
     await fetchStatistic();
