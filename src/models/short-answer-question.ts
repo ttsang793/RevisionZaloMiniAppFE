@@ -1,4 +1,4 @@
-import axios from "axios";
+import { render_api } from "@/script/util";
 import { Question, QuestionError, validateInput } from "./question";
 
 class ShortAnswerQuestion extends Question {
@@ -22,14 +22,14 @@ function validateShortAnswerInput(question: ShortAnswerQuestion): ShortAnswerErr
 }
 
 function getShortAnswerQuestionById(id: number) {
-  return axios.get(`/api/question/${id}`);
+  return render_api.get(`/api/question/${id}`);
 }
 
 async function insertShortAnswerQuestion(saq: ShortAnswerQuestion): Promise<any> {
   try {
     saq.answerKey = saq.answerKey.trim();
 
-    const response = axios.post("/api/question/short-answer", saq, {
+    const response = render_api.post("/api/question/short-answer", saq, {
       headers: { "Content-Type": "application/json" }
     })
     return response;
@@ -43,7 +43,7 @@ async function updateShortAnswerQuestion(saq: ShortAnswerQuestion, id: number): 
   try {
     saq.answerKey = saq.answerKey.trim();
     
-    const response = axios.put(`/api/question/short-answer/${id}`, saq, {
+    const response = render_api.put(`/api/question/short-answer/${id}`, saq, {
       headers: { "Content-Type": "application/json" }
     })
     return response;

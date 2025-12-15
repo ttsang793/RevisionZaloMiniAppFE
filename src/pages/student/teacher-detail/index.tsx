@@ -44,7 +44,6 @@ export default function TeacherDetailPage() {
           <Text className="italic text-justify">{teacher.introduction}</Text>
           <hr />
           <Box className="flex items-center gap-x-2">
-            <Text>1,000 học sinh theo dõi</Text>
             <FollowButton teacherId={teacher.id} />
           </Box>
         </Box>
@@ -55,7 +54,7 @@ export default function TeacherDetailPage() {
         {
           examList.length === 0 ? (
             <Box className="text-center bg-white p-4 italic place-items-center">
-              <Clipboard2X size={54} className="text-gray-400" />
+              <Clipboard2X size={48} className="text-gray-400" />
               <Text className="mt-2 italic">Hiện tại chưa có đề, hãy quay lại khi giáo viên xuất bản đề nhé!</Text>
             </Box>
           ) :

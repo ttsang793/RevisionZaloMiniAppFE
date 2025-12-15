@@ -2,12 +2,11 @@ import { CameraFill, ChevronRight } from "react-bootstrap-icons";
 import { Box, Switch, Input, Select, Text, Page, useNavigate, useSnackbar, Spinner } from "zmp-ui";
 import AppHeader from "@/components/header";
 import Reminder from "@/components/student/settings/reminder";
-import "./setting.css";
 import { useState, useEffect } from 'react';
 import { Student, getStudentById, updateStudent, deleteStudent } from "@/models/user";
 import { getUserInfo } from "zmp-sdk";
 import { updateStudentStatus } from "@/models/notification";
-import axios from "axios";
+import { render_api } from "@/script/util";
 
 export default function StudentSettingPage() {
   const navTo = useNavigate();
@@ -150,7 +149,7 @@ export default function StudentSettingPage() {
               errorText={emailError} status={!emailError ? "" : "error"}
             />
 
-            <Box className="flex gap-x-2 justify-center mt-4">
+            <Box className="flex gap-2 flex-wrap justify-center mt-4">
               <input type="submit" value="Lưu" className="zaui-bg-blue-80 text-white rounded-full py-2 px-8" onClick={handleSubmit} />
               <input type="reset" value="Hủy" className="zaui-bg-blue-20 zaui-text-blue-80 rounded-full py-2 px-8" onClick={handleCancel} />
               <input type="button" value="Lấy avatar từ Zalo" className="zaui-bg-blue-60 zaui-text-blue-10 rounded-full py-2 px-8" onClick={handleGetAvatarFromZalo} />
@@ -189,7 +188,7 @@ export default function StudentSettingPage() {
         formData.append("file", image);
 
         try {
-          response = await axios.post(`/api/upload/image/${student.id}/avatar`,
+          response = await render_api.post(`/api/upload/image/${student.id}/avatar`,
             formData, { headers: { "Content-Type": "multipart/form-data" } });
 
           if (response.status === 200) {

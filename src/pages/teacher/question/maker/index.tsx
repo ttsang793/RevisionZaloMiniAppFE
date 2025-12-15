@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Question, QuestionError, questionType } from "@/models/question";
 import { Topic, getActiveTopicByGrades } from "@/models/topic";
 import { getSubjectGradesById } from "@/models/subject";
-import axios from "axios";
+import { render_api } from "@/script/util";
 
 import { QuestionMakerMutipleChoice as MultipleChoice } from "@/components/teacher/question/maker/multiple-choice";
 import { QuestionMakerTrueFalse as TrueFalse } from "@/components/teacher/question/maker/true-false";
@@ -328,7 +328,7 @@ export default function QuestionMaker() {
       formData.append("file", image);
       
       try {
-        response = await axios.post(`/api/upload/image/${id ? id : response.data.id}/question`,
+        response = await render_api.post(`/api/upload/image/${id ? id : response.data.id}/question`,
           formData, { headers: { "Content-Type": "multipart/form-data" } });
 
         if (response.status === 200) {

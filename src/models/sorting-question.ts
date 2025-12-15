@@ -1,4 +1,4 @@
-import axios from "axios";
+import { render_api } from "@/script/util";
 import { Question, QuestionError, validateInput } from "./question";
 
 class SortingQuestion extends Question {
@@ -28,12 +28,12 @@ function validateSortingInput(question: SortingQuestion): SortingError {
 }
 
 function getSortingQuestionById(id: number) {
-  return axios.get(`/api/question/${id}`);
+  return render_api.get(`/api/question/${id}`);
 }
 
 async function insertSortingQuestion(sq: SortingQuestion): Promise<any> {
   try {
-    const response = axios.post("/api/question/sorting", sq, {
+    const response = render_api.post("/api/question/sorting", sq, {
       headers: { "Content-Type": "application/json" }
     })
     return response;
@@ -45,7 +45,7 @@ async function insertSortingQuestion(sq: SortingQuestion): Promise<any> {
 
 async function updateSortingQuestion(sq: SortingQuestion, id: number): Promise<any> {
   try {
-    const response = axios.put(`/api/question/sorting/${id}`, sq, {
+    const response = render_api.put(`/api/question/sorting/${id}`, sq, {
       headers: { "Content-Type": "application/json" }
     })
     return response;

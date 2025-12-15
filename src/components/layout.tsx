@@ -48,6 +48,7 @@ import { AdminFooter, AdminHeader } from "./admin/head-foot";
 import Error403 from "@/pages/errors/403";
 import Error404 from "@/pages/errors/404";
 import Error500 from "@/pages/errors/500";
+import { TeacherPage } from "@/pages/teacher";
 
 const role = sessionStorage.getItem("role") || null;
 
@@ -104,7 +105,7 @@ const Layout = () => {
 
             {/* Teacher routes */}
             <Route path="/teacher" element={<TeacherLayout />}>
-              <Route index element={<Navigate to="/teacher/question" replace />} />
+              <Route index element={<TeacherPage />} />
               <Route path="question">
                 <Route index element={<QuestionManagement />} />
                 <Route path="maker/:type/" element={<QuestionMaker />} />

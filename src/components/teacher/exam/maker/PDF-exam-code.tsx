@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Box, Text, useSnackbar } from "zmp-ui";
-import { PDFExamPart as ExamPart, PDFExamPart } from "./PDF-exam-part";
+import { PDFExamPart } from "./PDF-exam-part";
 import { ChevronDown, ChevronUp, XLg } from "react-bootstrap-icons";
 import { ExamCode, ExamCodeQuestion } from "@/models/pdf-exam-code";
 
@@ -14,8 +14,8 @@ interface PDFExamCodeProps {
 const PDFExamCode = ({i, examCode, updateExamCode, deleteExamCode}: PDFExamCodeProps) => {
   const [showPDF, setShowPDF] = useState(false);
   const { openSnackbar } = useSnackbar();
-  const [taskPDFName, setTaskPDFName] = useState("");
-  const [answerPDFName, setAnswerPDFName] = useState("");
+  const [taskPDFName, setTaskPDFName] = useState(examCode.taskPdf || "");
+  const [answerPDFName, setAnswerPDFName] = useState(examCode.answerPdf || "");
 
   const handleCode = (e): void => {
     if (!isNaN(Number(e.nativeEvent.data)) || e.nativeEvent.inputType.startsWith("delete")) {
@@ -71,7 +71,7 @@ const PDFExamCode = ({i, examCode, updateExamCode, deleteExamCode}: PDFExamCodeP
       reader.readAsDataURL(e.target.files[0]);
     }
     catch (err) {
-      console.log(err);
+      console.error(err);
       openSnackbar({
         text: "Không tải được file PDF!",
         type: "error"

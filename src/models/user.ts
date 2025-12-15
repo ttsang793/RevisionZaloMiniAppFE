@@ -1,4 +1,4 @@
-import axios from "axios";
+import { render_api } from "@/script/util";
 
 const id = Number(sessionStorage.getItem("id"));
 
@@ -6,7 +6,7 @@ class User {
   id?: number;
   zaloId?: string;
   name: string = "";
-  avatar: string = "/avatar/default.jpg";
+  avatar: string = "https://res.cloudinary.com/dqxhmt5sp/image/upload/default_uqpoz0.jpg";
   email: string = "";
   notification?: boolean[];
 }
@@ -39,16 +39,16 @@ class AdminResetPassword {
 }
 
 function getUserByZaloId(zaloId: string) {
-  return axios.get(`/api/user/${zaloId}`);
+  return render_api.get(`/api/user/${zaloId}`);
 }
 
 function getStudentById(studentId = id) {
-  return axios.get(`/api/student/${studentId}`);
+  return render_api.get(`/api/student/${studentId}`);
 }
 
 async function addStudent(student: Student): Promise<any> {
   try {
-    const response = await axios.post("/api/student", student, {
+    const response = await render_api.post("/api/student", student, {
       headers: { "Content-Type": "application/json" }
     });
     return response;
@@ -60,7 +60,7 @@ async function addStudent(student: Student): Promise<any> {
 
 async function updateStudent(student: Student): Promise<any> {
   try {
-    const response = await axios.put(`/api/student/${student.id}`, student, {
+    const response = await render_api.put(`/api/student/${student.id}`, student, {
       headers: { "Content-Type": "application/json" }
     })
     return response;
@@ -73,7 +73,7 @@ async function updateStudent(student: Student): Promise<any> {
 
 async function deleteStudent(): Promise<any> {
   try {
-    const response = await axios.delete(`/api/student/${id}`);
+    const response = await render_api.delete(`/api/student/${id}`);
     return response;
   }
   catch (err) {
@@ -83,16 +83,16 @@ async function deleteStudent(): Promise<any> {
 }
 
 function getTeacherById(teacherId = id) {
-  return axios.get(`/api/teacher/${teacherId}`);
+  return render_api.get(`/api/teacher/${teacherId}`);
 }
 
 async function getTeacherSubjectById(teacherId = id) {
-  return await axios.get(`/api/teacher/${teacherId}/subject`);
+  return await render_api.get(`/api/teacher/${teacherId}/subject`);
 }
 
 async function addTeacher(teacher: Teacher): Promise<any> {
   try {
-    const response = await axios.post("/api/teacher", teacher, {
+    const response = await render_api.post("/api/teacher", teacher, {
       headers: { "Content-Type": "application/json" }
     });
     return response;
@@ -104,7 +104,7 @@ async function addTeacher(teacher: Teacher): Promise<any> {
 
 async function updateTeacher(teacher: Teacher): Promise<any> {
   try {
-    const response = await axios.put(`/api/teacher/${teacher.id}`, teacher, {
+    const response = await render_api.put(`/api/teacher/${teacher.id}`, teacher, {
       headers: { "Content-Type": "application/json" }
     })
     return response;
@@ -116,7 +116,7 @@ async function updateTeacher(teacher: Teacher): Promise<any> {
 
 async function deleteTeacher(): Promise<any> {
   try {
-    const response = await axios.delete(`/api/teacher/${id}`);
+    const response = await render_api.delete(`/api/teacher/${id}`);
     return response;
   }
   catch (err) {
@@ -126,7 +126,7 @@ async function deleteTeacher(): Promise<any> {
 
 async function vertifyAdmin(admin: AdminLogin): Promise<any> {
   try {
-    const response = await axios.post("/api/admin", admin, {
+    const response = await render_api.post("/api/admin", admin, {
       headers: { "Content-Type": "application/json" }
     });
     return response;
@@ -138,7 +138,7 @@ async function vertifyAdmin(admin: AdminLogin): Promise<any> {
 
 async function resetPassword(admin: AdminResetPassword): Promise<any> {
   try {
-    const response = await axios.post("/api/admin/reset-password", admin, {
+    const response = await render_api.post("/api/admin/reset-password", admin, {
       headers: { "Content-Type": "application/json" }
     });
     return response;

@@ -35,9 +35,9 @@ const AdminHeader = () => {
           onMouseLeave={() => setIsAccountHover(false)}
         >
           <img
-            src={sessionStorage.getItem("avatar") || "/avatar/default.jpg"}
+            src={sessionStorage.getItem("avatar") || "https://res.cloudinary.com/dqxhmt5sp/image/upload/default_uqpoz0.jpg"}
             alt="avatar"
-            onError={e => e.target.src = "/avatar/default.jpg"}
+            onError={e => e.target.src = "https://res.cloudinary.com/dqxhmt5sp/image/upload/default_uqpoz0.jpg"}
             className="size-10 inline-block rounded-md me-1" />
           {sessionStorage.getItem("name")}
         </button>

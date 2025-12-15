@@ -1,4 +1,4 @@
-import axios from "axios";
+import { render_api } from "@/script/util";
 import { Question, QuestionError, validateInput } from "./question";
 
 class TrueFalseQuestion extends Question {
@@ -16,12 +16,12 @@ function validateTrueFalseInput(question: TrueFalseQuestion): QuestionError {
 }
 
 function getTrueFalseQuestionById(id: number) {
-  return axios.get(`/api/question/${id}`);
+  return render_api.get(`/api/question/${id}`);
 }
 
 async function insertTrueFalseQuestion(tfq: TrueFalseQuestion): Promise<any> {
   try {
-    const response = axios.post("/api/question/true-false", tfq, {
+    const response = render_api.post("/api/question/true-false", tfq, {
       headers: { "Content-Type": "application/json" }
     });
     return response;
@@ -33,7 +33,7 @@ async function insertTrueFalseQuestion(tfq: TrueFalseQuestion): Promise<any> {
 
 async function updateTrueFalseQuestion(tfq: TrueFalseQuestion, id: number): Promise<any> {
   try {
-    const response = axios.put(`/api/question/true-false/${id}`, tfq, {
+    const response = render_api.put(`/api/question/true-false/${id}`, tfq, {
       headers: { "Content-Type": "application/json" }
     });
     return response;

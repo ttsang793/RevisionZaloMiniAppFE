@@ -1,16 +1,17 @@
 import AppHeader from "@/components/header";
 import { PDFExamCode as ExamCodeBox } from "@/components/teacher/exam/maker/PDF-exam-code";
 import { ChevronUp } from "react-bootstrap-icons";
-import { Box, Page, useNavigate, useParams, useSnackbar } from "zmp-ui";
+import { Box, Page, Spinner, Text, useNavigate, useParams, useSnackbar } from "zmp-ui";
 import { backToTop } from "@/script/util";
-import { ExamCode, insertCode } from "@/models/pdf-exam-code";
-import { useState } from "react";
-import axios from "axios";
+import { ExamCode, ExamCodeQuestion, getAllExamCodesByExamId, insertCode } from "@/models/pdf-exam-code";
+import { useState, useEffect } from "react";
+import { render_api } from "@/script/util";
 
 export default function PDFExamQuestions() {
   const navTo = useNavigate();
   const { id } = useParams();
   const [examCode, setExamCode] = useState<ExamCode[]>([new ExamCode(Number(id))]);
+  const [loading, setLoading] = useState(true);
   const { openSnackbar } = useSnackbar();
 
   function addExamCode() {
@@ -30,6 +31,54 @@ export default function PDFExamQuestions() {
     const newCode = examCode.filter((_, index) => index !== i);
     setExamCode(newCode);
   }
+
+  useEffect(() => {
+    fetchData();
+  })
+
+  async function fetchData() {
+    try {
+      if (loading) {
+        const response = await getAllExamCodesByExamId(Number(id));
+        if (response.data.length === 0) return;
+        
+        const tempCode = response.data;
+        for (let i = 0; i < tempCode.length; i++) {
+          const questions: ExamCodeQuestion[][] = [];
+
+          for (let j = 0; j < tempCode[i].questions.length; j++) {
+            let q = tempCode[i].questions[j];
+
+            if (q.type === "true-false-thpt" || q.type === "short-answer") {
+              q.answerKeys = q.answerKey.split("");
+            }
+
+            if (j == 0 || tempCode[i].questions[j - 1].partIndex !== q.partIndex) questions.push([]);
+            questions[questions.length - 1].push(q);
+          }
+
+          tempCode[i].questions = questions;
+        }
+
+        setExamCode(tempCode);
+      }
+    }
+    catch (err) {
+      console.error(err);
+    }
+    finally {
+      setLoading(false);
+    }
+  }
+
+  if (loading) return (
+    <Page className="page-x-0 flex justify-center items-center">
+      <Box className="place-items-center text-center">
+        <Spinner />
+        <Text className="mt-2 italic">Đang tải đề thi...</Text>
+      </Box>
+    </Page>
+  )
 
   return (
     <Page className="page-x-0 page-wo-footer bg-white">
@@ -76,7 +125,6 @@ export default function PDFExamQuestions() {
   )
 
   async function handleSubmit(): Promise<any> {
-    console.log(examCode);
     openSnackbar({
       text: "Đang lưu bộ đề...",
       type: "loading",
@@ -85,14 +133,14 @@ export default function PDFExamQuestions() {
 
     for (let i: number = 0; i < examCode.length; i++) {
       let ec = examCode[i];
-      if (!ec.taskPDFFile) {
+      if (!ec.taskPdf && !ec.taskPDFFile) {
         openSnackbar({
           text: `Vui lòng nhập file đề ở mã ${ec.code}`,
           type: "error"
         })
         return;
       }
-      if (!ec.answerPDFFile) {
+      if (!ec.answerPdf && !ec.answerPDFFile) {
         openSnackbar({
           text: `Vui lòng nhập file đáp án ở mã ${ec.code}`,
           type: "error"
@@ -109,11 +157,11 @@ export default function PDFExamQuestions() {
 
       for (let index: number = 0; index < idList.length; index++) {
         const formData: FormData = new FormData();
-        formData.append("files", examCode[index].taskPDFFile!);
-        formData.append("files", examCode[index].answerPDFFile!);
+        formData.append("files", examCode[index].taskPDFFile || new File([""], "empty.pdf"));
+        formData.append("files", examCode[index].answerPDFFile || new File([""], "empty.pdf"));
 
         try {
-          response = await axios.post(`/api/upload/pdf/${idList[index]}`,
+          response = await render_api.post(`/api/upload/pdf/${idList[index]}`,
             formData, { headers: { "Content-Type": "multipart/form-data" } });
 
           loss += response.status === 200 ? 0 : 1;
@@ -128,6 +176,8 @@ export default function PDFExamQuestions() {
           type: "success",
           duration: 1500
         })
+
+        navTo("/teacher/exam");
       }
       else {
         openSnackbar({

@@ -11,7 +11,7 @@ const CommentBlock = ({id, title}: {id: number, title?: string}) => {
   const [commentList, setCommentList] = useState([]);
   const [commentContent, setCommentContent] = useState("");
   const userId = Number(sessionStorage.getItem("id"));
-  const avatar = sessionStorage.getItem("avatar") || "/avatar/default.jpg";
+  const avatar = sessionStorage.getItem("avatar") || "https://res.cloudinary.com/dqxhmt5sp/image/upload/default_uqpoz0.jpg";
   const { openSnackbar } = useSnackbar();
 
   useEffect(() => {

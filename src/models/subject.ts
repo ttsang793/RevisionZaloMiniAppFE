@@ -1,4 +1,4 @@
-import axios from "axios";
+import { render_api } from "@/script/util";
 
 type Subject = {
   id: string,
@@ -13,32 +13,32 @@ type Subject = {
 }
 
 const getSubjects = async () => {
-  const response = await axios.get("/api/subject");
+  const response = await render_api.get("/api/subject");
   return response.data;
 }
 
 const getActiveSubjects = async () => {
-  const response = await axios.get("/api/subject/active");
+  const response = await render_api.get("/api/subject/active");
   return response.data;
 }
 
 const getSubjectsByGrade = async (grade: number) => {
-  const response = await axios.get(`/api/subject/grade/${grade}`);
+  const response = await render_api.get(`/api/subject/grade/${grade}`);
   return response.data;
 }
 
 const getSubjectById = async (id: string) => {
-  const response = await axios.get(`/api/subject/${id}`);
+  const response = await render_api.get(`/api/subject/${id}`);
   return (response.status === 200) ? response.data : null;
 }
 
 const getSubjectGradesById = async (id: string) => {
-  return await axios.get(`/api/subject/${id}/grade`);
+  return await render_api.get(`/api/subject/${id}/grade`);
 }
 
 const insertSubject = async (subject: Subject): Promise<any> => {
   try {
-    const response = await axios.post(`/api/subject`, subject);
+    const response = await render_api.post(`/api/subject`, subject);
     return response;
   }
   catch (err) {
@@ -48,7 +48,7 @@ const insertSubject = async (subject: Subject): Promise<any> => {
 
 const updateSubject = async (subject: Subject): Promise<any> => {
   try {
-    const response = await axios.put(`/api/subject/${subject.id}`, subject);
+    const response = await render_api.put(`/api/subject/${subject.id}`, subject);
     return response;
   }
   catch (err) {
@@ -58,7 +58,7 @@ const updateSubject = async (subject: Subject): Promise<any> => {
 
 const deleteSubject = async (id: string): Promise<any> => {
   try {
-    const response = await axios.delete(`/api/subject/${id}`);
+    const response = await render_api.delete(`/api/subject/${id}`);
     return response;
   }
   catch (err) {

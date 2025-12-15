@@ -1,4 +1,4 @@
-import axios from "axios";
+import { render_api } from "@/script/util";
 import AchievementRow from "@/components/student/statistic/achievement";
 import AppHeader from "@/components/header";
 import { Tabs, Box, Text, Page, Spinner, Select } from "zmp-ui";
@@ -102,7 +102,7 @@ export default function StatisticPage() {
   )
 
   async function fetchData() {
-    const achievementResponse = await axios.get(`/api/achievement/${studentId}`);
+    const achievementResponse = await render_api.get(`/api/achievement/${studentId}`);
     setAchievementList(achievementResponse.data || []);
     
     const subjectResponse = await getSubjectsByGrade(Number(sessionStorage.getItem("grade")));
@@ -113,7 +113,7 @@ export default function StatisticPage() {
   }
 
   async function fetchStatistic() {
-    const statisticResponse = await axios.get(`/api/statistic/student/${studentId}/${subjectId}`);
+    const statisticResponse = await render_api.get(`/api/statistic/student/${studentId}/${subjectId}`);
     setStatisticData(statisticResponse.data);
   }
 }

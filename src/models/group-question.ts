@@ -1,5 +1,5 @@
 import { Question } from './question';
-import axios from "axios";
+import { render_api } from "@/script/util";
 
 class GroupQuestionGet {
   id: number = -1;
@@ -26,11 +26,11 @@ class GroupQuestionPost {
 }
 
 function getGroupQuestionById(id: number) {
-  return axios.get(`/api/question/${id}`);
+  return render_api.get(`/api/question/${id}`);
 }
 
 function insertGroupQuestion(gq: GroupQuestionPost) {
-  axios.post("/api/question/group", gq, {
+  render_api.post("/api/question/group", gq, {
     headers: { "Content-Type": "application/json" }
   }).then(response => {
     console.log(response.status);
@@ -40,7 +40,7 @@ function insertGroupQuestion(gq: GroupQuestionPost) {
 }
 
 function updateGroupQuestion(gq: GroupQuestionPost, id: number) {
-  axios.put(`/api/question/group/${id}`, gq, {
+  render_api.put(`/api/question/group/${id}`, gq, {
     headers: { "Content-Type": "application/json" }
   }).then(response => {
     console.log(response.status);

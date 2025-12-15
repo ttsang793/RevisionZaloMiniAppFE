@@ -1,4 +1,4 @@
-import axios from "axios";
+import { render_api } from "@/script/util";
 import { Question, QuestionError, validateInput } from "./question";
 
 class TrueFalseTHPTQuestion extends Question {
@@ -32,12 +32,12 @@ function validateTrueFalseTHPTInput(question: TrueFalseTHPTQuestion): TrueFalseT
 }
 
 function getTrueFalseTHPTQuestionById(id: number) {
-  return axios.get(`/api/question/${id}`);
+  return render_api.get(`/api/question/${id}`);
 }
 
 async function insertTrueFalseTHPTQuestion(tfq: TrueFalseTHPTQuestion): Promise<any> {
   try {
-    const response = axios.post("/api/question/true-false-thpt", tfq, {
+    const response = render_api.post("/api/question/true-false-thpt", tfq, {
       headers: { "Content-Type": "application/json" }
     });
     return response;
@@ -49,7 +49,7 @@ async function insertTrueFalseTHPTQuestion(tfq: TrueFalseTHPTQuestion): Promise<
 
 async function updateTrueFalseTHPTQuestion(tfq: TrueFalseTHPTQuestion, id: number): Promise<any> {
   try {
-    const response = axios.put(`/api/question/true-false-thpt/${id}`, tfq, {
+    const response = render_api.put(`/api/question/true-false-thpt/${id}`, tfq, {
       headers: { "Content-Type": "application/json" }
     });
     return response;

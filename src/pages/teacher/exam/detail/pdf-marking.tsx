@@ -30,7 +30,7 @@ export default function PDFExamMarking() {
   const [examInfo, setExamInfo] = useState<Exam>(new Exam());
   const [code, setCode] = useState("");
   const [currentPart, setCurrentPart] = useState(0);
-  const [examAttempt, setExamAttempt] = useState<PdfExamAttempt>(new PdfExamAttempt(Number(examId)));
+  const [examAttempt, setExamAttempt] = useState<PdfExamAttempt>(new PdfExamAttempt(Number(examId), false));
   const [examParts, setExamParts] = useState<PDFPart[]>([]);
 
   useEffect(() => {

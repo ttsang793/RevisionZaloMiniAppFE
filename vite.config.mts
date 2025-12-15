@@ -19,10 +19,10 @@ export default () => {
     server: {
       proxy: {
         '^/api': {
-          target: 'https://localhost:7132',
+          //target: 'https://localhost:7132',
           //target: 'https://revision-app-9dgy.onrender.com',
           //changeOrigin: true,
-          secure: false
+          //secure: false
         },
       }
     }

@@ -4,8 +4,7 @@ import AppHeader from "@/components/header";
 import { useState, useEffect } from "react";
 import { getActiveSubjects, Subject } from "@/models/subject";
 import { getUserInfo } from "zmp-sdk";
-import axios from "axios";
-import "./setting.css";
+import { render_api } from "@/script/util";
 
 import { deleteTeacher, getTeacherById, getTeacherSubjectById, getUserByZaloId, Teacher, updateTeacher } from "@/models/user";
 import { updateTeacherStatus } from "@/models/notification";
@@ -95,14 +94,14 @@ export default function TeacherSettingPage() {
           <Switch checked={noti[1]} onChange={() => handleChange("manual", 1)} />
         </Box>
         <hr />
-        <Box className="grid grid-cols-[1fr_30px] gap-x-2 my-3 items-center">
+        <Box className="grid grid-cols-[1fr_30px] gap-x-2 mt-3 items-center">
           <Text>Bình luận của học sinh</Text>
           <Switch checked={noti[2]} onChange={() => handleChange("reply", 2)} />
         </Box>
       </Box>
 
       <Box className="section-container">
-        <Box className="grid grid-cols-[80px_1fr] w-full gap-x-4">
+        <Box className="grid grid-cols-[80px_1fr] gap-x-4">
           <Box className="relative mb-2">
             <img
               src={!image ? teacher.avatar : image}
@@ -171,7 +170,7 @@ export default function TeacherSettingPage() {
               *: Các trường bắt buộc
             </Text>
 
-            <Box className="flex gap-x-2 justify-center mt-4">
+            <Box className="flex gap-2 flex-wrap justify-center mt-4">
               <input type="submit" value="Lưu" className="zaui-bg-blue-80 text-white rounded-full py-2 px-8" onClick={handleSubmit} />
               <input type="reset" value="Hủy" className="zaui-bg-blue-20 zaui-text-blue-80 rounded-full py-2 px-8" onClick={handleCancel} />
               <input type="button" value="Lấy avatar từ Zalo" className="zaui-bg-blue-60 zaui-text-blue-10 rounded-full py-2 px-8" onClick={handleGetAvatarFromZalo} />
@@ -225,7 +224,7 @@ export default function TeacherSettingPage() {
         formData.append("file", image);
 
         try {
-          response = await axios.post(`/api/upload/image/${teacher.id}/avatar`,
+          response = await render_api.post(`/api/upload/image/${teacher.id}/avatar`,
             formData, { headers: { "Content-Type": "multipart/form-data" } });
 
           if (response.status === 200) {

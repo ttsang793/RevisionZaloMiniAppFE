@@ -1,4 +1,4 @@
-import axios from "axios";
+import { render_api } from "@/script/util";
 import { Question, QuestionError, validateInput } from "./question";
 
 class ConstructedResponseQuestion extends Question {
@@ -25,12 +25,12 @@ function validateConstructedResponseInput(question: ConstructedResponseQuestion)
 }
 
 function getConstructedResponseQuestionById(id: number) {
-  return axios.get(`/api/question/${id}`);
+  return render_api.get(`/api/question/${id}`);
 }
 
 async function insertConstructedResponseQuestion(crq: ConstructedResponseQuestion): Promise<any> {
   try {
-    const response = axios.post("/api/question/manual-response", crq, {
+    const response = render_api.post("/api/question/manual-response", crq, {
       headers: { "Content-Type": "application/json" }
     });
     return response;
@@ -42,7 +42,7 @@ async function insertConstructedResponseQuestion(crq: ConstructedResponseQuestio
 
 async function updateConstructedResponseQuestion(crq: ConstructedResponseQuestion, id: number): Promise<any> {
   try {
-    const response = axios.put(`/api/question/manual-response/${id}`, crq, {
+    const response = render_api.put(`/api/question/manual-response/${id}`, crq, {
       headers: { "Content-Type": "application/json" }
     });
     return response;

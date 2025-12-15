@@ -1,4 +1,4 @@
-import axios from "axios";
+import { render_api } from "@/script/util";
 import { Subject } from "./subject";
 
 const subjectId = sessionStorage.getItem("subjectId");
@@ -12,32 +12,32 @@ type Topic = {
 };
 
 const getTopics = async () => {
-  const list = await axios.get("/api/topic");
+  const list = await render_api.get("/api/topic");
   return list.data;
 }
 
 const getActiveTopicByGrades = async (grade) => {
-  return axios.get(`/api/topic/${subjectId}/${grade}/active`);
+  return render_api.get(`/api/topic/${subjectId}/${grade}/active`);
 }
 
 const getTopicsBySubject = async (subjectId: number) => {
-  const response = await axios.get(`/api/topic/subject/${subjectId}`);
+  const response = await render_api.get(`/api/topic/subject/${subjectId}`);
   return response.data;
 }
 
 const getTopicById = async (id: string) => {
-  const response = await axios.get(`/api/topic/${id}`);
+  const response = await render_api.get(`/api/topic/${id}`);
   return (response.status === 200) ? response.data : null;
 }
 
 const getTopicByName = async (name: string) => {
-  const list = await axios.get(`/api/topic?name=${name}`);
+  const list = await render_api.get(`/api/topic?name=${name}`);
   return list.data;
 }
 
 const insertTopic = async (topic: Topic): Promise<any> => {
   try {
-    const response = await axios.post("/api/topic/", topic);
+    const response = await render_api.post("/api/topic/", topic);
     return response;
   }
   catch (err) {
@@ -47,7 +47,7 @@ const insertTopic = async (topic: Topic): Promise<any> => {
 
 const updateTopic = async (topic: Topic): Promise<any> => {
   try {
-    const response = axios.put(`/api/topic/${topic.id}`, topic)
+    const response = render_api.put(`/api/topic/${topic.id}`, topic)
     return response;
   }
   catch (err) {
@@ -57,7 +57,7 @@ const updateTopic = async (topic: Topic): Promise<any> => {
 
 const deleteTopic = async (id: string): Promise<any> => {
   try {
-    const response = await axios.delete(`/api/topic/${id}`);
+    const response = await render_api.delete(`/api/topic/${id}`);
     return response;
   }
   catch (err) {

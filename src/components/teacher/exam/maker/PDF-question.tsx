@@ -136,8 +136,8 @@ const TraLoiNgan = ({prop}: {prop: PDFQuestionProps}) => {
   //   }
   // };
   
-  const { partIndex, questionIndex, updateQuestion } = prop;
-  const [answer, setAnswer] = useState(["", "", "", ""])
+  const { question, partIndex, questionIndex, updateQuestion } = prop;
+  const [answer, setAnswer] = useState(question.answerKeys || ["", "", "", ""])
 
   const handleAnswer = (i: number, value: string) => {
     const newAnswer = [...answer];
@@ -155,7 +155,7 @@ const TraLoiNgan = ({prop}: {prop: PDFQuestionProps}) => {
           <input
             className="size-7 rounded-md text-center border zaui-border-blue-80"
             maxLength={1}
-            //value={answer[i]}
+            value={answer[i]}
             key={`cell_${partIndex}_${questionIndex}_${i}`}
             //ref={(el) => (inputRefs.current[i] = el)}
             onChange={(e) => handleAnswer(i, e.target.value)}

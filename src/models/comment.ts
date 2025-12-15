@@ -1,4 +1,4 @@
-import axios from "axios"
+import { render_api } from "@/script/util";
 
 const userId = Number(sessionStorage.getItem("id"));
 
@@ -14,12 +14,12 @@ class Comment {
 }
 
 function getCommentsByExamId(examId: number) {
-  return axios.get(`/api/comment/${examId}`);
+  return render_api.get(`/api/comment/${examId}`);
 }
 
 async function insertComment(c: Comment): Promise<number> {
   try {
-    const response = await axios.post("/api/comment", c, {
+    const response = await render_api.post("/api/comment", c, {
       headers: { "Content-Type": "application/json" },
     });
     return response.status;
@@ -32,7 +32,7 @@ async function insertComment(c: Comment): Promise<number> {
 
 async function deleteComment(id: number): Promise<number> {
   try {
-    const response = await axios.delete(`/api/comment/${id}`);
+    const response = await render_api.delete(`/api/comment/${id}`);
     return response.status;
   }
   catch (err) {

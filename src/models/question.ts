@@ -1,4 +1,4 @@
-import axios from "axios";
+import { render_api } from "@/script/util";
 
 const teacherId = Number(sessionStorage.getItem("id"));
 const subjectId = sessionStorage.getItem("subjectId");
@@ -40,16 +40,16 @@ const questionType = [
 ];
 
 function getQuestionsByTeacher() {
-  return axios.get(`/api/question/teacher/${teacherId}`);
+  return render_api.get(`/api/question/teacher/${teacherId}`);
 }
 
 function getQuestionsFilterByTeacher(title?: string, type?: string, grade?: number) {
-  if (!title) return axios.get(`/api/question/teacher/filter/${teacherId}?type=${type}&grade=${grade}`);
-  return axios.get(`/api/question/teacher/filter/${teacherId}?type=${type}&title=${title}`);
+  if (!title) return render_api.get(`/api/question/teacher/filter/${teacherId}?type=${type}&grade=${grade}`);
+  return render_api.get(`/api/question/teacher/filter/${teacherId}?type=${type}&title=${title}`);
 }
 
 function isUpdatable(id: number): Promise<any> {
-  return axios.get(`/api/question/${id}/updatable`);
+  return render_api.get(`/api/question/${id}/updatable`);
 }
 
 function validateInput(question: Question, error: QuestionError) {
@@ -61,7 +61,7 @@ function validateInput(question: Question, error: QuestionError) {
 
 async function deleteQuestion(id: number): Promise<any> {
   try {
-    const response = axios.delete(`/api/question/${id}`);
+    const response = render_api.delete(`/api/question/${id}`);
     return response;
   }
   catch(err) {

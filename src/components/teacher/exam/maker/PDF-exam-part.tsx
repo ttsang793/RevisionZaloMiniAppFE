@@ -1,10 +1,17 @@
 import { Box, Text, Sheet } from "zmp-ui";
 import { PlusLg, XLg } from "react-bootstrap-icons";
 import { useState } from "react";
-
-import { questionType } from "@/models/question";
 import { PDFAnswer } from "./PDF-question";
 import { ExamCodeQuestion } from "@/models/pdf-exam-code";
+
+const questionType = [
+ { title: "Trắc nghiệm 4 đáp án", type: "multiple-choice" },
+ { title: "Trắc nghiệm Đúng – Sai", type: "true-false" },
+ { title: "Trắc nghiệm trả lời ngắn", type: "short-answer" },
+ { title: "Điền vào chỗ trống", type: "gap-fill" },
+ { title: "Tự luận", type: "constructed-response" },
+ { title: "Trắc nghiệm Đúng – Sai THPT", type: "true-false-thpt" },
+];
 
 interface PDFExamPartProps {
   partIndex: number;

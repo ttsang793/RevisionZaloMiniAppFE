@@ -1,4 +1,4 @@
-import axios from "axios";
+import { render_api } from "@/script/util";
 import { ExamCodeQuestionGet } from "./pdf-exam-code";
 
 const studentId = Number(sessionStorage.getItem("id"));
@@ -25,11 +25,11 @@ class PdfExamAttempt {
 }
 
 function getPdfExamAttempt(examId: number) {
-  return axios.get(`/api/exam/attempt/pdf/${studentId}/${examId}`);
+  return render_api.get(`/api/exam/attempt/pdf/${studentId}/${examId}`);
 }
 
 function getPdfExamAttemptById(examAttemptId: number) {
-  return axios.get(`/api/exam/attempt/pdf/${examAttemptId}`);
+  return render_api.get(`/api/exam/attempt/pdf/${examAttemptId}`);
 }
 
 function handleTrueFalseTHPTQuestion(q: ExamCodeQuestionGet): { point: number, correct: boolean[] } {
@@ -93,7 +93,7 @@ async function insertPdfExamAttempt(examAnswer: ExamCodeQuestionGet[], pdfExamAt
   pdfExamAttempt.correctBoard = correctBoard;
 
   try {
-    const response = await axios.post("/api/exam/attempt/pdf", pdfExamAttempt, { headers: { "Content-Type": "application/json" } });
+    const response = await render_api.post("/api/exam/attempt/pdf", pdfExamAttempt, { headers: { "Content-Type": "application/json" } });
     return response;
   }
   catch (err) {
@@ -104,7 +104,7 @@ async function insertPdfExamAttempt(examAnswer: ExamCodeQuestionGet[], pdfExamAt
 
 async function gradingPdfAttempt(pdfExamAttempt: PdfExamAttempt): Promise<any> {
   try {
-    const response = await axios.put(`/api/exam/attempt/pdf/grading/${pdfExamAttempt.id}`, pdfExamAttempt, { headers: { "Content-Type": "application/json" } });
+    const response = await render_api.put(`/api/exam/attempt/pdf/grading/${pdfExamAttempt.id}`, pdfExamAttempt, { headers: { "Content-Type": "application/json" } });
     return response;
   }
   catch (err) {

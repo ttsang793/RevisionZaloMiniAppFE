@@ -1,4 +1,4 @@
-import axios from "axios";
+import { render_api } from "@/script/util";
 
 const studentId = Number(sessionStorage.getItem("id"));
 
@@ -97,19 +97,19 @@ function checkTrueFalseTHPT(question, answer): {numCorrect: number, point: numbe
 }
 
 function getLatestExamAttempt(examId: number) {
-  return axios.get(`/api/exam/attempt/${studentId}/${examId}/latest`);
+  return render_api.get(`/api/exam/attempt/${studentId}/${examId}/latest`);
 }
 
 function getLatestExamAttemptDate(examId: number) {
-  return axios.get(`/api/exam/attempt/${studentId}/${examId}/latest/date`);
+  return render_api.get(`/api/exam/attempt/${studentId}/${examId}/latest/date`);
 }
 
 function getExamAttemptById(examAttemptId: number) {
-  return axios.get(`/api/exam/attempt/${examAttemptId}`);
+  return render_api.get(`/api/exam/attempt/${examAttemptId}`);
 }
 
 function getExamAttemptsByExamId(id: number) {
-  return axios.get(`/api/exam/attempt/exam/${id}`);
+  return render_api.get(`/api/exam/attempt/exam/${id}`);
 }
 
 async function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], answerList: any[][]): Promise<number> {
@@ -207,7 +207,7 @@ async function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], an
 
 async function postAttempt(examAttempt: ExamAttempt): Promise<number> {
   try {
-    const response = await axios.post("/api/exam/attempt", examAttempt,
+    const response = await render_api.post("/api/exam/attempt", examAttempt,
                             { headers: { "Content-Type": "application/json" } });
     return response.status;
   }
@@ -222,12 +222,12 @@ async function postAttempt(examAttempt: ExamAttempt): Promise<number> {
 }
 
 async function checkAchievement(sId = studentId) {
-  await axios.post(`/api/exam/attempt/achievement/${sId}`);
+  await render_api.post(`/api/exam/attempt/achievement/${sId}`);
 }
 
 async function gradingAttempt(examAttempt: ExamAttempt): Promise<any> {
   try {
-    const response = axios.put(`/api/exam/attempt/grading/${examAttempt.id}`, examAttempt,
+    const response = render_api.put(`/api/exam/attempt/grading/${examAttempt.id}`, examAttempt,
                       { headers: { "Content-Type": "application/json" } });
 
     return response;

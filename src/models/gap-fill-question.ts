@@ -1,4 +1,4 @@
-import axios from "axios";
+import { render_api } from "@/script/util";
 import { Question, QuestionError, validateInput } from "./question";
 
 class GapFillQuestion extends Question {
@@ -28,12 +28,12 @@ function validateGapFillInput(question: GapFillQuestion): GapFillError {
 }
 
 function getGapFillQuestionById(id: number) {
-  return axios.get(`/api/question/${id}`);
+  return render_api.get(`/api/question/${id}`);
 }
 
 async function insertGapFillQuestion(gfq: GapFillQuestion): Promise<any> {
   try {
-    const response = axios.post("/api/question/manual-response", gfq, {
+    const response = render_api.post("/api/question/manual-response", gfq, {
       headers: { "Content-Type": "application/json" }
     });
     return response;
@@ -45,7 +45,7 @@ async function insertGapFillQuestion(gfq: GapFillQuestion): Promise<any> {
 
 async function updateGapFillQuestion(gfq: GapFillQuestion, id: number): Promise<any> {
   try {
-    const response = axios.put(`/api/question/manual-response/${id}`, gfq, {
+    const response = render_api.put(`/api/question/manual-response/${id}`, gfq, {
       headers: { "Content-Type": "application/json" }
     });
     return response;

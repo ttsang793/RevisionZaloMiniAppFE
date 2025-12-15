@@ -1,4 +1,4 @@
-import axios from "axios";
+import { render_api } from "@/script/util";
 
 const studentId = Number(sessionStorage.getItem("id"));
 
@@ -10,16 +10,16 @@ class StudentReminder {
 }
 
 async function getFavorite() {
-  return axios.get(`/api/student/favorite/${studentId}`);
+  return render_api.get(`/api/student/favorite/${studentId}`);
 }
 
 async function isFavorite(examId: number) {
-  return axios.get(`/api/student/favorite/${studentId}/${examId}`);
+  return render_api.get(`/api/student/favorite/${studentId}/${examId}`);
 }
 
 async function handleFavorite(examId: number): Promise<any> {
   try {
-    const response = await axios.put(`/api/student/favorite/${studentId}/${examId}`);
+    const response = await render_api.put(`/api/student/favorite/${studentId}/${examId}`);
     return response;
   }
   catch(err) {
@@ -28,12 +28,12 @@ async function handleFavorite(examId: number): Promise<any> {
 }
 
 async function getHistory() {
-  return axios.get(`/api/student/history/${studentId}`);
+  return render_api.get(`/api/student/history/${studentId}`);
 }
 
 async function handleHistory(examId: number): Promise<any> {
   try {
-    const response = await axios.put(`/api/student/history/${studentId}/${examId}`);
+    const response = await render_api.put(`/api/student/history/${studentId}/${examId}`);
     return response;
   }
   catch(err) {
@@ -43,7 +43,7 @@ async function handleHistory(examId: number): Promise<any> {
 
 async function updateAllowingSaveHistory(): Promise<any> {
   try {
-    const response = await axios.put(`/api/student/history/${studentId}/allow-save`);
+    const response = await render_api.put(`/api/student/history/${studentId}/allow-save`);
     return response;
   }
   catch(err) {
@@ -53,7 +53,7 @@ async function updateAllowingSaveHistory(): Promise<any> {
 
 async function deleteHistory(historyId: number): Promise<any> {
   try {
-    const response = await axios.delete(`/api/student/history/${historyId}`);
+    const response = await render_api.delete(`/api/student/history/${historyId}`);
     return response;
   }
   catch(err) {
@@ -63,7 +63,7 @@ async function deleteHistory(historyId: number): Promise<any> {
 
 async function deleteAllHistories(): Promise<any> {
   try {
-    const response = await axios.delete(`/api/student/history/${studentId}/all`);
+    const response = await render_api.delete(`/api/student/history/${studentId}/all`);
     return response;
   }
   catch(err) {
@@ -72,12 +72,12 @@ async function deleteAllHistories(): Promise<any> {
 }
 
 async function getFollowing(teacherId: number) {
-  return axios.get(`/api/student/follow/${studentId}/${teacherId}`);
+  return render_api.get(`/api/student/follow/${studentId}/${teacherId}`);
 }
 
 async function following(teacherId: number): Promise<any> {
   try {
-    const response = await axios.put(`/api/student/follow/${studentId}/${teacherId}`)
+    const response = await render_api.put(`/api/student/follow/${studentId}/${teacherId}`)
     return response;
   }
   catch(err) {
@@ -86,12 +86,12 @@ async function following(teacherId: number): Promise<any> {
 }
 
 async function getReminder() {
-  return axios.get(`/api/student/reminder/${studentId}`);
+  return render_api.get(`/api/student/reminder/${studentId}`);
 }
 
 async function addReminder(): Promise<any> {
   try {
-    const response = axios.post(`/api/student/reminder/${studentId}`);
+    const response = render_api.post(`/api/student/reminder/${studentId}`);
     return response;
   }
   catch(err) {
@@ -101,7 +101,7 @@ async function addReminder(): Promise<any> {
 
 async function updateReminder(id: Number, reminder: StudentReminder): Promise<any> {
   try {
-    const response = axios.put(`/api/student/reminder/${id}`, reminder, {
+    const response = render_api.put(`/api/student/reminder/${id}`, reminder, {
       headers: { "Content-Type": "application/json" }
     });
     return response;
@@ -113,7 +113,7 @@ async function updateReminder(id: Number, reminder: StudentReminder): Promise<an
 
 async function deleteReminder(id: Number): Promise<any> {
   try {
-    const response = axios.delete(`/api/student/reminder/${id}`);
+    const response = render_api.delete(`/api/student/reminder/${id}`);
     return response;
   }
   catch(err) {

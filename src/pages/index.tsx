@@ -67,12 +67,12 @@ export default function ChooseRolePage() {
         sessionStorage.setItem("questionSA", teacherResponse.data.questionSA);
         sessionStorage.setItem("questionGF", teacherResponse.data.questionGF);
         sessionStorage.setItem("questionST", teacherResponse.data.questionST);
-        location.href = ("/teacher");
+        navTo("/teacher", { replace: true });
       }
       else if (curUserData.role === "HS") {
         const studentResponse = await getStudentById(curUserData.id);
         sessionStorage.setItem("grade", studentResponse.data.grade);
-        location.href = ("/student");
+        navTo("/student", { replace: true });
       }
       else throw new Error();
     }

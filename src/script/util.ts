@@ -1,3 +1,10 @@
+import axios from "axios";
+
+const render_api = axios.create({
+  //baseURL: "https://localhost:7132"
+  baseURL: "https://revision-app-9dgy.onrender.com"
+});
+
 function backToTop() {
   document.body.scrollTo({
     top: 0,
@@ -36,4 +43,4 @@ function parseMinutesAndSeconds(second: number): string {
   return `${div(second, 60)} phút ${second % 60} giây`;
 }
 
-export { backToTop, fisherYatesShuffle, floatTwoDigits, sumThenParseFloat, stringToDate, parseMinutesAndSeconds }
+export { render_api, backToTop, fisherYatesShuffle, floatTwoDigits, sumThenParseFloat, stringToDate, parseMinutesAndSeconds }

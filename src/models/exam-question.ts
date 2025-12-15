@@ -1,4 +1,4 @@
-import axios from "axios";
+import { render_api } from "@/script/util";
 
 class ExamQuestion {
   examId: number = -1;
@@ -21,11 +21,11 @@ class ExamQuestionItem {
 }
 
 function getExamQuestion(id: number) {
-  return axios.get(`/api/exam/${id}/question`);
+  return render_api.get(`/api/exam/${id}/question`);
 }
 
 function getExamQuestionWithQuestions(id: number) {
-  return axios.get(`/api/exam/${id}/question/attempt`);
+  return render_api.get(`/api/exam/${id}/question/attempt`);
 }
 
 async function updateExam(exam: ExamQuestion, list: any[][]): Promise<any> {
@@ -49,7 +49,7 @@ async function updateExam(exam: ExamQuestion, list: any[][]): Promise<any> {
   else exam.examStatus = 0;
 
   try {
-    const response = axios.post(`/api/exam/question/${exam.examId}`, exam);
+    const response = render_api.post(`/api/exam/question/${exam.examId}`, exam);
     return response;
   }
   catch (err) {

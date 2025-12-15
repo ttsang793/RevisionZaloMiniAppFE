@@ -1,4 +1,4 @@
-import axios from "axios";
+import { render_api } from "@/script/util";
 
 const teacherId = Number(sessionStorage.getItem("id"));
 const subjectId = sessionStorage.getItem("subjectId")!;
@@ -73,32 +73,32 @@ function getPublishExams(filter: HomeFilter | null) {
     if (filter.type) url += `&type=${filter.type}`;
   }
 
-  return axios.get(url);
+  return render_api.get(url);
 }
 
 function getExamById(id: number) {
-  return axios.get(`/api/exam/${id}`);
+  return render_api.get(`/api/exam/${id}`);
 }
 
 function getExamDetailById(id: number) {
-  return axios.get(`/api/exam/${id}/detail`);
+  return render_api.get(`/api/exam/${id}/detail`);
 }
 
 function getExamRecordById(id: number) {
-  return axios.get(`/api/exam/${id}/record`);
+  return render_api.get(`/api/exam/${id}/record`);
 }
 
 function getExamsByTeacher(tId = teacherId) {
-  return axios.get(`/api/exam/teacher/${tId}`);
+  return render_api.get(`/api/exam/teacher/${tId}`);
 }
 
 function getPublishExamsByTeacher(tId = teacherId) {
-  return axios.get(`/api/exam/teacher/${tId}/publish`);
+  return render_api.get(`/api/exam/teacher/${tId}/publish`);
 }
 
 async function insertExam(exam: Exam): Promise<any> {
   try {
-    const response = await axios.post("/api/exam", exam, {
+    const response = await render_api.post("/api/exam", exam, {
       headers: { "Content-Type": "application/json" }
     })
     return response;
@@ -110,7 +110,7 @@ async function insertExam(exam: Exam): Promise<any> {
 
 async function updateExam(exam: Exam, id: number): Promise<any> {  
   try {
-    const response = await axios.put(`/api/exam/${id}`, exam, {
+    const response = await render_api.put(`/api/exam/${id}`, exam, {
       headers: { "Content-Type": "application/json" }
     })
     return response;
@@ -122,7 +122,7 @@ async function updateExam(exam: Exam, id: number): Promise<any> {
 
 async function deleteExam(id: number): Promise<any> {  
   try {
-    const response = await axios.delete(`/api/exam/${id}`);
+    const response = await render_api.delete(`/api/exam/${id}`);
     return response;
   }
   catch (err) {
@@ -132,7 +132,7 @@ async function deleteExam(id: number): Promise<any> {
 
 async function publishExam(id: number): Promise<any> {  
   try {
-    const response = await axios.put(`/api/exam/publish/${id}`)
+    const response = await render_api.put(`/api/exam/publish/${id}`)
     return response;
   }
   catch (err) {

@@ -1,4 +1,4 @@
-import axios from "axios";
+import { render_api } from "@/script/util";
 import { Question, QuestionError, validateInput } from "./question";
 
 class MultipleChoiceQuestion extends Question {
@@ -30,12 +30,12 @@ function validateMultipleChoiceInput(question: MultipleChoiceQuestion): Multiple
 }
 
 function getMultipleChoiceQuestionById(id: number) {
-  return axios.get(`/api/question/${id}`);
+  return render_api.get(`/api/question/${id}`);
 }
 
 async function insertMultipleChoiceQuestion(mcq: MultipleChoiceQuestion): Promise<any> {
   try {
-    const response = axios.post("/api/question/multiple-choice", mcq, {
+    const response = render_api.post("/api/question/multiple-choice", mcq, {
       headers: { "Content-Type": "application/json" }
     })
     return response;
@@ -47,7 +47,7 @@ async function insertMultipleChoiceQuestion(mcq: MultipleChoiceQuestion): Promis
 
 async function updateMultipleChoiceQuestion(mcq: MultipleChoiceQuestion, id: number): Promise<any> {
   try {
-    const response = axios.put(`/api/question/multiple-choice/${id}`, mcq, {
+    const response = render_api.put(`/api/question/multiple-choice/${id}`, mcq, {
       headers: { "Content-Type": "application/json" }
     })
     return response;

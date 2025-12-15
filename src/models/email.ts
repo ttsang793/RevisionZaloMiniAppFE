@@ -1,4 +1,4 @@
-import axios from "axios";
+import { render_api } from "@/script/util";
 
 class EmailDTO {
   toId: number;
@@ -13,7 +13,7 @@ class EmailDTO {
 async function notifyWhenComment(toId: number, examTitle: string): Promise<any> {
   try {
     const email: EmailDTO = new EmailDTO(toId, examTitle);
-    await axios.post("/api/email/comment", email, {
+    await render_api.post("/api/email/comment", email, {
       headers: {
         "Content-Type": "application/json"
       }
@@ -27,7 +27,7 @@ async function notifyWhenComment(toId: number, examTitle: string): Promise<any> 
 async function notifyWhenNewTurnIn(toId: number, examTitle: string): Promise<any> {
   try {
     const email: EmailDTO = new EmailDTO(toId, examTitle);
-    await axios.post("/api/email/turn-in", email, {
+    await render_api.post("/api/email/turn-in", email, {
       headers: {
         "Content-Type": "application/json"
       }
@@ -41,7 +41,7 @@ async function notifyWhenNewTurnIn(toId: number, examTitle: string): Promise<any
 async function notifyWhenNewExam(teacherId: number, teacherName: string): Promise<any> {
   try {
     const email: EmailDTO = new EmailDTO(teacherId, teacherName);
-    await axios.post("/api/email/exam", email, {
+    await render_api.post("/api/email/exam", email, {
       headers: {
         "Content-Type": "application/json"
       }
@@ -56,7 +56,7 @@ async function notifyWhenNewExam(teacherId: number, teacherName: string): Promis
 async function notifyWhenFinishGrading(toId: number, teacherName: string): Promise<any> {
   try {
     const email: EmailDTO = new EmailDTO(toId, teacherName);
-    await axios.post("/api/email/grading", email, {
+    await render_api.post("/api/email/grading", email, {
       headers: {
         "Content-Type": "application/json"
       }
