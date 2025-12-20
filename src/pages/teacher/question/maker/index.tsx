@@ -155,6 +155,12 @@ export default function QuestionMaker() {
   }, []);
 
   const handleImageUpload = (e) => {
+    if (e.target.files[0].size > 3 * 1024 * 1024) {
+      openSnackbar({ text: "Hình ảnh phải nhỏ hơn 3MB!", type: "error" });
+      setImage(null);
+      return;
+    }
+
     try {
       setImage(e.target.files[0]);
 

@@ -55,6 +55,11 @@ const PDFExamCode = ({i, examCode, updateExamCode, deleteExamCode}: PDFExamCodeP
   }
 
   const handlePDFUpload = (e, type: string) => {
+    if (e.target.files[0].size > 5 * 1024 * 1024) {
+      openSnackbar({ text: "File PDF phải nhỏ hơn 5MB!", type: "error" })
+      return;
+    }
+
     try {
       if (type === "task") {
         updateExamCode(i, {...examCode, taskPDFFile: e.target.files[0]});
