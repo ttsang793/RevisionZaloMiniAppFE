@@ -1,6 +1,5 @@
 import { render_api } from "@/script/util";
-
-const studentId = Number(sessionStorage.getItem("id"));
+import { UserStorage } from "./user";
 
 class ExamAttemptGet {
   id?: number;
@@ -17,7 +16,7 @@ class ExamAttemptGet {
 class ExamAttempt {
   id?: number;
   examId: number;
-  studentId: number = studentId;
+  studentId: number;
   totalPoint?: number;
   startedAt?: Date;
   comment?: string;
@@ -27,6 +26,7 @@ class ExamAttempt {
 
   constructor(examId: number, isPractice: boolean) {
     this.examId = examId;
+    this.studentId = UserStorage.getId();
     this.isPractice = isPractice;
   }
 }
@@ -97,10 +97,12 @@ function checkTrueFalseTHPT(question, answer): {numCorrect: number, point: numbe
 }
 
 function getLatestExamAttempt(examId: number) {
+  const studentId = UserStorage.getId();
   return render_api.get(`/api/exam/attempt/${studentId}/${examId}/latest`);
 }
 
 function getLatestExamAttemptDate(examId: number) {
+  const studentId = UserStorage.getId();
   return render_api.get(`/api/exam/attempt/${studentId}/${examId}/latest/date`);
 }
 
@@ -112,7 +114,7 @@ function getExamAttemptsByExamId(id: number) {
   return render_api.get(`/api/exam/attempt/exam/${id}`);
 }
 
-async function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], answerList: any[][]): Promise<number> {
+async function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], answerList: any[][]): Promise<any> {
   const examAttemptAnswers: ExamAttemptAnswer[] = [];
   let totalPoint = 0;
 
@@ -120,12 +122,12 @@ async function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], an
     for (let j = 0; j < answerList[i].length; j++) {
       const currentQuestion = questionList[i][j].question;
       const answer = new ExamAttemptAnswer();
-      answer.examQuestionId = currentQuestion.id;      
+      answer.examQuestionId = currentQuestion.id;
 
       switch (currentQuestion.question.type) {
         case "multiple-choice": {
           const result = checkMultipleChoice(currentQuestion, answerList[i][j]);
-          answer.studentAnswer[0] = answerList[i][j];
+          answer.studentAnswer[0] = typeof(answerList[i][j]) === "string" ? answerList[i][j] : "";
           answer.correct[0] = result ? 1 : 0;
           answer.answerOrder = currentQuestion.question.answerKeys;
           if (result) {
@@ -136,7 +138,7 @@ async function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], an
         }
         case "true-false": {
           const result = checkTrueFalse(currentQuestion, answerList[i][j]);
-          answer.studentAnswer[0] = answerList[i][j];
+          answer.studentAnswer[0] = typeof(answerList[i][j]) === "string" ? answerList[i][j] : "";
           answer.correct[0] = result ? 1 : 0;
           if (result) {
             answer.point = currentQuestion.point;
@@ -155,7 +157,7 @@ async function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], an
           break;
         }
         case "gap-fill": {
-          answer.studentAnswer[0] = answerList[i][j];
+          answer.studentAnswer[0] = typeof(answerList[i][j]) === "string" ? answerList[i][j] : "";
           if (currentQuestion.question.markAsWrong) {
             const result = checkManualResponse(currentQuestion, answerList[i][j]);
             answer.correct[0] = result ? 1 : 0;
@@ -168,7 +170,7 @@ async function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], an
           break;
         }
         case "constructed-response": {
-          answer.studentAnswer[0] = answerList[i][j];
+          answer.studentAnswer[0] = typeof(answerList[i][j]) === "string" ? answerList[i][j] : "";
           if (currentQuestion.question.markAsWrong) {
             const result = checkManualResponse(currentQuestion, answerList[i][j]);
             answer.correct[0] = result ? 1 : 0;
@@ -202,14 +204,16 @@ async function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], an
   examAttempt.totalPoint = totalPoint;
   examAttempt.examAttemptAnswers = examAttemptAnswers;
 
-  return await postAttempt(examAttempt);
+  console.log(examAttempt);
+
+  //return await postAttempt(examAttempt);
 }
 
-async function postAttempt(examAttempt: ExamAttempt): Promise<number> {
+async function postAttempt(examAttempt: ExamAttempt): Promise<any> {
   try {
     const response = await render_api.post("/api/exam/attempt", examAttempt,
                             { headers: { "Content-Type": "application/json" } });
-    return response.status;
+    return response;
   }
   catch (err: any) {
     if (err.response) {
@@ -217,12 +221,12 @@ async function postAttempt(examAttempt: ExamAttempt): Promise<number> {
     } else {
       console.error("Network error:", err.message);
     }
-    return err.response?.status ?? 500;
+    return err.response;
   }
 }
 
-async function checkAchievement(sId = studentId) {
-  await render_api.post(`/api/exam/attempt/achievement/${sId}`);
+async function checkAchievement(studentId = UserStorage.getId()) {
+  await render_api.post(`/api/exam/attempt/achievement/${studentId}`);
 }
 
 async function gradingAttempt(examAttempt: ExamAttempt): Promise<any> {

@@ -140,7 +140,7 @@ export default function InfoSubjectModal({visible = false, setVisible, editId = 
         onClick: async () => {
           const response = editId ? await updateSubject(subject) : await insertSubject(subject);
 
-          if (editId ? response.status === 200 : response.status === 201) {
+          if (response.status === 200 || response.status === 201) {
             openSnackbar({
               text: `${editId ? "Cập nhật" : "Thêm"} môn học thành công!`,
               type: "success",

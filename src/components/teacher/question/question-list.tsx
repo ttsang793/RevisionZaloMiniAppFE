@@ -71,7 +71,7 @@ const QuestionListItem = ({question}: {question: Question}) => {
       }
 
       else {
-        console.log(response);
+        console.error(response);
         openSnackbar({
           text: "Xóa câu hỏi thất bại!",
           type: "error"

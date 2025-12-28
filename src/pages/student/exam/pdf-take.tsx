@@ -177,7 +177,7 @@ export default function TakePDFExamPage({practice}: {practice: boolean}) {
       })
       
       setTimeout(() => {
-        navTo(`/student/exam/pdf/result/${id}`, { replace: true })
+        navTo(`/student/exam/pdf/result/${id}/${response.data.id}`, { replace: true })
       }, 1500);
     }
   }

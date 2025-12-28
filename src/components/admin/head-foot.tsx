@@ -64,6 +64,7 @@ const AdminHeader = () => {
   )
 
   function handleLogout() {    
+    setIsAccountHover(false);
     openSnackbar({
       text: "Đăng xuất thành công!",
       type: "success",

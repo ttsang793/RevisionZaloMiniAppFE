@@ -1,13 +1,13 @@
 import AppHeader from "@/components/header";
 import { Page, Input, Text, Box, useNavigate, useSnackbar } from "zmp-ui";
 import { useState } from "react";
-import QuestionList from "@/components/teacher/question/question-list";
+import SelectQuestion from "@/components/teacher/select-question";
 import mammoth from 'mammoth';
 import { Question } from "@/models/question";
 import { MultipleChoiceQuestion, insertMultipleChoiceQuestion } from "@/models/multiple-choice-question";
 import { TrueFalseQuestion, insertTrueFalseQuestion } from "@/models/true-false-question";
 import { ShortAnswerQuestion, insertShortAnswerQuestion } from "@/models/short-answer-question";
-import { insertGapFillQuestion } from "@/models/gap-fill-question";
+import { GapFillQuestion, insertGapFillQuestion } from "@/models/gap-fill-question";
 import { ConstructedResponseQuestion, insertConstructedResponseQuestion } from "@/models/constructed-response-question";
 import { SortingQuestion, insertSortingQuestion } from "@/models/sorting-question";
 import { TrueFalseTHPTQuestion, insertTrueFalseTHPTQuestion } from "@/models/true-false-thpt-question";
@@ -152,7 +152,7 @@ export default function QuestionImportWord() {
             <hr />
             
             {
-              questionList.map((q, index) => <QuestionList question={q} key={index} />)
+              questionList.map((q, index) => <SelectQuestion question={q} key={index} />)
             }
 
             <div className="flex gap-x-2 justify-center mt-2">

@@ -1,4 +1,3 @@
-import { Eye } from "react-bootstrap-icons";
 import { Text, Box } from "zmp-ui";
 import {questionType } from "@/models/question";
 
@@ -12,10 +11,6 @@ const SelectQuestion = ({question, filter = false, handleQuestion}) => {
         <Text bold>{question.title}</Text>
         <Text size="small">{questionType.find(q => q.type === question.type)?.title} <i>({question.subjectName} {question.grade})</i></Text>
       </Box>
-
-      <button>
-        <Eye size={24} />
-      </button>
     </Box>
   )
 }

@@ -173,8 +173,9 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
       type: "loading"
     })
 
-    const submitStatus = await insertAttempt(examAttempt, examQuestionList, examAnswerList);
-    if (submitStatus === 201) {
+    const submitReponse = await insertAttempt(examAttempt, examQuestionList, examAnswerList);
+    
+    if (submitReponse.status === 201) {
       if (!practice) {
         await checkAchievement();
         await notifyWhenNewTurnIn(examInfo.teacherId, `${examInfo.title} (${examInfo.subjectName} ${examInfo.grade})`);
@@ -187,7 +188,7 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
       })
 
       setTimeout(() => {
-        navTo(`/student/exam/result/${id}`, { replace: true })
+        navTo(`/student/exam/result/${id}/${submitReponse.data.id}`, { replace: true })
       }, 1500);
     }
   }
