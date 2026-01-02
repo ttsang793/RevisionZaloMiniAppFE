@@ -1,12 +1,13 @@
 import { useState, FormEvent } from "react";
-import { Text, Avatar, Input } from "zmp-ui";
+import { Avatar, Input } from "zmp-ui";
 import { Comment, insertComment } from "@/models/comment";
+import { UserStorage } from "@/models/user";
 import { Send, XLg } from "react-bootstrap-icons";
 
 const CommentReplyInput = ({examId, userId, showReply, setShowReply, replyTo, loadData}) => {
   const [commentContent, setCommentContent] = useState("");
   const { TextArea } = Input;
-  const avatar = sessionStorage.getItem("avatar");
+  const avatar = UserStorage.getAvatar();
 
   return (
     <div className={showReply ? "ms-9 py-1 grid grid-cols-[32px_1fr] gap-x-2 text-justify" : "hidden"}>

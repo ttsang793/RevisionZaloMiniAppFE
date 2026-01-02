@@ -1,12 +1,11 @@
 import { render_api } from "@/script/util";
 import { ExamCodeQuestionGet } from "./pdf-exam-code";
-
-const studentId = Number(sessionStorage.getItem("id"));
+import { UserStorage } from "./user";
 
 class PdfExamAttempt {
   id?: number;
   examId: number;
-  studentId: number = studentId;
+  studentId: number;
   taskPdf: string = "";
   answerPdf: string = "";
   totalPoint: number = 0;
@@ -20,11 +19,13 @@ class PdfExamAttempt {
 
   constructor(examId: number, isPractice: boolean) {
     this.examId = examId;
-    this.isPractice = isPractice
+    this.isPractice = isPractice;
+    this.studentId = UserStorage.getId();
   }
 }
 
 function getPdfExamAttempt(examId: number) {
+  const studentId = UserStorage.getId();
   return render_api.get(`/api/exam/attempt/pdf/${studentId}/${examId}`);
 }
 

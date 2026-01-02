@@ -1,5 +1,6 @@
 import CommentFirst from "./comment-first";
 import CommentReply from "./comment-reply";
+import { UserStorage } from "@/models/user";
 import { Text, Input, Box, useSnackbar } from "zmp-ui"
 import { useState, useEffect, FormEvent, Fragment } from "react";
 import { Comment, getCommentsByExamId, insertComment, deleteComment } from "@/models/comment";
@@ -10,8 +11,8 @@ const CommentBlock = ({id, title}: {id: number, title?: string}) => {
   const { TextArea } = Input;
   const [commentList, setCommentList] = useState([]);
   const [commentContent, setCommentContent] = useState("");
-  const userId = Number(sessionStorage.getItem("id"));
-  const avatar = sessionStorage.getItem("avatar") || "https://res.cloudinary.com/dqxhmt5sp/image/upload/default_uqpoz0.jpg";
+  const userId = UserStorage.getId();
+  const avatar = UserStorage.getAvatar() || "https://res.cloudinary.com/dqxhmt5sp/image/upload/default_uqpoz0.jpg";
   const { openSnackbar } = useSnackbar();
 
   useEffect(() => {

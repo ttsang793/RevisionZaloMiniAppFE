@@ -1,7 +1,7 @@
 import { render_api } from "@/script/util";
 import { Subject } from "./subject";
+import { UserStorage } from "./user";
 
-const subjectId = sessionStorage.getItem("subjectId");
 type Topic = {
   id?: string,
   name: string,
@@ -16,7 +16,8 @@ const getTopics = async () => {
   return list.data;
 }
 
-const getActiveTopicByGrades = async (grade) => {
+const getActiveTopicByGrades = async (grade: number) => {
+  const subjectId = UserStorage.getSubjectId();
   return render_api.get(`/api/topic/${subjectId}/${grade}/active`);
 }
 

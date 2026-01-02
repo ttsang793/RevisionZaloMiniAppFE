@@ -22,6 +22,7 @@ import { ConstructedResponseQuestion, validateConstructedResponseInput, getConst
 import { SortingQuestion, validateSortingInput, getSortingQuestionById, insertSortingQuestion, updateSortingQuestion, SortingError } from "@/models/sorting-question";
 import { TrueFalseTHPTQuestion, validateTrueFalseTHPTInput, getTrueFalseTHPTQuestionById, insertTrueFalseTHPTQuestion, updateTrueFalseTHPTQuestion, TrueFalseTHPTError } from "@/models/true-false-thpt-question";
 import { XLg } from "react-bootstrap-icons";
+import { UserStorage } from "@/models/user";
 
 function renderQuestionMaker(type: string, question, setQuestion, error, setError) {
   switch (type) {
@@ -49,7 +50,7 @@ export default function QuestionMaker() {
   const { openSnackbar } = useSnackbar()
 
   const initQuestion = async () => {
-    getSubjectGradesById(sessionStorage.getItem("subjectId")!).then(response => setGradeList(response.data));
+    getSubjectGradesById(UserStorage.getSubjectId()).then(response => setGradeList(response.data));
 
     switch (type) {
       case questionType[0].type: {

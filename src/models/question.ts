@@ -46,7 +46,8 @@ function getQuestionsByTeacher(id?: number) {
 
 function getQuestionsFilterByTeacher(title?: string, type?: string, grade?: number) {
   const teacherId = UserStorage.getId();
-  if (!title) return render_api.get(`/api/question/teacher/filter/${teacherId}?type=${type}&grade=${grade}`);
+  console.log(teacherId);
+  if (!title || title.length > 0) return render_api.get(`/api/question/teacher/filter/${teacherId}?type=${type}&grade=${grade}`);
   return render_api.get(`/api/question/teacher/filter/${teacherId}?type=${type}&title=${title}`);
 }
 

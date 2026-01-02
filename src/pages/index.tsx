@@ -56,7 +56,7 @@ export default function ChooseRolePage() {
       UserStorage.setUserData({
         id: curUserData.id,
         role: curUserData.role,
-        avatar: curUserData.avatar
+        avatar: (!curUserData.avatar || curUserData.avatar.length === 0) ? "https://res.cloudinary.com/dqxhmt5sp/image/upload/default_uqpoz0.jpg" : curUserData.avatar
       });  
 
       if (curUserData.role === "GV") {

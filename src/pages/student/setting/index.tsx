@@ -60,7 +60,7 @@ export default function StudentSettingPage() {
 
   const handleGetAvatarFromZalo = async () => {
     const userInfo = await getUserInfo({ autoRequestPermission: false });
-    setImage(userInfo.userInfo.avatar)
+    setImage((!userInfo.userInfo.avatar || userInfo.userInfo.avatar.length === 0) ? "https://res.cloudinary.com/dqxhmt5sp/image/upload/default_uqpoz0.jpg" : userInfo.userInfo.avatar)
   }
 
   if (loading) return (
