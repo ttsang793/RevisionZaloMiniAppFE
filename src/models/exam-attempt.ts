@@ -50,7 +50,7 @@ const checkTrueFalse = (question, answer) => {
 }
 
 const checkShortAnswer = (question, answer) => {
-  return answer.join[""] === question.question.answerKey;
+  return answer.join("") === question.question.answerKey;
 }
 
 const checkManualResponse = (question, answer) => {
@@ -62,14 +62,12 @@ const checkSorting = (question, answer): {point: number, correct: number[]} => {
   let correct: number[] = [];
   let numCorrect: number = 0;
   for (let i: number = 0; i < correctOrder.length; i++) {
-    console.log(answer[i] + "-" + correctOrder[i])
     if(answer[i] === correctOrder[i]) {
       correct.push(1);
       numCorrect++;
     }
     else correct.push(0);
   }
-  console.log(question.point * numCorrect * 1.0 / correctOrder.length);
 
   return { point: question.point * numCorrect * 1.0 / correctOrder.length, correct };
 }
@@ -148,7 +146,8 @@ async function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], an
         }
         case "short-answer": {
           const result = checkShortAnswer(currentQuestion, answerList[i][j]);
-          answer.studentAnswer = answerList[i][j];
+          answer.studentAnswer = [...answerList[i][j]];
+          console.log(result);
           answer.correct[0] = result ? 1 : 0;
           if (result) {
             answer.point = currentQuestion.point;
@@ -203,10 +202,8 @@ async function insertAttempt(examAttempt: ExamAttempt, questionList: any[][], an
 
   examAttempt.totalPoint = totalPoint;
   examAttempt.examAttemptAnswers = examAttemptAnswers;
-
-  console.log(examAttempt);
-
-  //return await postAttempt(examAttempt);
+  
+  return await postAttempt(examAttempt);
 }
 
 async function postAttempt(examAttempt: ExamAttempt): Promise<any> {

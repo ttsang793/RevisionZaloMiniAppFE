@@ -1,11 +1,11 @@
-import { Eye, ThreeDotsVertical } from "react-bootstrap-icons";
+import { ThreeDotsVertical } from "react-bootstrap-icons";
 import { useState } from "react";
 import { Text } from "zmp-ui";
 import ExamListAction from "./exam-list-action";
 import { Exam } from "@/models/exam";
 import { stringToDate } from "@/script/util";
 
-const ExamList = ({exam}: {exam: Exam}) => {
+const ExamList = ({exam, fetchData}: {exam: Exam, fetchData: () => void}) => {
   const showAction = () => {
     return (
       <button onClick={() => setOpenAction(true)}><ThreeDotsVertical size={24} /></button>
@@ -27,22 +27,17 @@ const ExamList = ({exam}: {exam: Exam}) => {
             }
           </Text>
           <Text size="small">
-            Thời gian làm bài: {exam.timeLimit / 60} phút | 3 phần | 22 câu hỏi
+            Thời gian làm bài: {exam.timeLimit / 60} phút
           </Text>
           <Text size="small">
             Loại bài kiểm tra: {exam.displayType === "pdf" ? "PDF" : "Thủ công"}
-          </Text>
-          <Text size="small">
-          {
-            exam.status === 3 ? `Số lượt làm bài: 100` : ""
-          }
           </Text>
         </div>
         { showAction() }
       </div>
       <hr />
 
-      <ExamListAction exam={exam} visible={openAction} setVisible={setOpenAction}  />
+      <ExamListAction exam={exam} visible={openAction} setVisible={setOpenAction} fetchData={fetchData}  />
     </>
   )
 }

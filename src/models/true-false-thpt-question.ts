@@ -37,25 +37,41 @@ function getTrueFalseTHPTQuestionById(id: number) {
 
 async function insertTrueFalseTHPTQuestion(tfq: TrueFalseTHPTQuestion): Promise<any> {
   try {
-    const response = render_api.post("/api/question/true-false-thpt", tfq, {
+    const response = await render_api.post("/api/question/true-false-thpt", tfq, {
       headers: { "Content-Type": "application/json" }
     });
     return response;
   }
-  catch (err) {
-    return err;
+  catch (err: any) {
+    console.log("Loi roi!")
+    console.log(err);
+
+    if (err.response) {
+      console.error("Backend returned error:", err.response.status, err.response.data);
+      return err.response;
+    } else {
+      console.error("Network error:", err.message);
+      err.response.status = 500;
+      return err.response;
+    }
+    return err.response;
   }
 }
 
 async function updateTrueFalseTHPTQuestion(tfq: TrueFalseTHPTQuestion, id: number): Promise<any> {
   try {
-    const response = render_api.put(`/api/question/true-false-thpt/${id}`, tfq, {
+    const response = await render_api.put(`/api/question/true-false-thpt/${id}`, tfq, {
       headers: { "Content-Type": "application/json" }
     });
     return response;
   }
-  catch (err) {
-    return err;
+  catch (err: any) {    
+    if (err.response) {
+      console.error("Backend returned error:", err.response.status, err.response.data);
+    } else {
+      console.error("Network error:", err.message);
+    }
+    return err.response;
   }
 }
 

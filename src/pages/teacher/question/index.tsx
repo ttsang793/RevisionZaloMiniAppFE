@@ -58,7 +58,7 @@ export default function QuestionManagement() {
             ) :
             <>
               {
-                questionList.map((q: Question) => <QuestionList question={q} key={`question-${q.id}`} />)
+                questionList.map((q: Question) => <QuestionList question={q} fetchData={fetchData} key={`question-${q.id}`} />)
               }
               <Text size="xxSmall" className="text-center">-- Không còn câu hỏi --</Text>
             </>
@@ -89,7 +89,7 @@ export default function QuestionManagement() {
       }).then(() => openSnackbar({ text: "Tải xuống thành công!", type: "success" }));
     }
     catch (err) {
-      console.log(err);
+      console.error(err);
       openSnackbar({ text: "Tải xuống thất bại!", type: "error" });
     }
   }

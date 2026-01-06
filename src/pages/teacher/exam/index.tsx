@@ -49,7 +49,7 @@ export default function ExamManagement() {
             ) :
             <>
               {
-                examList.map((exam: Exam) => <ExamList exam={exam} key={`exam-${exam.id}`} />)
+                examList.map((exam: Exam) => <ExamList exam={exam} key={`exam-${exam.id}`} fetchData={fetchData} />)
               }
               <Text size="xxSmall" className="text-center">-- Không còn đề thi --</Text>
             </>

@@ -12,7 +12,7 @@ import { notifyWhenNewTurnIn } from "@/models/email";
 export default function TakePDFExamPage({practice}: {practice: boolean}) {
   const { id } = useParams();
   const navTo = useNavigate();
-  const [allowEarlySubmit, setAllowEarlySubmit] = useState(true);
+  const [allowEarlySubmit, setAllowEarlySubmit] = useState(practice);
   const [allowShowScore, setAllowShowScore] = useState(false);
   const [earlySubmitVisible, setEarlySubmitVisible] = useState(false);
   const [autoTurnIn, setAutoTurnIn] = useState(false);
@@ -79,15 +79,14 @@ export default function TakePDFExamPage({practice}: {practice: boolean}) {
       {/* Tiêu đề và các phần */}
       <Text.Title className="text-center uppercase mb-1">{examInfo.title}</Text.Title>
       <Text.Title className="text-center mb-1">
-        Môn: {examInfo.subjectName} <i>(Mã đề: {examAnswer?.code})</i> &minus; Thời gian: {examInfo.timeLimit / 60} phút
+        Môn: {examInfo.subjectName} <i>(Mã đề: {examAnswer?.code})</i>{practice ? "" : ` – Thời gian: ${examInfo.timeLimit / 60} phút`}
       </Text.Title>
-
       <hr />
 
       <Box className="my-2 text-center">
         <button
           className="zaui-bg-blue-70 zaui-text-blue-10 py-2 px-6 rounded-full"
-          onClick={() => openDocument({url: examAnswer?.taskPDF})}
+          onClick={() => openDocument({url: examAnswer?.taskPdf})}
         >
           Xem đề thi
         </button>
@@ -108,12 +107,15 @@ export default function TakePDFExamPage({practice}: {practice: boolean}) {
           }
         </Box>
 
-        <Countdown
-          timeLimit={examInfo.timeLimit}
-          earlyTurnIn={examInfo.earlyTurnIn}
-          setAllowEarlySubmit={setAllowEarlySubmit}
-          setAutoTurnIn={setAutoTurnIn}
-        />
+        {
+          practice ? <></> :
+            <Countdown
+              timeLimit={examInfo.timeLimit}
+              earlyTurnIn={examInfo.earlyTurnIn}
+              setAllowEarlySubmit={setAllowEarlySubmit}
+              setAutoTurnIn={setAutoTurnIn}
+            />
+        }
       </Box>
 
       <PDFExamPart

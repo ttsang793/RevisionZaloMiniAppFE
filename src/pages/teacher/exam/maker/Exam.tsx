@@ -49,7 +49,7 @@ export default function ExamQuestions() {
 
       getExamQuestion(Number(id)).then(response => {
         const partTitles: any[] = [];
-        console.log(response.data);
+        //console.log(response.data);
         response.data.forEach((d, i) => {
           const questionTypes: any[] = [];
           partTitles.push(d.partTitle);
@@ -59,7 +59,7 @@ export default function ExamQuestions() {
           setExamQuestionList(prev => [...prev, questionTypes]);
         })
         setExamQuestions({...examQuestions, partTitles});
-        console.log(examQuestions);
+        //console.log(examQuestions);
         setLoading(false);
       });
     }
@@ -118,14 +118,19 @@ export default function ExamQuestions() {
   async function handleSave(): Promise<void> {
     try {
       const response = await updateExam(examQuestions, examQuestionList);
+      console.log(response);
 
       if (response.status === 200) {
         openSnackbar({ text: "Lưu danh sách câu hỏi thành công!", type: "success", duration: 1500 });
         navTo("/teacher/exam")
       }
       else {
-        console.error(response);
-        openSnackbar({ text: "Lưu danh sách câu hỏi thất bại!", type: "error" });
+        if (response.message === "Tổng điểm không được vượt quá 10!")
+        openSnackbar({ text: response.message, type: "error" });
+        else {
+          console.error(response);
+          openSnackbar({ text: "Lưu danh sách câu hỏi thất bại!", type: "error" });
+        }
       }
     }
     catch (err: any) {

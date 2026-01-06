@@ -150,6 +150,7 @@ export default function PDFExamQuestions() {
     }
 
     let response: any = await insertCode(examCode);
+    console.log(response);
 
     if (response.status === 201) {
       const idList = response.data.id;
@@ -189,7 +190,7 @@ export default function PDFExamQuestions() {
     else {
       console.error(response);
       openSnackbar({
-        text: "Lưu bộ đề thất bại!",
+        text: response.message,
         type: "error"
       })
     }

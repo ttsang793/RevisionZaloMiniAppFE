@@ -45,7 +45,7 @@ export default function ChooseRolePage() {
   )
 
   async function loadUser() {
-    const userResponse = await getUserInfo({ autoRequestPermission: false });
+    const userResponse = await getUserInfo({ autoRequestPermission: true });
     const user = userResponse.userInfo;
     setUserInfo(user);
 

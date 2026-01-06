@@ -3,7 +3,7 @@ import { Box, Text, useNavigate, useSnackbar } from "zmp-ui";
 import { deleteQuestion, isUpdatable, Question } from "@/models/question";
 import { questionType } from "@/models/question";
 
-const QuestionListItem = ({question}: {question: Question}) => {
+const QuestionListItem = ({question, fetchData}: {question: Question, fetchData: () => void}) => {
   const navTo = useNavigate();
   const { openSnackbar } = useSnackbar();
 
@@ -67,7 +67,7 @@ const QuestionListItem = ({question}: {question: Question}) => {
           type: "success",
           duration: 1500
         });
-        navTo(0);
+        fetchData();
       }
 
       else {

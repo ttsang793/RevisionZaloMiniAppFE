@@ -2,7 +2,7 @@ import { Exam, deleteExam, publishExam } from "@/models/exam";
 import { useNavigate, Sheet, useSnackbar } from "zmp-ui";
 import { notifyWhenNewExam } from "@/models/email";
 
-const ExamListAction = ({exam, visible, setVisible}: {exam: Exam, visible: boolean, setVisible: any}) => {
+const ExamListAction = ({exam, visible, setVisible, fetchData}: {exam: Exam, visible: boolean, setVisible: any, fetchData: () => void}) => {
   const navTo = useNavigate();
   const { openSnackbar } = useSnackbar();
 
@@ -54,7 +54,7 @@ const ExamListAction = ({exam, visible, setVisible}: {exam: Exam, visible: boole
         type: "success",
         duration: 1500,
       })
-      setTimeout(() => navTo(0), 1000);
+      setTimeout(() => fetchData(), 1000);
     }
     else {
       openSnackbar({
@@ -72,8 +72,8 @@ const ExamListAction = ({exam, visible, setVisible}: {exam: Exam, visible: boole
         type: "success",
         duration: 1500,
       })
+      fetchData();
       await notifyWhenNewExam(exam.teacherId, exam.teacherName!)
-      setTimeout(() => navTo(0), 1000);
     }
     else {
       openSnackbar({

@@ -13,7 +13,6 @@ type ExamMakerError = {
 
 export default function ExamMaker() {
   const navTo = useNavigate();
-  console.log(useParams());
   const { type, id } = useParams();
   const { openSnackbar } = useSnackbar();
 
@@ -27,8 +26,7 @@ export default function ExamMaker() {
     setLoading(true);
     if (id !== undefined) {
       getExamById(Number(id)).then(response => {
-        console.log(response);
-
+        console.log(response.data);
         setExamInfo(response.data);
         setTimeLimit(`${response.data.timeLimit/60}`);
         setEarlyTurnIn(`${response.data.earlyTurnIn/60}`);
@@ -190,7 +188,7 @@ export default function ExamMaker() {
       setTimeout(() => navTo("/teacher/exam"), 1500);
     }
     else {
-      console.log(response);
+      console.error(response);
       openSnackbar({
         text: `${!id ? "Thêm" : "Cập nhật"} thông tin bài kiểm tra thất bại!`,
         type: "error"

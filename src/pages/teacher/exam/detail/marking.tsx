@@ -125,7 +125,7 @@ export default function ExamMarking() {
       const response = await gradingAttempt(sendExamAttempt);
       if (response.status === 200) {        
         await checkAchievement(examAttempt.studentId);
-        await notifyWhenFinishGrading(examAttempt.studentId!, `${examInfo.title} (${examInfo.subjectName} ${examInfo.grade}) của giáo viên ${examInfo.teacherName}`);
+        //await notifyWhenFinishGrading(examAttempt.studentId!, `${examInfo.title} (${examInfo.subjectName} ${examInfo.grade}) của giáo viên ${examInfo.teacherName}`);
 
         openSnackbar({
           text: "Chấm điểm thành công!",

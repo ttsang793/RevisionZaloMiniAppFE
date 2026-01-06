@@ -11,7 +11,7 @@ import { notifyWhenNewTurnIn } from "@/models/email";
 export default function TakeExamPage({practice}: {practice: boolean}) {
   const { id } = useParams();
   const navTo = useNavigate();
-  const [allowEarlySubmit, setAllowEarlySubmit] = useState(true);
+  const [allowEarlySubmit, setAllowEarlySubmit] = useState(practice);
   const [earlySubmitVisible, setEarlySubmitVisible] = useState(false);
   const [autoTurnIn, setAutoTurnIn] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -61,7 +61,10 @@ export default function TakeExamPage({practice}: {practice: boolean}) {
                 sq.question.answerKeys = fisherYatesShuffle([sq.question.correctAnswer, sq.question.wrongAnswer[0], sq.question.wrongAnswer[1], sq.question.wrongAnswer[2]]);
               questionTypes.push({question: sq});
 
-              if (sq.question.type === "sorting") questionAnswer.push(fisherYatesShuffle(sq.question.correctOrder))
+              if (sq.question.type === "sorting") {
+                const tempOrder = [...sq.question.correctOrder]
+                questionAnswer.push(fisherYatesShuffle(tempOrder))
+              }
               else questionAnswer.push([""]);
               questionIndex.push(sq.orderIndex);
             }
